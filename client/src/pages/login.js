@@ -2,6 +2,7 @@ import { useState } from "react";
 import {useEffect} from "react";
 import axios from "axios";
 import "./auth.css";
+import API_BASE_URL from "../config/api";
 
 function UserIcon() {
   return (
@@ -49,7 +50,7 @@ function Login() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post("http://localhost:5000/api/login", {
+      const res = await axios.post(`${API_BASE_URL}/api/login`, {
         email,
         password,
       });

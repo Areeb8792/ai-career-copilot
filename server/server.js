@@ -10,13 +10,35 @@ const app = express();
 const AI_TIMEOUT_MS = 1500;
 const GEMINI_MODEL = "gemini-2.5-flash";
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+const allowedOrigins = new Set([
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://ai-career-copilot-rjc8.vercel.app",
+]);
+const allowedOriginPatterns = [
+  /^https:\/\/ai-career-copilot(?:-[a-z0-9-]+)?\.vercel\.app$/,
+  /^https:\/\/ai-career-copilot.*\.vercel\.app$/,
+];
+const corsOptions = {
+  origin(origin, callback) {
+    if (!origin) {
+      callback(null, true);
+      return;
+    }
 
-app.use(cors({
-  origin: "https://ai-career-copilot-rjc8.vercel.app",
+    if (allowedOrigins.has(origin) || allowedOriginPatterns.some((pattern) => pattern.test(origin))) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`Origin not allowed by CORS: ${origin}`));
+  },
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-}));
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -213,7 +235,7 @@ app.post("/api/compare-roles", async (req, res) => {
   }
 });
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

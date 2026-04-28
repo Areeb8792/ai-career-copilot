@@ -3,6 +3,7 @@ import axios from "axios";
 import Layout from "../components/layout";
 import "./theme.css";
 import "./risk-management.css";
+import API_BASE_URL from "../config/api";
 
 const AI_REQUEST_TIMEOUT_MS = 1800;
 
@@ -178,7 +179,7 @@ function RiskManagement() {
     try {
       const role = `${jobTitle} - Skill ${skillLevel}%`;
       const res = await axios.post(
-        "http://localhost:5000/api/predict-risk",
+        `${API_BASE_URL}/api/predict-risk`,
         { role },
         { timeout: AI_REQUEST_TIMEOUT_MS }
       );
@@ -216,7 +217,7 @@ function RiskManagement() {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/compare-roles",
+        `${API_BASE_URL}/api/compare-roles`,
         {
           roles: cleaned,
         },
