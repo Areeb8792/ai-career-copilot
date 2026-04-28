@@ -3,7 +3,7 @@ import axios from "axios";
 import { NavLink } from "react-router-dom";
 import API_BASE_URL from "../config/api";
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 const MAX_PROFILE_IMAGE_SIZE = 2 * 1024 * 1024;
 
 function PrometheusSigil() {
@@ -145,6 +145,7 @@ function Layout({ children }) {
       window.removeEventListener("prometheus_progress_update", handleProgressUpdate);
       window.removeEventListener("storage", handleProgressUpdate);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const handlePasswordFieldChange = (key, value) => {
     setPasswordForm((current) => ({

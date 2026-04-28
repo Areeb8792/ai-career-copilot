@@ -12,30 +12,9 @@ const MONGO_CONNECT_TIMEOUT_MS = 8000;
 const GEMINI_MODEL = "gemini-2.5-flash";
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const allowedOrigins = new Set([
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "https://ai-career-copilot-rjc8.vercel.app",
-]);
-const allowedOriginPatterns = [
-  /^https:\/\/ai-career-copilot(?:-[a-z0-9-]+)?\.vercel\.app$/,
-  /^https:\/\/ai-career-copilot.*\.vercel\.app$/,
-];
 const corsOptions = {
-  origin(origin, callback) {
-    if (!origin) {
-      callback(null, true);
-      return;
-    }
-
-    if (allowedOrigins.has(origin) || allowedOriginPatterns.some((pattern) => pattern.test(origin))) {
-      callback(null, true);
-      return;
-    }
-
-    callback(new Error(`Origin not allowed by CORS: ${origin}`));
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  origin: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
