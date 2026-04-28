@@ -8,6 +8,7 @@ require("dotenv").config();
 
 const app = express();
 const AI_TIMEOUT_MS = 1500;
+const MONGO_CONNECT_TIMEOUT_MS = 8000;
 const GEMINI_MODEL = "gemini-2.5-flash";
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,7 +60,7 @@ const normalizeMongoUri = (rawUri) => {
     return "";
   }
 
-  const trimmed = rawUri.trim().replace("??", "?");
+  const trimmed = rawUri.trim().replace(/^['"]|['"]$/g, "").replace(/\?{2,}/g, "?");
   const match = trimmed.match(/^(mongodb(?:\+srv)?:\/\/)([^:]+):([^@]+)@(.+)$/);
 
   if (!match) {
@@ -72,28 +73,31 @@ const normalizeMongoUri = (rawUri) => {
 
 const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
 const isValidEmail = (value) => EMAIL_PATTERN.test(normalizeEmail(value));
+const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 let isDatabaseReady = false;
+let mongoConnectPromise = null;
+let mongoLastError = null;
 const mongoUri = normalizeMongoUri(process.env.MONGO_URI);
 
 mongoose.connection.on("connected", () => {
   isDatabaseReady = true;
+  mongoLastError = null;
   console.log("MongoDB connected");
 });
 
 mongoose.connection.on("disconnected", () => {
   isDatabaseReady = false;
+  mongoConnectPromise = null;
   console.log("MongoDB disconnected");
 });
 
-mongoose
-  .connect(mongoUri, {
-    serverSelectionTimeoutMS: 5000,
-  })
-  .catch((err) => {
-    isDatabaseReady = false;
-    console.log(err);
-  });
+mongoose.connection.on("error", (err) => {
+  isDatabaseReady = false;
+  mongoLastError = err;
+  console.error("MongoDB connection error:");
+  console.error(err.message);
+});
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -102,15 +106,61 @@ const userSchema = new mongoose.Schema({
   quests: { type: Array, default: [] },
 });
 
+  
 const User = mongoose.model("User", userSchema);
 
-const ensureDatabaseReady = (res) => {
+const connectToMongo = async () => {
   if (isDatabaseReady) {
     return true;
   }
 
-  res.status(503).json({ message: "Database unavailable. Check MongoDB connection settings." });
-  return false;
+  if (!mongoUri) {
+    throw new Error("Missing MONGO_URI");
+  }
+
+  if (!mongoConnectPromise) {
+    mongoConnectPromise = mongoose
+      .connect(mongoUri, {
+        serverSelectionTimeoutMS: 5000,
+      })
+      .then(() => true)
+      .catch((err) => {
+        mongoLastError = err;
+        mongoConnectPromise = null;
+        throw err;
+      });
+  }
+
+  return mongoConnectPromise;
+};
+
+connectToMongo().catch((err) => {
+  mongoLastError = err;
+  console.error("MongoDB initial connection failed:");
+  console.error(err.message);
+});
+
+const ensureDatabaseReady = async (res) => {
+  if (isDatabaseReady) {
+    return true;
+  }
+
+  try {
+    await Promise.race([
+      connectToMongo(),
+      wait(MONGO_CONNECT_TIMEOUT_MS).then(() => {
+        throw new Error("MongoDB connection timed out");
+      }),
+    ]);
+
+    return true;
+  } catch (err) {
+    const reason = mongoLastError?.message || err.message;
+    console.error("Database unavailable:");
+    console.error(reason);
+    res.status(503).json({ message: "Database unavailable. Check MongoDB connection settings." });
+    return false;
+  }
 };
 
 const authMiddleware = (req, res, next) => {
@@ -195,7 +245,7 @@ app.post("/api/signup", async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const password = String(req.body.password || "");
 
-  if (!ensureDatabaseReady(res)) {
+  if (!(await ensureDatabaseReady(res))) {
     return;
   }
 
@@ -232,7 +282,7 @@ app.post("/api/login", async (req, res) => {
   const email = normalizeEmail(req.body.email);
   const password = String(req.body.password || "");
 
-  if (!ensureDatabaseReady(res)) {
+  if (!(await ensureDatabaseReady(res))) {
     return;
   }
 
@@ -266,6 +316,10 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.get("/api/profile", authMiddleware, async (req, res) => {
+  if (!(await ensureDatabaseReady(res))) {
+    return;
+  }
+
   const user = await User.findById(req.user.id);
   res.json(user);
 });
