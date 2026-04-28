@@ -101,6 +101,7 @@ function Tasks() {
           };
 
           localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(updatedProgress));
+          window.dispatchEvent(new Event("prometheus_progress_update"));
 
           return {
             ...task,

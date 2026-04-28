@@ -58,6 +58,19 @@ function Layout({ children }) {
     { label: "Tasks", path: "/tasks" },
     { label: "Progress", path: "/progress" },
   ];
+  
+  const [progressData, setProgressData] = useState(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem("prometheus_progress");
+        return raw ? JSON.parse(raw) : { totalXp: 0 };
+      } catch {
+        return { totalXp: 0 };
+      }
+    }
+    return { totalXp: 0 };
+  });
+
   const [account, setAccount] = useState({
     email: "",
     profileImage: "",
@@ -115,8 +128,24 @@ function Layout({ children }) {
 
   useEffect(() => {
     loadProfile();
-  }, []);
 
+    const handleProgressUpdate = () => {
+      try {
+        const raw = localStorage.getItem("prometheus_progress");
+        if (raw) {
+          setProgressData(JSON.parse(raw));
+        }
+      } catch {}
+    };
+
+    window.addEventListener("prometheus_progress_update", handleProgressUpdate);
+    window.addEventListener("storage", handleProgressUpdate);
+
+    return () => {
+      window.removeEventListener("prometheus_progress_update", handleProgressUpdate);
+      window.removeEventListener("storage", handleProgressUpdate);
+    };
+  }, []);
   const handlePasswordFieldChange = (key, value) => {
     setPasswordForm((current) => ({
       ...current,
@@ -276,11 +305,15 @@ function Layout({ children }) {
           <div className="scan-list">
             <div className="scan-list-item">
               <span>LEVEL</span>
-              <strong className="status-cyan">01</strong>
+              <strong className="status-cyan">
+                {String(Math.floor((progressData.totalXp || 0) / 100) + 1).padStart(2, "0")}
+              </strong>
             </div>
             <div className="scan-list-item">
               <span>XP DATA</span>
-              <strong className="status-good">0 / 100</strong>
+              <strong className="status-good">
+                {(progressData.totalXp || 0) % 100} / 100
+              </strong>
             </div>
           </div>
         </div>
