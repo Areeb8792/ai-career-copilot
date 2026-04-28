@@ -10,7 +10,13 @@ const app = express();
 const AI_TIMEOUT_MS = 1500;
 const GEMINI_MODEL = "gemini-2.5-flash";
 
-app.use(cors());
+const cors = require("cors");
+
+app.use(cors({
+  origin: "https://ai-career-copilot-rjc8.vercel.app",
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
 app.use(express.json());
 
 app.get("/", (req, res) => {
