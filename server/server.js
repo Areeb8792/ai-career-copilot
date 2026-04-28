@@ -10,21 +10,19 @@ const app = express();
 const AI_TIMEOUT_MS = 1500;
 const GEMINI_MODEL = "gemini-2.5-flash";
 
-const cors = require("cors");
-
 app.use(cors({
   origin: "https://ai-career-copilot-rjc8.vercel.app",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+app.options("*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("AI Career Copilot Backend Running");
 });
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017/ai-career")
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
@@ -45,7 +43,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
     next();
   } catch {
