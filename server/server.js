@@ -9,6 +9,7 @@ require("dotenv").config();
 const app = express();
 const AI_TIMEOUT_MS = 1500;
 const GEMINI_MODEL = "gemini-2.5-flash";
+const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
 
 app.use(cors({
   origin: "https://ai-career-copilot-rjc8.vercel.app",
@@ -16,7 +17,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
-app.options("/api/*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -44,7 +44,7 @@ const authMiddleware = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded;
     next();
   } catch {
@@ -154,7 +154,7 @@ app.post("/api/login", async (req, res) => {
       return res.status(400).json({ message: "Invalid password" });
     }
 
-    const token = jwt.sign({ id: user._id }, "secretkey", { expiresIn: "7d" });
+    const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
     res.json({ token });
   } catch (err) {
     console.error(err);
