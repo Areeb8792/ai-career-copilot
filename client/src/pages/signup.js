@@ -3,6 +3,8 @@ import axios from "axios";
 import "./auth.css";
 import API_BASE_URL from "../config/api";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function UserIcon() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -49,21 +51,33 @@ function Signup() {
   const [password, setPassword] = useState("");
 
   const handleSignup = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!EMAIL_PATTERN.test(normalizedEmail)) {
+      alert("Enter a valid email address.");
+      return;
+    }
+
+    if (password.trim().length < 6) {
+      alert("Password must be at least 6 characters.");
+      return;
+    }
+
     try {
       await axios.post(`${API_BASE_URL}/api/signup`, {
-        email,
+        email: normalizedEmail,
         password,
       });
 
       if (!localStorage.getItem("prometheus_signup_date")) {
         localStorage.setItem("prometheus_signup_date", new Date().toISOString());
       }
-      localStorage.setItem("prometheus_username", email);
+      localStorage.setItem("prometheus_username", normalizedEmail);
 
       alert("Account created");
       window.location.href = "/login";
     } catch (err) {
-      alert("Signup failed");
+      alert(err.response?.data?.message || "Signup failed");
     }
   };
 
@@ -90,7 +104,7 @@ function Signup() {
 
           <div className="field-group">
             <label className="field-label" htmlFor="signup-email">
-              USERNAME
+              EMAIL
             </label>
             <div className="input-shell">
               <span className="input-icon">
@@ -98,8 +112,9 @@ function Signup() {
               </span>
               <input
                 id="signup-email"
-                type="text"
-                placeholder="ENTER USERNAME"
+                type="email"
+                autoComplete="email"
+                placeholder="ENTER EMAIL"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="auth-input"
@@ -118,6 +133,7 @@ function Signup() {
               <input
                 id="signup-password"
                 type="password"
+                autoComplete="new-password"
                 placeholder="ENTER PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

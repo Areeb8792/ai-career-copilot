@@ -4,6 +4,8 @@ import axios from "axios";
 import "./auth.css";
 import API_BASE_URL from "../config/api";
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function UserIcon() {
   return (
     <svg viewBox="0 0 24 24">
@@ -49,9 +51,21 @@ function Login() {
   };
 
   const handleLogin = async () => {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!EMAIL_PATTERN.test(normalizedEmail)) {
+      alert("Enter a valid email address.");
+      return;
+    }
+
+    if (!password.trim()) {
+      alert("Enter your password.");
+      return;
+    }
+
     try {
       const res = await axios.post(`${API_BASE_URL}/api/login`, {
-        email,
+        email: normalizedEmail,
         password,
       });
 
@@ -112,12 +126,13 @@ function Login() {
 
           {/* EMAIL */}
           <div className="field-group">
-            <label className="field-label">USERNAME</label>
+            <label className="field-label">EMAIL</label>
             <div className="input-shell">
               <span className="input-icon"><UserIcon /></span>
               <input
-                type="text"
-                placeholder="ENTER USERNAME"
+                type="email"
+                autoComplete="email"
+                placeholder="ENTER EMAIL"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="auth-input"
@@ -132,6 +147,7 @@ function Login() {
               <span className="input-icon"><LockIcon /></span>
               <input
                 type="password"
+                autoComplete="current-password"
                 placeholder="ENTER PASSWORD"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}

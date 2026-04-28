@@ -10,6 +10,7 @@ const app = express();
 const AI_TIMEOUT_MS = 1500;
 const GEMINI_MODEL = "gemini-2.5-flash";
 const JWT_SECRET = process.env.JWT_SECRET || "secretkey";
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const allowedOrigins = new Set([
   "http://localhost:3000",
   "http://127.0.0.1:3000",
@@ -45,9 +46,54 @@ app.get("/", (req, res) => {
   res.send("AI Career Copilot Backend Running");
 });
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.log(err));
+const safeEncodeCredential = (value) => {
+  try {
+    return encodeURIComponent(decodeURIComponent(value));
+  } catch {
+    return encodeURIComponent(value);
+  }
+};
+
+const normalizeMongoUri = (rawUri) => {
+  if (!rawUri) {
+    return "";
+  }
+
+  const trimmed = rawUri.trim().replace("??", "?");
+  const match = trimmed.match(/^(mongodb(?:\+srv)?:\/\/)([^:]+):([^@]+)@(.+)$/);
+
+  if (!match) {
+    return trimmed;
+  }
+
+  const [, prefix, username, password, rest] = match;
+  return `${prefix}${safeEncodeCredential(username)}:${safeEncodeCredential(password)}@${rest}`;
+};
+
+const normalizeEmail = (value) => String(value || "").trim().toLowerCase();
+const isValidEmail = (value) => EMAIL_PATTERN.test(normalizeEmail(value));
+
+let isDatabaseReady = false;
+const mongoUri = normalizeMongoUri(process.env.MONGO_URI);
+
+mongoose.connection.on("connected", () => {
+  isDatabaseReady = true;
+  console.log("MongoDB connected");
+});
+
+mongoose.connection.on("disconnected", () => {
+  isDatabaseReady = false;
+  console.log("MongoDB disconnected");
+});
+
+mongoose
+  .connect(mongoUri, {
+    serverSelectionTimeoutMS: 5000,
+  })
+  .catch((err) => {
+    isDatabaseReady = false;
+    console.log(err);
+  });
 
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
@@ -57,6 +103,15 @@ const userSchema = new mongoose.Schema({
 });
 
 const User = mongoose.model("User", userSchema);
+
+const ensureDatabaseReady = (res) => {
+  if (isDatabaseReady) {
+    return true;
+  }
+
+  res.status(503).json({ message: "Database unavailable. Check MongoDB connection settings." });
+  return false;
+};
 
 const authMiddleware = (req, res, next) => {
   const token = req.headers.authorization;
@@ -137,7 +192,20 @@ async function callGemini(prompt) {
 }
 
 app.post("/api/signup", async (req, res) => {
-  const { email, password } = req.body;
+  const email = normalizeEmail(req.body.email);
+  const password = String(req.body.password || "");
+
+  if (!ensureDatabaseReady(res)) {
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ message: "Enter a valid email address." });
+  }
+
+  if (password.length < 6) {
+    return res.status(400).json({ message: "Password must be at least 6 characters." });
+  }
 
   try {
     const existingUser = await User.findOne({ email });
@@ -161,7 +229,20 @@ app.post("/api/signup", async (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
-  const { email, password } = req.body;
+  const email = normalizeEmail(req.body.email);
+  const password = String(req.body.password || "");
+
+  if (!ensureDatabaseReady(res)) {
+    return;
+  }
+
+  if (!isValidEmail(email)) {
+    return res.status(400).json({ message: "Enter a valid email address." });
+  }
+
+  if (!password) {
+    return res.status(400).json({ message: "Password is required." });
+  }
 
   try {
     const user = await User.findOne({ email });
