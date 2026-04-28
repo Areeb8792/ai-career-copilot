@@ -104,10 +104,19 @@ const userSchema = new mongoose.Schema({
   password: String,
   xp: { type: Number, default: 0 },
   quests: { type: Array, default: [] },
+  profileImage: { type: String, default: "" },
 });
 
   
 const User = mongoose.model("User", userSchema);
+
+const toPublicUser = (user) => ({
+  id: user._id,
+  email: user.email,
+  xp: user.xp ?? 0,
+  questCount: Array.isArray(user.quests) ? user.quests.length : 0,
+  profileImage: user.profileImage || "",
+});
 
 const connectToMongo = async () => {
   if (isDatabaseReady) {
@@ -320,8 +329,92 @@ app.get("/api/profile", authMiddleware, async (req, res) => {
     return;
   }
 
-  const user = await User.findById(req.user.id);
-  res.json(user);
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ user: toPublicUser(user) });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.patch("/api/profile", authMiddleware, async (req, res) => {
+  if (!(await ensureDatabaseReady(res))) {
+    return;
+  }
+
+  const profileImage = String(req.body.profileImage || "");
+
+  if (profileImage && !profileImage.startsWith("data:image/")) {
+    return res.status(400).json({ message: "Profile image must be a valid image file." });
+  }
+
+  if (profileImage.length > 2_200_000) {
+    return res.status(400).json({ message: "Profile image is too large. Use a smaller image." });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.profileImage = profileImage;
+    await user.save();
+
+    res.json({
+      message: "Profile updated",
+      user: toPublicUser(user),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+app.patch("/api/profile/password", authMiddleware, async (req, res) => {
+  if (!(await ensureDatabaseReady(res))) {
+    return;
+  }
+
+  const currentPassword = String(req.body.currentPassword || "");
+  const newPassword = String(req.body.newPassword || "");
+
+  if (!currentPassword) {
+    return res.status(400).json({ message: "Current password is required." });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ message: "New password must be at least 6 characters." });
+  }
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Current password is incorrect." });
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await user.save();
+
+    res.json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 app.post("/api/generate-roadmap", async (req, res) => {

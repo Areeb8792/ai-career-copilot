@@ -6,6 +6,7 @@ import "./risk-management.css";
 import API_BASE_URL from "../config/api";
 
 const AI_REQUEST_TIMEOUT_MS = 1800;
+const TASKS_STORAGE_KEY = "prometheus_tasks";
 
 const defaultRisk = {
   baseRisk: 42,
@@ -77,8 +78,6 @@ const roleProfiles = [
   },
 ];
 
-const formatNumberedTips = (tips) => tips.map((tip, index) => `${index + 1}. ${tip}`).join("\n");
-
 const isGenericExplanation = (text) => {
   const normalized = text.toLowerCase();
   return (
@@ -137,13 +136,12 @@ function RiskManagement() {
   const [jobTitle, setJobTitle] = useState("");
   const [skillLevel, setSkillLevel] = useState(58);
   const [riskData, setRiskData] = useState(defaultRisk);
-  const [countermeasuresText, setCountermeasuresText] = useState(
-    formatNumberedTips(defaultRisk.tips)
-  );
   const [careers, setCareers] = useState(["", "", ""]);
   const [compareData, setCompareData] = useState(fallbackCompare);
   const [isCalculating, setIsCalculating] = useState(false);
   const [isComparing, setIsComparing] = useState(false);
+  const [taskActionMessage, setTaskActionMessage] = useState("");
+  const [addedSuggestions, setAddedSuggestions] = useState({});
 
   const handleCareerChange = (index, value) => {
     setCareers((current) => current.map((career, i) => (i === index ? value : career)));
@@ -195,11 +193,13 @@ function RiskManagement() {
           : parsed;
 
       setRiskData(finalRiskData);
-      setCountermeasuresText(formatNumberedTips(finalRiskData.tips));
+      setAddedSuggestions({});
+      setTaskActionMessage("");
     } catch (error) {
       const fallback = createFallbackRisk(jobTitle, skillLevel);
       setRiskData(fallback);
-      setCountermeasuresText(formatNumberedTips(fallback.tips));
+      setAddedSuggestions({});
+      setTaskActionMessage("");
     } finally {
       setIsCalculating(false);
     }
@@ -238,16 +238,34 @@ function RiskManagement() {
     }
   };
 
-  const copySuggestions = async () => {
-    if (!countermeasuresText.trim()) {
-      return;
-    }
-
+  const addSuggestionToTasks = (tip) => {
     try {
-      await navigator.clipboard.writeText(countermeasuresText);
-      alert("Suggestions copied. Paste them into Tasks to generate AI-based tasks.");
+      const rawTasks = localStorage.getItem(TASKS_STORAGE_KEY);
+      const storedTasks = rawTasks ? JSON.parse(rawTasks) : [];
+      const alreadyExists = storedTasks.some(
+        (task) => String(task.title || "").trim().toLowerCase() === tip.trim().toLowerCase()
+      );
+
+      if (alreadyExists) {
+        setTaskActionMessage("That suggestion is already in your Tasks queue.");
+        return;
+      }
+
+      const nextTasks = [
+        {
+          id: Date.now(),
+          title: tip,
+          completed: false,
+          rewarded: false,
+        },
+        ...storedTasks,
+      ];
+
+      localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(nextTasks));
+      setAddedSuggestions((current) => ({ ...current, [tip]: true }));
+      setTaskActionMessage("Suggestion added to Tasks.");
     } catch (error) {
-      alert("Copy failed. You can still manually copy the text below.");
+      setTaskActionMessage("Could not add that suggestion to Tasks.");
     }
   };
 
@@ -263,9 +281,6 @@ function RiskManagement() {
       })
       .join(" ");
   }, [safeCompareData]);
-
-  const suggestionHelper =
-    "Copy these countermeasures and paste them into Tasks to generate AI-based action items for your learning plan.";
 
   return (
     <Layout>
@@ -327,16 +342,30 @@ function RiskManagement() {
                 </div>
                 <div className="countermeasure-block">
                   <span className="countermeasure-label">Recommended Action Plan</span>
+                  <p className="suggestion-direct-hint">
+                    Add any recommendation directly into your Tasks queue.
+                  </p>
                   <ol className="countermeasure-list">
                     {riskData.tips.map((tip, index) => (
                       <li key={tip} className="countermeasure-item">
                         <span className="countermeasure-index">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <p>{tip}</p>
+                        <div className="countermeasure-item-body">
+                          <p>{tip}</p>
+                          <button
+                            type="button"
+                            className={`suggestion-task-btn${addedSuggestions[tip] ? " added" : ""}`}
+                            onClick={() => addSuggestionToTasks(tip)}
+                            disabled={Boolean(addedSuggestions[tip])}
+                          >
+                            {addedSuggestions[tip] ? "Added to Tasks" : "Add to Tasks"}
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ol>
+                  {taskActionMessage ? <p className="suggestion-task-message">{taskActionMessage}</p> : null}
                 </div>
               </div>
 
@@ -398,35 +427,6 @@ function RiskManagement() {
               </button>
             </section>
           </div>
-
-          <section className="task-handoff-panel">
-            <div className="task-handoff-copy">
-              <h3>Task Generator Suggestion</h3>
-              <p>{suggestionHelper}</p>
-            </div>
-            <button onClick={copySuggestions} className="copy-suggestions-btn">
-              Copy Suggestions
-            </button>
-          </section>
-
-          <section className="suggestion-output-panel">
-            <div className="suggestion-output-header">
-              <div>
-                <h3>Structured Suggestion Export</h3>
-                <p>Use this cleaned list as your copy-ready input for the Tasks tab.</p>
-              </div>
-              <span className="suggestion-status">
-                {riskData.tips.length} ACTIONS
-              </span>
-            </div>
-
-            <textarea
-              value={countermeasuresText}
-              onChange={(e) => setCountermeasuresText(e.target.value)}
-              className="suggestion-box"
-              placeholder="Calculated countermeasures will appear here. Copy them into Tasks to generate AI-based tasks."
-            />
-          </section>
         </div>
       </div>
     </Layout>

@@ -72,9 +72,7 @@
 }
 
 .risk-card,
-.comparison-panel,
-.task-handoff-panel,
-.suggestion-box {
+.comparison-panel {
   position: relative;
   overflow: hidden;
 }
@@ -284,6 +282,11 @@
   line-height: 1.7;
 }
 
+.suggestion-direct-hint {
+  margin: 0 0 12px;
+  color: var(--text-dim);
+}
+
 .countermeasure-list {
   display: grid;
   gap: 10px;
@@ -319,6 +322,48 @@
   margin: 0;
   color: #d3edff;
   line-height: 1.65;
+}
+
+.countermeasure-item-body {
+  display: grid;
+  gap: 12px;
+}
+
+.suggestion-task-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  background: rgba(0, 255, 255, 0.08);
+  color: var(--cyan);
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 150ms ease, background 150ms ease, color 150ms ease, box-shadow 150ms ease;
+}
+
+.suggestion-task-btn:hover:not(:disabled) {
+  border-color: rgba(255, 0, 255, 0.4);
+  background: rgba(255, 0, 255, 0.12);
+  color: var(--text-main);
+  box-shadow: 0 0 14px rgba(255, 0, 255, 0.16);
+}
+
+.suggestion-task-btn:disabled,
+.suggestion-task-btn.added {
+  border-color: rgba(0, 255, 102, 0.34);
+  background: rgba(0, 255, 102, 0.12);
+  color: var(--lime);
+  cursor: default;
+}
+
+.suggestion-task-message {
+  margin: 12px 0 0;
+  color: var(--lime);
 }
 
 .chart-shell {
@@ -400,8 +445,7 @@
   color: var(--pink);
 }
 
-.risk-cta,
-.copy-suggestions-btn {
+.risk-cta {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -421,92 +465,6 @@
   margin-top: 16px;
 }
 
-.task-handoff-panel {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-top: 18px;
-  padding: 18px;
-  border: 1px solid rgba(0, 255, 255, 0.16);
-  background: rgba(0, 255, 255, 0.04);
-}
-
-.task-handoff-panel h3 {
-  margin: 0 0 6px;
-  color: var(--cyan);
-  text-transform: uppercase;
-}
-
-.task-handoff-copy {
-  max-width: 760px;
-}
-
-.copy-suggestions-btn {
-  min-width: 190px;
-}
-
-.suggestion-output-panel {
-  position: relative;
-  z-index: 1;
-  margin-top: 14px;
-  border: 1px solid rgba(255, 0, 255, 0.16);
-  background:
-    linear-gradient(180deg, rgba(8, 5, 18, 0.98), rgba(2, 2, 8, 0.98)),
-    linear-gradient(90deg, rgba(255, 0, 255, 0.06), transparent 48%, rgba(0, 255, 255, 0.05));
-}
-
-.suggestion-output-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 16px 18px 14px;
-  border-bottom: 1px solid rgba(0, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.suggestion-output-header h3 {
-  margin: 0 0 6px;
-  color: var(--text-main);
-  font-family: "Orbitron", sans-serif;
-  text-transform: uppercase;
-}
-
-.suggestion-output-header p {
-  margin: 0;
-  color: var(--text-dim);
-}
-
-.suggestion-status {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 112px;
-  min-height: 42px;
-  padding: 0 12px;
-  border: 1px solid rgba(0, 255, 255, 0.18);
-  background: rgba(0, 255, 255, 0.08);
-  color: var(--cyan);
-  font-family: "Orbitron", sans-serif;
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-}
-
-.suggestion-box {
-  position: relative;
-  z-index: 1;
-  min-height: 210px;
-  margin-top: 0;
-  padding: 18px;
-  border: 0;
-  background: transparent;
-  resize: vertical;
-  line-height: 1.6;
-}
-
 @media (max-width: 1080px) {
   .risk-grid {
     grid-template-columns: 1fr;
@@ -516,19 +474,5 @@
 @media (max-width: 720px) {
   .risk-board {
     padding: 16px;
-  }
-
-  .task-handoff-panel {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .suggestion-output-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .copy-suggestions-btn {
-    width: 100%;
   }
 }
