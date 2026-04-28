@@ -12,10 +12,11 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 
 app.use(cors({
   origin: "https://ai-career-copilot-rjc8.vercel.app",
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true
 }));
-app.options("*", cors());
+app.options("/api/*", cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
