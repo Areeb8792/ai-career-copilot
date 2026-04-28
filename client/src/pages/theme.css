@@ -383,6 +383,98 @@ textarea {
   font-size: 0.74rem;
 }
 
+.cyber-file-input {
+  display: none;
+}
+
+.cyber-account-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cyber-account-btn {
+  flex: 1;
+  padding: 8px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  color: var(--cyan);
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.cyber-account-btn:hover:not(:disabled) {
+  background: rgba(0, 255, 255, 0.15);
+  border-color: var(--cyan);
+}
+
+.cyber-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.cyber-account-message {
+  padding: 10px;
+  font-size: 0.85rem;
+  border-left: 2px solid var(--lime);
+  background: rgba(0, 255, 0, 0.05);
+  color: var(--lime);
+}
+
+.cyber-account-message.error {
+  border-left-color: var(--pink);
+  background: rgba(255, 0, 255, 0.05);
+  color: var(--pink);
+}
+
+.cyber-account-form {
+  display: grid;
+  gap: 8px;
+}
+
+.cyber-account-input {
+  width: 100%;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+
+.cyber-account-input:focus {
+  outline: none;
+  border-color: var(--cyan);
+  background: rgba(0, 255, 255, 0.02);
+}
+
+.cyber-account-submit {
+  padding: 8px;
+  background: rgba(255, 0, 255, 0.1);
+  border: 1px solid rgba(255, 0, 255, 0.3);
+  color: var(--pink);
+  font-family: "Orbitron", sans-serif;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.cyber-account-submit:hover:not(:disabled) {
+  background: rgba(255, 0, 255, 0.2);
+  border-color: var(--pink);
+}
+
+.cyber-account-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .cyber-main {
   position: relative;
   padding: 24px;
