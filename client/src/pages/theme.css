@@ -701,6 +701,7 @@ textarea {
   .cyber-main {
     flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 16px;
     height: calc(100vh - 55px);
   }
