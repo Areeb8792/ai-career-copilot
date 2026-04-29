@@ -128,33 +128,27 @@ function Tasks() {
         
         {/* Top Stats Row */}
         <div className="mini-grid tasks-feed-grid" style={{ marginBottom: "24px" }}>
-          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(0, 255, 255, 0.2)" }}>
-            <p className="page-kicker" style={{ color: "var(--cyan)", fontSize: "0.7rem" }}>TOTAL_DIRECTIVES</p>
-            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
-              {String(totalTasks).padStart(2, "0")}
-            </h3>
-            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--cyan)", opacity: 0.5 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          <section className="card-grad clip-angle glow-box-purple flex-col" style={{ padding: "12px", border: "1px solid rgba(124, 58, 237, 0.4)", display: "flex", justifyContent: "space-between", height: "80px" }}>
+            <span className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.15em" }}>Total_Directives</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="font-led text-white" style={{ fontSize: "2.5rem", lineHeight: 1 }}>{String(totalTasks).padStart(2, "0")}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(124, 58, 237, 0.4)" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
             </div>
           </section>
           
-          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(255, 0, 255, 0.2)" }}>
-            <p className="page-kicker" style={{ color: "var(--pink)", fontSize: "0.7rem" }}>PENDING_ACTIONS</p>
-            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
-              {String(pendingTasks).padStart(2, "0")}
-            </h3>
-            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--pink)", opacity: 0.5 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+          <section className="card-grad clip-angle glow-box-amber flex-col" style={{ padding: "12px", border: "1px solid rgba(251, 191, 36, 0.4)", display: "flex", justifyContent: "space-between", height: "80px" }}>
+            <span className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "0.15em" }}>Pending_Actions</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="font-led text-white" style={{ fontSize: "2.5rem", lineHeight: 1 }}>{String(pendingTasks).padStart(2, "0")}</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(251, 191, 36, 0.4)" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
             </div>
           </section>
 
-          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(0, 255, 0, 0.2)" }}>
-            <p className="page-kicker" style={{ color: "var(--lime)", fontSize: "0.7rem" }}>SYNC_COMPLETION</p>
-            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
-              {completionRate}%
-            </h3>
-            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--lime)", opacity: 0.5 }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+          <section className="card-grad clip-angle glow-box-emerald flex-col" style={{ padding: "12px", border: "1px solid rgba(16, 185, 129, 0.4)", display: "flex", justifyContent: "space-between", height: "80px" }}>
+            <span className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-emerald)", textTransform: "uppercase", letterSpacing: "0.15em" }}>Sync_Completion</span>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+              <span className="font-led text-white" style={{ fontSize: "2.5rem", lineHeight: 1 }}>{completionRate}%</span>
+              <svg className="animate-spin-slow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(16, 185, 129, 0.4)" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
             </div>
           </section>
         </div>
@@ -162,47 +156,51 @@ function Tasks() {
         <div className="mini-grid tasks-split-grid">
           {/* ACTIVE QUEUE */}
           <div>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
-              <h3 className="neon-card-title" style={{ margin: 0, color: "var(--cyan)" }}>ACTIVE_QUEUE</h3>
-              <span style={{ fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>SCROLL_TO_EXPLORE</span>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", borderBottom: "1px solid rgba(124, 58, 237, 0.3)", paddingBottom: "8px", marginBottom: "16px" }}>
+              <h3 style={{ margin: 0, fontSize: "0.8rem", fontWeight: 900, color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.2em" }}>Active_Queue</h3>
+              <span className="font-tech" style={{ fontSize: "0.55rem", color: "var(--text-dim)", textTransform: "uppercase" }}>Priority: Critical</span>
             </div>
             
             <div className="scan-list" style={{ maxHeight: "600px", overflowY: "auto", paddingRight: "8px" }}>
               {tasks.map((task, idx) => (
                 <div
                   key={task.id}
-                  className="neon-card"
+                  className="clip-angle group"
                   style={{
-                    padding: "16px",
+                    padding: "12px",
                     display: "flex",
                     justifyContent: "space-between",
                     alignItems: "center",
                     gap: "16px",
-                    borderLeft: `3px solid ${task.completed ? 'var(--lime)' : 'var(--cyan)'}`,
+                    background: "rgba(30, 41, 59, 0.4)",
+                    borderLeft: `2px solid ${task.completed ? 'var(--accent-emerald)' : 'var(--accent-purple)'}`,
                     opacity: task.completed ? 0.5 : 1,
-                    transition: "opacity 0.2s"
+                    filter: task.completed ? "grayscale(0.6)" : "none",
+                    transition: "all 0.3s ease"
                   }}
                 >
-                  <div style={{ flex: 1 }}>
-                    <span style={{ display: "block", fontSize: "0.65rem", color: "var(--cyan)", letterSpacing: "0.1em", marginBottom: "4px" }}>UID: P0{idx + 1}-X</span>
-                    <strong style={{ display: "block", fontSize: "1.1rem", textDecoration: task.completed ? "line-through" : "none", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "2px", flex: 1 }}>
+                    <span className="font-tech" style={{ fontSize: "0.55rem", color: task.completed ? "var(--accent-emerald)" : "var(--accent-purple)" }}>UID: P0{idx + 1}-X</span>
+                    <h4 style={{ margin: 0, fontSize: "0.9rem", fontWeight: "bold", textTransform: "uppercase", letterSpacing: "-0.05em", textDecoration: task.completed ? "line-through" : "none" }}>
                       {task.title}
-                    </strong>
-                    <span style={{ display: "block", fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Execute subroutine and maintain sync alignment.</span>
+                    </h4>
+                    <p className="font-tech" style={{ margin: 0, fontSize: "0.65rem", color: "var(--text-dim)", lineHeight: 1.2 }}>Execute subroutine and maintain sync alignment.</p>
                   </div>
 
                   <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                     <button
                       onClick={() => toggleTask(task.id)}
-                      style={{ width: "36px", height: "36px", background: "rgba(0, 255, 0, 0.05)", border: "1px solid rgba(0, 255, 0, 0.2)", color: "var(--lime)", cursor: "pointer", display: "grid", placeItems: "center" }}
+                      className="clip-angle"
+                      style={{ width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.4)", color: "var(--accent-emerald)", cursor: "pointer", transition: "all 0.2s" }}
                     >
-                      ✓
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5"/></svg>
                     </button>
                     <button
                       onClick={() => removeTask(task.id)}
-                      style={{ width: "36px", height: "36px", background: "rgba(255, 0, 255, 0.05)", border: "1px solid rgba(255, 0, 255, 0.2)", color: "var(--pink)", cursor: "pointer", display: "grid", placeItems: "center" }}
+                      className="clip-angle"
+                      style={{ width: "36px", height: "36px", display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(251, 191, 36, 0.1)", border: "1px solid rgba(251, 191, 36, 0.4)", color: "var(--accent-amber)", cursor: "pointer" }}
                     >
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
                     </button>
                   </div>
                 </div>
@@ -211,45 +209,49 @@ function Tasks() {
           </div>
 
           {/* DIRECT COMMAND ENTRY */}
-          <div>
-            <div style={{ marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
-              <h3 className="neon-card-title" style={{ margin: 0, color: "var(--pink)" }}>DIRECT_COMMAND_ENTRY</h3>
-            </div>
+          <div className="clip-angle" style={{ background: "rgba(15, 23, 42, 0.8)", border: "1px solid rgba(251, 191, 36, 0.3)", padding: "16px", backdropFilter: "blur(12px)", display: "flex", flexDirection: "column", gap: "16px" }}>
+            <h3 style={{ margin: 0, fontSize: "0.8rem", fontWeight: 900, color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "0.2em", borderBottom: "1px solid rgba(251, 191, 36, 0.2)", paddingBottom: "8px" }}>
+              DIRECT_COMMAND_ENTRY
+            </h3>
 
-            <div className="neon-card" style={{ padding: "24px" }}>
-              <label style={{ display: "block", fontSize: "0.7rem", color: "var(--pink)", letterSpacing: "0.1em", marginBottom: "8px", textTransform: "uppercase" }}>DIRECTIVE_TITLE</label>
+            <div>
+              <label className="font-tech" style={{ display: "block", fontSize: "0.6rem", color: "var(--accent-amber)", textTransform: "uppercase", marginBottom: "4px" }}>Directive_Title</label>
               <input
                 value={taskInput}
                 onChange={(e) => setTaskInput(e.target.value)}
                 placeholder="ENTER_TASK_HEADING"
-                style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--text-main)", fontFamily: "inherit", marginBottom: "20px" }}
+                className="font-tech clip-angle"
+                style={{ width: "100%", background: "var(--bg-slate-800)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "10px", fontSize: "0.8rem", color: "var(--accent-purple)", outline: "none", transition: "all 0.2s", textTransform: "uppercase" }}
               />
-
-              <label style={{ display: "block", fontSize: "0.7rem", color: "var(--pink)", letterSpacing: "0.1em", marginBottom: "8px", textTransform: "uppercase" }}>SUBROUTINE_PARAMETERS</label>
-              <textarea
-                placeholder="SPECIFY_TASK_DESCRIPTION_AND_GOALS"
-                style={{ width: "100%", height: "100px", padding: "12px", background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--text-main)", fontFamily: "inherit", resize: "none", marginBottom: "20px" }}
-              />
-
-              <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
-                <div style={{ flex: 1, background: "rgba(0, 255, 255, 0.05)", border: "1px solid rgba(0, 255, 255, 0.1)", padding: "12px", textAlign: "center" }}>
-                  <span style={{ display: "block", fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>XP_REWARD</span>
-                  <strong style={{ color: "var(--cyan)", fontSize: "1.1rem" }}>+10 CREDITS</strong>
-                </div>
-                <div style={{ flex: 1, background: "rgba(255, 0, 255, 0.05)", border: "1px solid rgba(255, 0, 255, 0.1)", padding: "12px", textAlign: "center" }}>
-                  <span style={{ display: "block", fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>RISK_FACTOR</span>
-                  <strong style={{ color: "var(--pink)", fontSize: "1.1rem" }}>LOW_LATENCY</strong>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={addTask}
-                style={{ width: "100%", padding: "16px", background: "var(--pink)", border: "none", color: "black", fontSize: "1.1rem", fontWeight: "bold", letterSpacing: "0.1em", cursor: "pointer", clipPath: "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)" }}
-              >
-                INITIALIZE_TASK
-              </button>
             </div>
+
+            <div>
+              <label className="font-tech" style={{ display: "block", fontSize: "0.6rem", color: "var(--accent-amber)", textTransform: "uppercase", marginBottom: "4px" }}>Subroutine_Parameters</label>
+              <textarea
+                placeholder="SPECIFY_OBJECTIVES"
+                className="font-tech clip-angle"
+                style={{ width: "100%", height: "80px", background: "var(--bg-slate-800)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "10px", fontSize: "0.8rem", color: "var(--text-dim)", outline: "none", resize: "none", transition: "all 0.2s" }}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: "8px" }}>
+              <div className="clip-angle" style={{ flex: 1, padding: "8px", background: "rgba(124, 58, 237, 0.05)", border: "1px solid rgba(124, 58, 237, 0.2)", textAlign: "center" }}>
+                <span className="font-tech" style={{ display: "block", fontSize: "0.55rem", color: "var(--text-dim)", textTransform: "uppercase" }}>REWARD</span>
+                <span className="font-led" style={{ fontSize: "0.9rem", color: "var(--accent-purple)" }}>+10 XP</span>
+              </div>
+              <div className="clip-angle" style={{ flex: 1, padding: "8px", background: "rgba(251, 191, 36, 0.05)", border: "1px solid rgba(251, 191, 36, 0.2)", textAlign: "center" }}>
+                <span className="font-tech" style={{ display: "block", fontSize: "0.55rem", color: "var(--text-dim)", textTransform: "uppercase" }}>RISK</span>
+                <span className="font-led" style={{ fontSize: "0.9rem", color: "var(--accent-amber)" }}>LOW</span>
+              </div>
+            </div>
+
+            <button
+              onClick={addTask}
+              className="clip-angle"
+              style={{ width: "100%", padding: "14px", background: "var(--accent-amber)", color: "#0f172a", fontSize: "0.8rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.2em", cursor: "pointer", border: "none", boxShadow: "0 0 12px rgba(251, 191, 36, 0.25)", transition: "all 0.2s" }}
+            >
+              INITIALIZE_TASK
+            </button>
           </div>
         </div>
 

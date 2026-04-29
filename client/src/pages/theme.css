@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800;900&family=Rajdhani:wght@500;600;700&family=VT323&family=Share+Tech+Mono&family=Rubik+Glitch&display=swap");
 
 :root {
   --bg-void: #05010a;
@@ -18,6 +18,13 @@
   --shadow-cyan: 0 0 18px rgba(0, 255, 255, 0.28);
   --shadow-pink: 0 0 18px rgba(255, 0, 255, 0.24);
   --shadow-lime: 0 0 18px rgba(0, 255, 102, 0.22);
+  
+  /* Vanguard Theme Additions */
+  --accent-amber: #fbbf24;
+  --accent-purple: #7c3aed;
+  --accent-emerald: #10b981;
+  --bg-dark: #0f172a;
+  --bg-slate-800: #1e293b;
 }
 
 * {
@@ -33,43 +40,100 @@ body,
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(255, 0, 255, 0.16), transparent 18%),
-    radial-gradient(circle at 85% 12%, rgba(0, 255, 255, 0.16), transparent 18%),
-    radial-gradient(circle at 52% 84%, rgba(0, 255, 0, 0.1), transparent 18%),
-    linear-gradient(180deg, #07010d 0%, #030106 55%, #000000 100%);
-  color: var(--text-main);
+  background-color: var(--bg-dark);
+  color: #f1f5f9;
   font-family: "Orbitron", sans-serif;
   overflow-y: auto;
 }
 
 body::before,
 body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
+  content: none;
+}
+
+/* Vanguard Utils */
+.font-tech {
+  font-family: 'Share Tech Mono', monospace;
+}
+.font-led { font-family: 'VT323', monospace; }
+.font-glitch { font-family: 'Rubik Glitch', cursive; }
+
+.glitch-text {
+  position: relative;
+  color: #fff;
+  text-shadow: 1.5px 1.5px var(--accent-purple), -1.5px -1.5px var(--accent-amber);
+  animation: glitch-skew 2s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  10% { transform: skew(-1deg); }
+  11% { transform: skew(0deg); }
+  100% { transform: skew(0deg); }
+}
+
+.scanlines {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.2));
+  background-size: 100% 4px;
   pointer-events: none;
+  z-index: 100;
+  opacity: 0.4;
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: overlay;
+}
+
+.cyber-grid-vanguard {
+  background-size: 40px 40px;
+  background-image: linear-gradient(to right, rgba(124, 58, 237, 0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(251, 191, 36, 0.05) 1px, transparent 1px);
+  mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+  position: absolute;
+  inset: 0;
+  transform: perspective(800px) rotateX(45deg);
+  transform-origin: top center;
+  opacity: 0.3;
   z-index: 0;
 }
 
-body::before {
-  background:
-    linear-gradient(rgba(0, 255, 255, 0.06) 1px, transparent 1px) 0 0 / 100% 36px,
-    linear-gradient(90deg, rgba(255, 0, 255, 0.05) 1px, transparent 1px) 0 0 / 36px 100%,
-    repeating-linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.015) 0 2px,
-      transparent 2px 4px
-    );
-  opacity: 0.42;
-  mix-blend-mode: screen;
+.clip-angle {
+  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
 }
 
-body::after {
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.82), transparent 14%, transparent 86%, rgba(0, 0, 0, 0.82)),
-    radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.04), transparent 44%);
-  opacity: 0.92;
+.clip-tab {
+  clip-path: polygon(0 0, 85% 0, 100% 100%, 0 100%);
+}
+
+.glow-box-purple {
+  box-shadow: 0 0 10px rgba(124, 58, 237, 0.25), inset 0 0 5px rgba(124, 58, 237, 0.1);
+}
+
+.glow-box-amber {
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.25), inset 0 0 5px rgba(251, 191, 36, 0.1);
+}
+
+.glow-box-emerald {
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.25), inset 0 0 5px rgba(16, 185, 129, 0.1);
+}
+
+.card-grad {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
 h1,
@@ -332,12 +396,10 @@ textarea {
 }
 
 .cyber-nav-link.active {
-  color: #09000e;
-  background: linear-gradient(90deg, var(--pink), #ff66d9);
-  border-color: rgba(255, 0, 255, 0.66);
-  box-shadow:
-    0 0 18px rgba(255, 0, 255, 0.34),
-    0 0 36px rgba(255, 0, 255, 0.2);
+  background: var(--accent-amber) !important;
+  color: #0f172a !important;
+  box-shadow: 0 0 12px var(--accent-amber);
+  border-color: var(--accent-amber);
 }
 
 .cyber-sidebar-footer {
@@ -701,4 +763,190 @@ textarea {
     display: none;
   }
 }
+
+/* Vanguard Progress Additions */
+.heatmap-cell {
+  aspect-ratio: 1/1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.2s ease;
+}
+
+.heatmap-cell:hover {
+  transform: scale(1.1);
+  z-index: 10;
+}
+
+@keyframes pulse-flame {
+  0%, 100% { filter: drop-shadow(0 0 4px var(--accent-amber)); transform: scale(1); }
+  50% { filter: drop-shadow(0 0 12px var(--accent-amber)); transform: scale(1.05); }
+}
+
+.animate-flame {
+  animation: pulse-flame 1.5s infinite;
+}
+
+.scrollbar-cyber::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollbar-cyber::-webkit-scrollbar-thumb {
+  background: var(--accent-purple);
+}
+/* Vanguard Risk Additions */
+.circuit-lines {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(90deg, transparent 79%, rgba(124, 58, 237, 0.02) 80%, transparent 81%),
+    linear-gradient(rgba(251, 191, 36, 0.02) 1px, transparent 1px);
+  background-size: 100px 100px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.cyber-grid-3d {
+  background-image: 
+    linear-gradient(to right, rgba(124, 58, 237, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(251, 191, 36, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  position: absolute;
+  inset: 0;
+  transform: perspective(600px) rotateX(60deg);
+  transform-origin: center top;
+  opacity: 0.2;
+  z-index: 0;
+  height: 150%;
+}
+
+.clip-hex {
+  clip-path: polygon(10% 0, 90% 0, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+}
+
+.clip-cyber {
+  clip-path: polygon(0 0, 100% 0, 100% 85%, 90% 100%, 10% 100%, 0 85%);
+}
+
+.clip-corner {
+  clip-path: polygon(25px 0, 100% 0, 100% calc(100% - 25px), calc(100% - 25px) 100%, 0 100%, 0 25px);
+}
+
+.radial-progress-svg {
+  filter: drop-shadow(0 0 12px var(--accent-purple));
+  transition: all 1s ease-out;
+}
+
+.risk-circle {
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1), stroke 1.5s ease;
+  stroke-dasharray: 880;
+  stroke-dashoffset: 880;
+}
+
+.floating-shape {
+  position: absolute;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  animation: rotate-float 25s infinite linear;
+}
+
+@keyframes rotate-float {
+  from { transform: translate(0, 0) rotate(0deg); }
+  to { transform: translate(20px, 40px) rotate(360deg); }
+}
+
+.particle {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: drift 7s infinite ease-in-out;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+  50% { transform: translateY(-30px) translateX(15px); opacity: 0.6; }
+}
+
+.corner-deco {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--accent-purple);
+  z-index: 5;
+  opacity: 0.5;
+}
+.top-l { top: 0; left: 0; border-right: none; border-bottom: none; }
+.top-r { top: 0; right: 0; border-left: none; border-bottom: none; }
+.bot-l { bottom: 0; left: 0; border-right: none; border-top: none; }
+.bot-r { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+@keyframes pulse-intense {
+  0% { filter: brightness(1) drop-shadow(0 0 5px var(--accent-amber)); }
+  100% { filter: brightness(1.2) drop-shadow(0 0 20px var(--accent-amber)); }
+}
+
+.risk-critical { animation: pulse-intense 0.6s infinite alternate; }
+
+/* Vanguard Dashboard Additions */
+.glitch-hero {
+  position: relative;
+  color: #fff;
+  text-shadow: 1px 1px var(--accent-purple), -1px -1px var(--accent-amber);
+  animation: glitch-skew 6s infinite linear alternate-reverse;
+}
+
+.glitch-hero::before, .glitch-hero::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.5;
+}
+
+.glitch-hero::before {
+  color: var(--accent-purple);
+  z-index: -1;
+  animation: glitch-anim-hero-1 3s infinite linear alternate-reverse;
+}
+
+.glitch-hero::after {
+  color: var(--accent-amber);
+  z-index: -2;
+  animation: glitch-anim-hero-2 4s infinite linear alternate-reverse;
+}
+
+@keyframes glitch-anim-hero-1 {
+  0% { clip: rect(44px, 9999px, 56px, 0); transform: translate(-1px, -1px); }
+  20% { clip: rect(12px, 9999px, 88px, 0); transform: translate(1px, 1px); }
+  100% { clip: rect(90px, 9999px, 66px, 0); transform: translate(1px, -1px); }
+}
+
+@keyframes glitch-anim-hero-2 {
+  0% { clip: rect(12px, 9999px, 44px, 0); transform: translate(1px, 1px); }
+  60% { clip: rect(44px, 9999px, 88px, 0); transform: translate(1px, -1px); }
+  100% { clip: rect(95px, 9999px, 32px, 0); transform: translate(-1px, 1px); }
+}
+
+@keyframes glitch-skew {
+  0% { transform: skew(0deg); }
+  15% { transform: skew(-1deg); }
+  16% { transform: skew(0deg); }
+  50% { transform: skew(1deg); }
+  51% { transform: skew(0deg); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+.animate-float { animation: float 8s ease-in-out infinite; }
+
+.game-card-gradient {
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+}
+
 

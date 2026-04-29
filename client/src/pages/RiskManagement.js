@@ -282,151 +282,256 @@ function RiskManagement() {
       .join(" ");
   }, [safeCompareData]);
 
+  const getRiskStatus = (score) => {
+    if (score < 30) return { label: "STATUS: LOW_THREAT", color: "var(--accent-emerald)", shadow: "drop-shadow(0 0 12px var(--accent-emerald))", bgClass: "bg-slate-900/50 border-var(--accent-emerald) text-var(--accent-emerald)" };
+    if (score < 70) return { label: "STATUS: ELEVATED", color: "var(--accent-purple)", shadow: "drop-shadow(0 0 12px var(--accent-purple))", bgClass: "bg-slate-900/50 border-var(--accent-purple) text-var(--accent-purple)" };
+    return { label: "STATUS: CRITICAL", color: "var(--accent-amber)", shadow: "drop-shadow(0 0 20px var(--accent-amber))", bgClass: "bg-slate-950 border-2 border-var(--accent-amber) text-var(--accent-amber) risk-critical" };
+  };
+
+  const riskStatus = getRiskStatus(riskData.risk);
+  const strokeOffset = 880 - (riskData.risk / 100) * 880;
+
+  const particles = useMemo(() => {
+    return Array.from({ length: 40 }).map((_, i) => ({
+      id: i,
+      size: Math.random() * 4 + 1 + "px",
+      left: Math.random() * 100 + "%",
+      top: Math.random() * 100 + "%",
+      delay: Math.random() * 7 + "s",
+      opacity: Math.random() * 0.5 + 0.2
+    }));
+  }, []);
+
   return (
     <Layout>
-      <div className="risk-page-shell">
-        <div className="risk-board">
-          <div className="risk-brand">
-            <h1>PROMETHEUS</h1>
-            <p>AI Risk Assessment Platform</p>
-          </div>
+      <div className="relative w-full min-h-screen overflow-hidden circuit-bg scrollbar-cyber" style={{ background: "var(--bg-dark)", margin: "-24px" }}>
+        <div className="circuit-lines"></div>
+        <div className="scanlines"></div>
+        <div className="cyber-grid-3d"></div>
 
-          <div className="risk-grid">
-            <section className="risk-card risk-card-left">
-              <div className="risk-card-header">
-                <h2>Job Risk Calculator & Countermeasures</h2>
-              </div>
+        {/* Animated Floating Background Elements */}
+        <div className="floating-shape clip-hex" style={{ width: "160px", height: "160px", borderColor: "rgba(251, 191, 36, 0.1)", top: "10%", left: "10%" }}></div>
+        <div className="floating-shape" style={{ width: "96px", height: "96px", borderColor: "rgba(124, 58, 237, 0.1)", bottom: "20%", right: "15%", transform: "rotate(45deg)" }}></div>
 
-              <div className="risk-form">
-                <div className="field-shell search-shell">
-                  <input
-                    value={jobTitle}
-                    onChange={(e) => setJobTitle(e.target.value)}
-                    placeholder="Enter Job Title"
-                    className="risk-input"
-                  />
-                  <span className="field-icon">?</span>
+        <div style={{ position: "relative", zIndex: 10, padding: "24px" }}>
+          
+          {/* Full-Width Hero Risk Section */}
+          <section className="relative w-full mb-12 flex flex-col items-center border clip-corner group" style={{ background: "rgba(15, 23, 42, 0.3)", borderColor: "rgba(255, 255, 255, 0.05)", padding: "48px", backdropFilter: "blur(24px)", overflow: "hidden" }}>
+            {/* Corner Decorations */}
+            <div className="corner-deco top-l" style={{ borderColor: "rgba(124, 58, 237, 0.3)" }}></div>
+            <div className="corner-deco top-r" style={{ borderColor: "rgba(251, 191, 36, 0.3)" }}></div>
+            <div className="corner-deco bot-l" style={{ borderColor: "rgba(16, 185, 129, 0.3)" }}></div>
+            <div className="corner-deco bot-r" style={{ borderColor: "rgba(255, 255, 255, 0.3)" }}></div>
+
+            <div style={{ position: "absolute", top: "-80px", left: "-80px", width: "320px", height: "320px", background: "rgba(124, 58, 237, 0.05)", filter: "blur(120px)", borderRadius: "50%" }}></div>
+            <div style={{ position: "absolute", bottom: "-80px", right: "-80px", width: "320px", height: "320px", background: "rgba(251, 191, 36, 0.05)", filter: "blur(120px)", borderRadius: "50%" }}></div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", width: "100%", maxWidth: "1280px", alignItems: "center", gap: "64px" }}>
+              
+              {/* Input Side */}
+              <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+                <div>
+                  <span className="font-tech" style={{ fontSize: "0.75rem", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.5em", display: "block" }}>Target_Parameter</span>
+                  <h1 style={{ fontSize: "clamp(3rem, 5vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", lineHeight: 1, margin: "8px 0" }}>
+                    PROME<span style={{ color: "transparent", backgroundImage: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", WebkitBackgroundClip: "text", backgroundClip: "text" }}>THEUS</span>
+                  </h1>
                 </div>
 
-                <div className="skill-strip">
-                  <div className="skill-strip-header">
-                    <span>Current Skill Level</span>
-                    <strong>{skillLevel}%</strong>
+                <div className="clip-angle" style={{ padding: "2px", background: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
+                  <div className="clip-angle" style={{ background: "rgba(2, 6, 23, 0.95)", padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                    
+                    <div>
+                      <label className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Input_Vocational_Protocol</label>
+                      <input 
+                        type="text" 
+                        value={jobTitle}
+                        onChange={(e) => setJobTitle(e.target.value)}
+                        placeholder="ENTER JOB TITLE..." 
+                        className="font-tech"
+                        style={{ width: "100%", background: "rgba(15, 23, 42, 0.5)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "20px", fontSize: "1.25rem", color: "var(--accent-purple)", outline: "none", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "8px" }} 
+                      />
+                    </div>
+
+                    <div>
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+                        <label className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Skill_Proficiency</label>
+                        <strong className="font-tech" style={{ color: "var(--accent-amber)" }}>{skillLevel}%</strong>
+                      </div>
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value={skillLevel}
+                        onChange={(e) => setSkillLevel(Number(e.target.value))}
+                        style={{ width: "100%", marginTop: "8px", accentColor: "var(--accent-amber)" }}
+                      />
+                    </div>
+
+                    <button 
+                      onClick={calculateAndMitigate} 
+                      disabled={isCalculating}
+                      className="clip-corner"
+                      style={{ width: "100%", padding: "24px 0", background: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", color: "#020617", fontWeight: 900, textTransform: "uppercase", fontSize: "1.125rem", border: "none", cursor: "pointer", boxShadow: "0 0 20px rgba(124, 58, 237, 0.3)", transition: "all 0.2s" }}
+                    >
+                      {isCalculating ? "COMPUTING_RISK..." : "INITIALIZE_CORE_SCAN"}
+                    </button>
                   </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={skillLevel}
-                    onChange={(e) => setSkillLevel(Number(e.target.value))}
-                    className="risk-slider"
-                  />
                 </div>
               </div>
 
-              <div className="gauge-panel">
-                <div className="gauge-meter" style={{ "--risk-angle": `${riskData.risk * 1.8}deg` }}>
-                  <div className="gauge-core">
-                    <span>{riskData.risk}%</span>
-                  </div>
-                  <div className="gauge-needle" />
-                </div>
-                <p>Potential for AI Replacement (Risk %)</p>
-              </div>
-
-              <div className="countermeasure-panel">
-                <h3>Personalized Countermeasures & Upskilling Paths</h3>
-                <div className="countermeasure-block">
-                  <span className="countermeasure-label">Risk Summary</span>
-                  <p className="countermeasure-summary">{riskData.explanation}</p>
-                </div>
-                <div className="countermeasure-block">
-                  <span className="countermeasure-label">Recommended Action Plan</span>
-                  <p className="suggestion-direct-hint">
-                    Add any recommendation directly into your Tasks queue.
-                  </p>
-                  <ol className="countermeasure-list">
-                    {riskData.tips.map((tip, index) => (
-                      <li key={tip} className="countermeasure-item">
-                        <span className="countermeasure-index">
-                          {String(index + 1).padStart(2, "0")}
-                        </span>
-                        <div className="countermeasure-item-body">
-                          <p>{tip}</p>
-                          <button
-                            type="button"
-                            className={`suggestion-task-btn${addedSuggestions[tip] ? " added" : ""}`}
-                            onClick={() => addSuggestionToTasks(tip)}
-                            disabled={Boolean(addedSuggestions[tip])}
-                          >
-                            {addedSuggestions[tip] ? "Added to Tasks" : "Add to Tasks"}
-                          </button>
-                        </div>
-                      </li>
-                    ))}
-                  </ol>
-                  {taskActionMessage ? <p className="suggestion-task-message">{taskActionMessage}</p> : null}
-                </div>
-              </div>
-
-              <button onClick={calculateAndMitigate} className="risk-cta" disabled={isCalculating}>
-                {isCalculating ? "Calculating..." : "Calculate and Mitigate"}
-                <span>{">"}</span>
-              </button>
-            </section>
-
-            <section className="risk-card risk-card-right">
-              <div className="risk-card-header">
-                <h2>Multi-Career Comparison</h2>
-              </div>
-
-              <div className="compare-form">
-                {careers.map((career, index) => (
-                  <div className="field-shell compare-shell" key={`career-${index}`}>
-                    <input
-                      value={career}
-                      onChange={(e) => handleCareerChange(index, e.target.value)}
-                      placeholder="Add Career to Compare"
-                      className="risk-input"
+              {/* Large Gauge Side */}
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "32px", overflow: "visible" }}>
+                
+                {/* Star Particles */}
+                <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
+                  {particles.map((p) => (
+                    <div 
+                      key={p.id} 
+                      className="particle" 
+                      style={{ 
+                        width: p.size, 
+                        height: p.size, 
+                        left: p.left, 
+                        top: p.top, 
+                        animationDelay: p.delay,
+                        background: "rgba(255,255,255,0.8)",
+                        boxShadow: "0 0 6px rgba(255,255,255,0.5)"
+                      }} 
                     />
-                    {index === 0 ? <span className="field-icon">+</span> : null}
+                  ))}
+                </div>
+
+                <svg className="radial-progress-svg" style={{ width: "100%", maxWidth: "450px", height: "auto", overflow: "visible", filter: riskStatus.shadow }} viewBox="0 0 300 300">
+                  <circle cx="150" cy="150" r="140" fill="none" stroke="rgba(255, 255, 255, 0.03)" strokeWidth="12" />
+                  <circle 
+                    className="risk-circle" 
+                    cx="150" cy="150" r="140" fill="none" 
+                    stroke={riskStatus.color} 
+                    strokeWidth="12" 
+                    strokeLinecap="butt" 
+                    transform="rotate(-90 150 150)" 
+                    style={{ strokeDashoffset: strokeOffset }}
+                  />
+                  {/* Decorative inner ring */}
+                  <circle cx="150" cy="150" r="115" fill="none" stroke="rgba(255, 255, 255, 0.02)" strokeWidth="2" strokeDasharray="10 20" />
+                </svg>
+
+                {/* Center Info */}
+                <div style={{ position: "absolute", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                  <span className="font-tech" style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.5em", marginBottom: "16px" }}>Displacement_Risk</span>
+                  <div className="glitch-text" style={{ fontSize: "clamp(5rem, 8vw, 8rem)", lineHeight: 1, color: "white", fontWeight: 900, fontStyle: "italic" }}>
+                    {riskData.risk}%
+                  </div>
+                  <div className={riskStatus.label === "STATUS: CRITICAL" ? "risk-critical" : ""} style={{ marginTop: "16px", padding: "8px 24px", background: "rgba(15, 23, 42, 0.5)", border: `1px solid ${riskStatus.color}`, fontSize: "1.25rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: riskStatus.color }}>
+                    {riskStatus.label}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          {/* Main Split Layout */}
+          <main style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "32px", position: "relative", zIndex: 10 }}>
+            
+            {/* Left Column: Counter-Measures */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", paddingBottom: "16px" }}>
+                <div>
+                  <h2 style={{ fontSize: "1.875rem", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", margin: 0 }}>TACTICAL_COUNTER_MEASURES</h2>
+                  <p className="font-tech" style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.1em", marginTop: "4px", margin: 0 }}>Survival protocols generated by CORE_ENGINE</p>
+                </div>
+              </div>
+
+              <p className="font-tech" style={{ color: "var(--accent-purple)", fontSize: "0.8rem", textTransform: "uppercase", borderLeft: "2px solid var(--accent-purple)", paddingLeft: "16px", background: "rgba(124, 58, 237, 0.05)", padding: "12px 16px" }}>
+                {riskData.explanation}
+              </p>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+                {riskData.tips.map((tip, i) => (
+                  <div key={i} className="clip-corner" style={{ position: "relative", background: "linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.8))", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "32px", display: "flex", flexDirection: "column", transition: "all 0.3s" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
+                      <div style={{ display: "flex", flexDirection: "column" }}>
+                        <span className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "0.3em" }}>MOD_0{i+1} // TACTIC</span>
+                      </div>
+                    </div>
+                    <p className="font-tech" style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.4)", textTransform: "uppercase", lineHeight: 1.6, marginBottom: "32px", flex: 1 }}>
+                      {tip}
+                    </p>
+                    <button 
+                      onClick={() => addSuggestionToTasks(tip)}
+                      disabled={Boolean(addedSuggestions[tip])}
+                      className="clip-angle font-tech"
+                      style={{ marginTop: "auto", width: "100%", padding: "16px", background: addedSuggestions[tip] ? "rgba(16, 185, 129, 0.1)" : "rgba(255, 255, 255, 0.05)", border: `1px solid ${addedSuggestions[tip] ? "var(--accent-emerald)" : "rgba(255, 255, 255, 0.1)"}`, color: addedSuggestions[tip] ? "var(--accent-emerald)" : "var(--accent-amber)", fontSize: "0.75rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.3em", cursor: addedSuggestions[tip] ? "not-allowed" : "pointer", transition: "all 0.2s" }}
+                    >
+                      {addedSuggestions[tip] ? "PROTOCOL_ADDED" : "DEPLOY_DIRECTIVE"}
+                    </button>
                   </div>
                 ))}
               </div>
+              {taskActionMessage && <div className="font-tech" style={{ padding: "12px", border: "1px solid var(--accent-emerald)", color: "var(--accent-emerald)", background: "rgba(16, 185, 129, 0.05)", fontSize: "0.8rem", textTransform: "uppercase" }}>{taskActionMessage}</div>}
+            </div>
 
-              <div className="comparison-panel">
-                <div className="chart-shell">
-                  <div className="chart-bars">
-                    {safeCompareData.map((item) => (
-                      <div className="chart-bar-column" key={item.role}>
-                        <div className="chart-bar-track">
-                          <div className="chart-bar-fill" style={{ height: `${Math.max(22, item.risk)}%` }} />
-                        </div>
+            {/* Right Column: Multi-Career Comparison */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+              <div className="clip-corner" style={{ background: "rgba(15, 23, 42, 0.8)", borderTop: "2px solid var(--accent-emerald)", padding: "32px", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
+                <h3 style={{ fontSize: "1.25rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: "24px", color: "white" }}>MULTI-CAREER COMPARISON</h3>
+                
+                <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
+                  {careers.map((career, index) => (
+                    <div key={index}>
+                      <label className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-emerald)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Target_Role_{index + 1}</label>
+                      <input
+                        value={career}
+                        onChange={(e) => handleCareerChange(index, e.target.value)}
+                        placeholder="ENTER JOB TITLE"
+                        className="font-tech"
+                        style={{ width: "100%", background: "rgba(2, 6, 23, 0.5)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "16px", fontSize: "0.875rem", color: "var(--accent-emerald)", textTransform: "uppercase", outline: "none", marginTop: "8px" }}
+                      />
+                    </div>
+                  ))}
+
+                  <button 
+                    onClick={compareCareers} 
+                    disabled={isComparing}
+                    className="clip-angle font-tech"
+                    style={{ width: "100%", padding: "16px", background: "rgba(16, 185, 129, 0.1)", border: "1px solid rgba(16, 185, 129, 0.3)", color: "var(--accent-emerald)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.2em", cursor: "pointer", transition: "all 0.2s" }}
+                  >
+                    {isComparing ? "ANALYZING_VECTORS..." : "RUN_COMPARISON_MATRIX"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Chart Visualization */}
+              <div className="clip-corner" style={{ flex: 1, background: "rgba(15, 23, 42, 0.3)", border: "1px solid rgba(255, 255, 255, 0.05)", backdropFilter: "blur(24px)", padding: "24px", display: "flex", flexDirection: "column" }}>
+                <h3 className="font-tech" style={{ fontSize: "0.875rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", color: "rgba(255, 255, 255, 0.5)", marginBottom: "16px", borderBottom: "1px solid rgba(255, 255, 255, 0.05)", paddingBottom: "16px" }}>THREAT_VECTORS</h3>
+                
+                <div style={{ flex: 1, position: "relative", minHeight: "200px" }}>
+                  <div style={{ display: "flex", height: "100%", alignItems: "flex-end", justifyContent: "space-around" }}>
+                    {safeCompareData.map((item, i) => (
+                      <div key={item.role + i} style={{ width: "40px", height: "100%", display: "flex", flexDirection: "column", justifyContent: "flex-end", position: "relative" }}>
+                        <div style={{ height: `${Math.max(10, item.risk)}%`, width: "100%", background: "linear-gradient(to top, var(--accent-emerald), transparent)", border: "1px solid var(--accent-emerald)", transition: "height 0.5s" }}></div>
                       </div>
                     ))}
                   </div>
-
-                  <svg className="chart-overlay" viewBox="0 0 100 100" preserveAspectRatio="none">
-                    <polyline points={chartPoints} />
+                  
+                  <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <polyline points={chartPoints} fill="none" stroke="var(--accent-purple)" strokeWidth="2" strokeDasharray="4 4" />
                   </svg>
                 </div>
 
-                <div className="compare-percentages">
-                  {safeCompareData.map((item) => (
-                    <div className="compare-row" key={`${item.role}-percent`}>
-                      <span>{item.role}</span>
-                      <strong>{item.risk}%</strong>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginTop: "24px" }}>
+                  {safeCompareData.map((item, i) => (
+                    <div key={item.role + i} className="font-tech" style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", textTransform: "uppercase" }}>
+                      <span style={{ color: "rgba(255, 255, 255, 0.7)" }}>{item.role || `Role ${i+1}`}</span>
+                      <strong style={{ color: "var(--accent-amber)" }}>{item.risk}%</strong>
                     </div>
                   ))}
                 </div>
               </div>
+            </div>
 
-              <button onClick={compareCareers} className="risk-cta" disabled={isComparing}>
-                {isComparing ? "Comparing..." : "Compare Careers"}
-                <span>{">"}</span>
-              </button>
-            </section>
-          </div>
+          </main>
         </div>
       </div>
     </Layout>
