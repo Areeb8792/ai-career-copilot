@@ -6,7 +6,7 @@ import "./dashboard.css";
 const featureCards = [
   {
     id: "01",
-    title: "Risk_Matrix_v4",
+    title: "Risk_Matrix",
     accent: "pink",
     copy:
       "Advanced neural analysis evaluating your workflow against fast-moving AI capability curves and displacement pressure.",
@@ -129,10 +129,13 @@ function Dashboard() {
           <div className="footer-brand">
             <div className="footer-chip">◈</div>
             <div>
-              <strong>CYBER_CORE</strong>
+              <strong>DEVELOPER_CORE</strong>
               <p>
-                Providing high-fidelity neural assessments and professional augmentation protocols for the post-AI labor
-                market.
+                Engineered by Sayyed Areeb. Providing high-fidelity neural assessments and professional augmentation protocols.
+                <br />
+                <span style={{ color: "var(--cyan)", marginTop: "8px", display: "inline-block", letterSpacing: "0.05em" }}>
+                  COMMS: sayyedareeb90@gmail.com
+                </span>
               </p>
             </div>
           </div>
@@ -147,9 +150,9 @@ function Dashboard() {
             </div>
             <div>
               <small>UPLINK_PORTALS</small>
-              <a href="#social">Twitter</a>
-              <a href="#social">Discord</a>
-              <a href="#social">GitHub</a>
+              <a href="https://www.linkedin.com/in/areeb564/" target="_blank" rel="noreferrer">LinkedIn</a>
+              <a href="https://www.instagram.com/areeb_._._?igsh=MWVsbHN0Y2tlMG4wOA==" target="_blank" rel="noreferrer">Instagram</a>
+              <a href="mailto:sayyedareeb90@gmail.com">Email Uplink</a>
             </div>
           </div>
         </footer>

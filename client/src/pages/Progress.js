@@ -106,7 +106,7 @@ function Progress() {
           ))}
         </div>
 
-        <div className="mini-grid" style={{ gridTemplateColumns: "1.1fr 0.9fr", marginTop: "18px" }}>
+        <div className="mini-grid tasks-split-grid" style={{ marginTop: "18px" }}>
           <section className="neon-card">
             <h3 className="neon-card-title">Signal Strength</h3>
             <div className="mini-grid">
