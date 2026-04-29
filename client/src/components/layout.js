@@ -182,7 +182,7 @@ function Layout({ children }) {
   }, []);
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" style={{ overflow: "hidden", maxWidth: "100vw" }}>
       {/* Background Overlays */}
       <div className="cyber-grid-vanguard" />
       <div className="scanlines" />
@@ -204,7 +204,7 @@ function Layout({ children }) {
               <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
             </div>
           </div>
-          <div style={{ flex: 1, maxWidth: "400px" }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "4px" }}>
               <div>
                 <strong className="glitch-text" style={{ display: "block", color: "var(--accent-purple)", fontSize: "1.2rem", letterSpacing: "0.1em", textTransform: "uppercase", fontStyle: "italic", fontWeight: 900 }}>
@@ -228,7 +228,7 @@ function Layout({ children }) {
           
           {/* Dropdown Menu */}
           {showProfileMenu && (
-            <div className="clip-angle font-tech" style={{ position: "absolute", top: "80px", left: "24px", width: "320px", background: "rgba(15, 23, 42, 0.95)", border: "1px solid var(--accent-purple)", backdropFilter: "blur(12px)", padding: "24px", zIndex: 100, boxShadow: "0 0 20px rgba(124, 58, 237, 0.2)" }}>
+            <div className="clip-angle font-tech profile-dropdown-panel" style={{ position: "absolute", top: "80px", left: "12px", width: "min(320px, calc(100vw - 24px))", background: "rgba(15, 23, 42, 0.97)", border: "1px solid var(--accent-purple)", backdropFilter: "blur(12px)", padding: "20px", zIndex: 100, boxShadow: "0 0 20px rgba(124, 58, 237, 0.2)" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px" }}>
                 <span style={{ fontSize: "0.7rem", color: "var(--accent-amber)", letterSpacing: "0.1em", textTransform: "uppercase" }}>UPLINK_CONFIG</span>
                 <button onClick={() => setShowProfileMenu(false)} style={{ background: "none", border: "none", color: "white", cursor: "pointer" }}>✕</button>

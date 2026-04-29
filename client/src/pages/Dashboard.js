@@ -69,7 +69,7 @@ function Dashboard() {
             </span>
           </div>
 
-          <h1 className="italic uppercase glitch-hero" data-text="EVOLVE_OR_LOSE_CONTROL" style={{ fontSize: "clamp(3rem, 8vw, 8rem)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1, marginBottom: "40px" }}>
+          <h1 className="italic uppercase glitch-hero w-full" data-text="EVOLVE_OR_LOSE_CONTROL" style={{ fontSize: "clamp(2rem, 10vw, 8rem)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1, marginBottom: "40px", wordBreak: "break-word" }}>
             EVOLVE_OR_<br />
             <span style={{ color: "transparent", backgroundImage: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", WebkitBackgroundClip: "text", backgroundClip: "text" }}>LOSE_CONTROL</span>
           </h1>
@@ -150,12 +150,12 @@ function Dashboard() {
           <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "32px", marginBottom: "96px", alignItems: "flex-start", "@media (min-width: 768px)": { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" } }}>
               <div>
-                <h2 style={{ fontSize: "clamp(3rem, 5vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", marginBottom: "24px", margin: 0 }}>
+                <h2 style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", marginBottom: "24px", margin: 0, wordBreak: "break-word" }}>
                   GAME_<span style={{ color: "var(--accent-purple)" }}>MODULES</span>
                 </h2>
                 <p className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Advanced protocols for professional leveling.</p>
               </div>
-              <div style={{ fontSize: "4.5rem", fontWeight: 400, color: "rgba(255, 255, 255, 0.05)", userSelect: "none", letterSpacing: "-0.05em" }}>PRO_GEAR_X9</div>
+              <div style={{ fontSize: "clamp(2rem, 8vw, 4.5rem)", fontWeight: 400, color: "rgba(255, 255, 255, 0.05)", userSelect: "none", letterSpacing: "-0.05em", wordBreak: "break-all" }}>PRO_GEAR_X9</div>
             </div>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px" }}>
@@ -203,7 +203,7 @@ function Dashboard() {
         {/* Access Tiers */}
         <section className="relative z-10 py-40 px-6">
           <div style={{ maxWidth: "1280px", margin: "0 auto", textAlign: "center" }}>
-             <h2 style={{ fontSize: "clamp(3rem, 4vw, 3.75rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "96px", textTransform: "uppercase", letterSpacing: "-0.05em" }}>SYNC_TIERS</h2>
+             <h2 style={{ fontSize: "clamp(2.5rem, 8vw, 3.75rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "96px", textTransform: "uppercase", letterSpacing: "-0.05em", wordBreak: "break-word" }}>SYNC_TIERS</h2>
              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px", alignItems: "center" }}>
                 
                 {/* Tier 1 */}
@@ -256,7 +256,7 @@ function Dashboard() {
         <section className="relative z-10 py-40 px-6 overflow-hidden">
             <div className="clip-angle mx-auto" style={{ maxWidth: "1024px", background: "linear-gradient(to right, rgba(124, 58, 237, 0.3), rgba(251, 191, 36, 0.3), rgba(16, 185, 129, 0.3))", padding: "2px" }}>
               <div className="clip-angle p-8 md:p-16 lg:p-24" style={{ background: "rgba(2, 6, 23, 1)", textAlign: "center", position: "relative" }}>
-                 <h2 className="glitch-hero" data-text="WIN_THE_FUTURE" style={{ fontSize: "clamp(3rem, 5vw, 6rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "40px", textTransform: "uppercase", letterSpacing: "-0.05em" }}>WIN_THE_FUTURE</h2>
+                 <h2 className="glitch-hero w-full" data-text="WIN_THE_FUTURE" style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "40px", textTransform: "uppercase", letterSpacing: "-0.05em", wordBreak: "break-word" }}>WIN_THE_FUTURE</h2>
                  <p className="font-tech" style={{ fontSize: "1.125rem", color: "rgba(255, 255, 255, 0.5)", marginBottom: "56px", maxWidth: "672px", margin: "0 auto 56px auto", textTransform: "uppercase" }}>The game has changed. Don't play by the old rules. Augment your reality now.</p>
                  <div style={{ display: "flex", gap: "32px", justifyContent: "center", flexWrap: "wrap" }}>
                     <button onClick={() => navigate("/signup")} className="clip-angle font-tech" style={{ padding: "20px 56px", background: "var(--accent-purple)", color: "white", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", cursor: "pointer", border: "none", boxShadow: "0 0 20px rgba(124, 58, 237, 0.3)", transition: "all 0.2s" }}>ENTER_SERVER</button>
