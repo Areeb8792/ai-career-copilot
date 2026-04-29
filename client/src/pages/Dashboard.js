@@ -97,12 +97,12 @@ function Dashboard() {
           </div>
 
           {/* Interactive Risk Matrix Mini-Demo */}
-          <div className="clip-angle group relative" style={{ marginTop: "112px", width: "100%", maxWidth: "1024px", background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "4px", backdropFilter: "blur(12px)" }}>
+          <div className="clip-angle group relative mx-auto" style={{ marginTop: "112px", width: "100%", maxWidth: "1024px", background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "4px", backdropFilter: "blur(12px)" }}>
             <div className="animate-float" style={{ position: "absolute", top: "-48px", right: "48px", color: "var(--accent-purple)" }}>
               <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
             </div>
-            <div className="clip-angle" style={{ padding: "40px 56px", border: "1px solid rgba(255, 255, 255, 0.05)", background: "linear-gradient(to bottom right, rgba(99, 102, 241, 0.05), transparent)" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "48px", alignItems: "center" }}>
+            <div className="clip-angle p-6 md:p-14" style={{ border: "1px solid rgba(255, 255, 255, 0.05)", background: "linear-gradient(to bottom right, rgba(99, 102, 241, 0.05), transparent)" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "48px", alignItems: "center" }}>
                 
                 <div style={{ textAlign: "left" }}>
                   <h3 style={{ fontSize: "1.875rem", fontWeight: 900, fontStyle: "italic", marginBottom: "20px", color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "-0.05em" }}>SKILL_SYNC_CALC</h3>
@@ -123,7 +123,7 @@ function Dashboard() {
                     <div className="clip-angle" style={{ height: "20px", width: "100%", background: "rgba(30, 41, 59, 1)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "2px", position: "relative" }}>
                       <div style={{ height: "100%", width: "72.8%", background: "linear-gradient(to right, var(--accent-purple), #3b82f6)", boxShadow: "0 0 15px var(--accent-purple)", transition: "width 1.2s" }}></div>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "20px", textAlign: "center", marginTop: "32px" }}>
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: "12px", textAlign: "center", marginTop: "32px" }}>
                       <div className="clip-angle" style={{ padding: "12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
                         <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.2)", textTransform: "uppercase", marginBottom: "4px" }}>Risk</div>
                         <div style={{ fontSize: "0.75rem", fontWeight: 900, color: "var(--accent-amber)" }}>MODERATE</div>
@@ -158,7 +158,7 @@ function Dashboard() {
               <div style={{ fontSize: "4.5rem", fontWeight: 400, color: "rgba(255, 255, 255, 0.05)", userSelect: "none", letterSpacing: "-0.05em" }}>PRO_GEAR_X9</div>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px" }}>
               {featureCards.map((card) => (
                 <div key={card.id} className="group clip-angle game-card-gradient" style={{ position: "relative", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "40px", transition: "all 0.3s", cursor: "pointer" }} onClick={() => navigate(card.path)}>
                   <div style={{ position: "absolute", bottom: "-40px", right: "-40px", fontSize: "8rem", color: "rgba(255, 255, 255, 0.02)", fontWeight: 900, transition: "color 0.3s" }}>{card.id}</div>
@@ -204,7 +204,7 @@ function Dashboard() {
         <section className="relative z-10 py-40 px-6">
           <div style={{ maxWidth: "1280px", margin: "0 auto", textAlign: "center" }}>
              <h2 style={{ fontSize: "clamp(3rem, 4vw, 3.75rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "96px", textTransform: "uppercase", letterSpacing: "-0.05em" }}>SYNC_TIERS</h2>
-             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "40px", alignItems: "center" }}>
+             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px", alignItems: "center" }}>
                 
                 {/* Tier 1 */}
                 <div className="clip-angle" style={{ background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "48px", display: "flex", flexDirection: "column", transition: "border-color 0.3s" }}>
@@ -254,8 +254,8 @@ function Dashboard() {
 
         {/* Final CTA */}
         <section className="relative z-10 py-40 px-6 overflow-hidden">
-           <div className="clip-angle" style={{ maxWidth: "1024px", margin: "0 auto", background: "linear-gradient(to right, rgba(124, 58, 237, 0.3), rgba(251, 191, 36, 0.3), rgba(16, 185, 129, 0.3))", padding: "2px" }}>
-              <div className="clip-angle" style={{ background: "rgba(2, 6, 23, 1)", padding: "64px 96px", textAlign: "center", position: "relative" }}>
+            <div className="clip-angle mx-auto" style={{ maxWidth: "1024px", background: "linear-gradient(to right, rgba(124, 58, 237, 0.3), rgba(251, 191, 36, 0.3), rgba(16, 185, 129, 0.3))", padding: "2px" }}>
+              <div className="clip-angle p-8 md:p-16 lg:p-24" style={{ background: "rgba(2, 6, 23, 1)", textAlign: "center", position: "relative" }}>
                  <h2 className="glitch-hero" data-text="WIN_THE_FUTURE" style={{ fontSize: "clamp(3rem, 5vw, 6rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "40px", textTransform: "uppercase", letterSpacing: "-0.05em" }}>WIN_THE_FUTURE</h2>
                  <p className="font-tech" style={{ fontSize: "1.125rem", color: "rgba(255, 255, 255, 0.5)", marginBottom: "56px", maxWidth: "672px", margin: "0 auto 56px auto", textTransform: "uppercase" }}>The game has changed. Don't play by the old rules. Augment your reality now.</p>
                  <div style={{ display: "flex", gap: "32px", justifyContent: "center", flexWrap: "wrap" }}>

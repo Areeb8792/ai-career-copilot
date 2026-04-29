@@ -316,7 +316,7 @@ function RiskManagement() {
         <div style={{ position: "relative", zIndex: 10, padding: "24px" }}>
           
           {/* Full-Width Hero Risk Section */}
-          <section className="relative w-full mb-12 flex flex-col items-center border clip-corner group" style={{ background: "rgba(15, 23, 42, 0.3)", borderColor: "rgba(255, 255, 255, 0.05)", padding: "48px", backdropFilter: "blur(24px)", overflow: "hidden" }}>
+          <section className="relative w-full mb-12 flex flex-col items-center border clip-corner group p-6 md:p-12" style={{ background: "rgba(15, 23, 42, 0.3)", borderColor: "rgba(255, 255, 255, 0.05)", backdropFilter: "blur(24px)", overflow: "hidden" }}>
             {/* Corner Decorations */}
             <div className="corner-deco top-l" style={{ borderColor: "rgba(124, 58, 237, 0.3)" }}></div>
             <div className="corner-deco top-r" style={{ borderColor: "rgba(251, 191, 36, 0.3)" }}></div>
@@ -326,19 +326,19 @@ function RiskManagement() {
             <div style={{ position: "absolute", top: "-80px", left: "-80px", width: "320px", height: "320px", background: "rgba(124, 58, 237, 0.05)", filter: "blur(120px)", borderRadius: "50%" }}></div>
             <div style={{ position: "absolute", bottom: "-80px", right: "-80px", width: "320px", height: "320px", background: "rgba(251, 191, 36, 0.05)", filter: "blur(120px)", borderRadius: "50%" }}></div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", width: "100%", maxWidth: "1280px", alignItems: "center", gap: "64px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", width: "100%", maxWidth: "1280px", alignItems: "center", gap: "32px md:gap-64px" }}>
               
               {/* Input Side */}
               <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
                 <div>
                   <span className="font-tech" style={{ fontSize: "0.75rem", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.5em", display: "block" }}>Target_Parameter</span>
-                  <h1 style={{ fontSize: "clamp(3rem, 5vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", lineHeight: 1, margin: "8px 0" }}>
+                  <h1 style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", lineHeight: 1, margin: "8px 0" }}>
                     PROME<span style={{ color: "transparent", backgroundImage: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", WebkitBackgroundClip: "text", backgroundClip: "text" }}>THEUS</span>
                   </h1>
                 </div>
 
                 <div className="clip-angle" style={{ padding: "2px", background: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-                  <div className="clip-angle" style={{ background: "rgba(2, 6, 23, 0.95)", padding: "32px", display: "flex", flexDirection: "column", gap: "24px" }}>
+                  <div className="clip-angle p-6 md:p-8" style={{ background: "rgba(2, 6, 23, 0.95)", display: "flex", flexDirection: "column", gap: "24px" }}>
                     
                     <div>
                       <label className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Input_Vocational_Protocol</label>
@@ -380,7 +380,7 @@ function RiskManagement() {
               </div>
 
               {/* Large Gauge Side */}
-              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "32px", overflow: "visible" }}>
+              <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", padding: "16px", overflow: "hidden", minHeight: "300px" }}>
                 
                 {/* Star Particles */}
                 <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none" }}>
@@ -432,7 +432,7 @@ function RiskManagement() {
           </section>
 
           {/* Main Split Layout */}
-          <main style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(350px, 1fr))", gap: "32px", position: "relative", zIndex: 10 }}>
+          <main style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 350px), 1fr))", gap: "32px", position: "relative", zIndex: 10 }}>
             
             {/* Left Column: Counter-Measures */}
             <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
@@ -447,7 +447,7 @@ function RiskManagement() {
                 {riskData.explanation}
               </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "24px" }}>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "24px" }}>
                 {riskData.tips.map((tip, i) => (
                   <div key={i} className="clip-corner" style={{ position: "relative", background: "linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.8))", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "32px", display: "flex", flexDirection: "column", transition: "all 0.3s" }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
