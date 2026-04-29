@@ -78,6 +78,7 @@ function Layout({ children }) {
   const [accountMessage, setAccountMessage] = useState("");
   const [accountMessageType, setAccountMessageType] = useState("");
   const [showPasswordForm, setShowPasswordForm] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
@@ -275,7 +276,19 @@ function Layout({ children }) {
 
   return (
     <div className="app-shell">
-      <aside className="cyber-sidebar">
+      <div className="mobile-header">
+        <div className="cyber-brand-copy" style={{ padding: "0 4px" }}>
+          <strong style={{ fontSize: "1.2rem" }}>PROMETHEUS</strong>
+        </div>
+        <button 
+          className="mobile-menu-btn" 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        >
+          {isMobileMenuOpen ? "CLOSE" : "MENU"}
+        </button>
+      </div>
+
+      <aside className={`cyber-sidebar ${isMobileMenuOpen ? "open" : ""}`}>
         <div className="cyber-brand-block">
           <div className="cyber-avatar cyber-avatar-large">
             <PrometheusSigil />
@@ -295,6 +308,7 @@ function Layout({ children }) {
               className={({ isActive }) =>
                 `cyber-nav-link${isActive ? " active" : ""}`
               }
+              onClick={() => setIsMobileMenuOpen(false)}
             >
               {link.label}
             </NavLink>

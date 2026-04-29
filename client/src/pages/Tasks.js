@@ -135,8 +135,8 @@ function Tasks() {
         </p>
 
         <div
-          className="mini-grid"
-          style={{ gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", marginTop: "18px" }}
+          className="mini-grid tasks-feed-grid"
+          style={{ marginTop: "18px" }}
         >
           {taskFeed.map((item) => (
             <section className="neon-card" key={item.label}>
@@ -148,7 +148,7 @@ function Tasks() {
           ))}
         </div>
 
-        <div className="mini-grid" style={{ gridTemplateColumns: "1.2fr 0.8fr", marginTop: "18px" }}>
+        <div className="mini-grid tasks-split-grid" style={{ marginTop: "18px" }}>
           <section className="neon-card">
             <h3 className="neon-card-title">Task Generator Feed</h3>
             <div className="scan-list">
