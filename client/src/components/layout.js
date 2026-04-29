@@ -54,9 +54,9 @@ const formatDisplayName = (email) => {
 function Layout({ children }) {
   const links = [
     { label: "Home", path: "/dashboard" },
-    { label: "Risk", path: "/risk-management" },
     { label: "Tasks", path: "/tasks" },
     { label: "Progress", path: "/progress" },
+    { label: "Risk", path: "/risk-management" },
   ];
   
   const [progressData, setProgressData] = useState(() => {
@@ -75,26 +75,18 @@ function Layout({ children }) {
     email: "",
     profileImage: "",
   });
-  const [accountMessage, setAccountMessage] = useState("");
-  const [accountMessageType, setAccountMessageType] = useState("");
-  const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
   const [isAccountLoading, setIsAccountLoading] = useState(true);
-  const [isSavingPhoto, setIsSavingPhoto] = useState(false);
-  const [isSavingPassword, setIsSavingPassword] = useState(false);
-  const fileInputRef = useRef(null);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
-  const fallbackEmail =
-    typeof window !== "undefined" ? localStorage.getItem("prometheus_username") || "" : "";
+  const fallbackEmail = typeof window !== "undefined" ? localStorage.getItem("prometheus_username") || "" : "";
   const displayEmail = account.email || fallbackEmail;
   const displayName = formatDisplayName(displayEmail);
-  const avatarFallback = displayName.charAt(0).toUpperCase() || "P";
+  const avatarFallback = displayName.charAt(0).toUpperCase() || "O";
+
+  const totalXp = progressData.totalXp || 0;
+  const currentLevel = Math.floor(totalXp / 100) + 1;
+  const xpIntoLevel = totalXp % 100;
+  const xpQuota = 100;
 
   const loadProfile = async () => {
     if (!token) {
@@ -114,14 +106,11 @@ function Layout({ children }) {
       };
 
       setAccount(nextAccount);
-
       if (nextAccount.email) {
         localStorage.setItem("prometheus_username", nextAccount.email);
       }
     } catch (error) {
       setAccount({ email: fallbackEmail, profileImage: "" });
-      setAccountMessage("Could not sync account details.");
-      setAccountMessageType("error");
     } finally {
       setIsAccountLoading(false);
     }
@@ -148,159 +137,44 @@ function Layout({ children }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const handlePasswordFieldChange = (key, value) => {
-    setPasswordForm((current) => ({
-      ...current,
-      [key]: value,
-    }));
-  };
-
-  const handlePhotoSelect = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handlePhotoChange = async (event) => {
-    const file = event.target.files?.[0];
-    event.target.value = "";
-
-    if (!file) {
-      return;
-    }
-
-    if (!file.type.startsWith("image/")) {
-      setAccountMessage("Choose a valid image file.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    if (file.size > MAX_PROFILE_IMAGE_SIZE) {
-      setAccountMessage("Profile image must be under 2 MB.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    if (!token) {
-      setAccountMessage("Please log in again to update your profile.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    setIsSavingPhoto(true);
-
-    try {
-      const imageDataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(String(reader.result || ""));
-        reader.onerror = () => reject(new Error("Unable to read image"));
-        reader.readAsDataURL(file);
-      });
-
-      const res = await axios.patch(
-        `${API_BASE_URL}/api/profile`,
-        { profileImage: imageDataUrl },
-        { headers: { authorization: token } }
-      );
-
-      const user = res.data?.user || {};
-      setAccount((current) => ({
-        ...current,
-        email: user.email || current.email,
-        profileImage: user.profileImage || "",
-      }));
-      setAccountMessage("Profile picture updated.");
-      setAccountMessageType("success");
-    } catch (error) {
-      setAccountMessage(error.response?.data?.message || "Profile picture update failed.");
-      setAccountMessageType("error");
-    } finally {
-      setIsSavingPhoto(false);
-    }
-  };
-
-  const handlePasswordSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!token) {
-      setAccountMessage("Please log in again to change your password.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    if (!passwordForm.currentPassword || !passwordForm.newPassword) {
-      setAccountMessage("Fill in all password fields.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    if (passwordForm.newPassword.length < 6) {
-      setAccountMessage("New password must be at least 6 characters.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      setAccountMessage("New passwords do not match.");
-      setAccountMessageType("error");
-      return;
-    }
-
-    setIsSavingPassword(true);
-
-    try {
-      const res = await axios.patch(
-        `${API_BASE_URL}/api/profile/password`,
-        {
-          currentPassword: passwordForm.currentPassword,
-          newPassword: passwordForm.newPassword,
-        },
-        {
-          headers: { authorization: token },
-        }
-      );
-
-      setPasswordForm({
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      });
-      setShowPasswordForm(false);
-      setAccountMessage(res.data?.message || "Password updated successfully.");
-      setAccountMessageType("success");
-    } catch (error) {
-      setAccountMessage(error.response?.data?.message || "Password update failed.");
-      setAccountMessageType("error");
-    } finally {
-      setIsSavingPassword(false);
-    }
-  };
 
   return (
     <div className="app-shell">
-      <div className="mobile-header">
-        <div className="cyber-brand-copy" style={{ padding: "0 4px" }}>
-          <strong style={{ fontSize: "1.2rem" }}>PROMETHEUS</strong>
-        </div>
-        <button 
-          className="mobile-menu-btn" 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? "CLOSE" : "MENU"}
-        </button>
-      </div>
-
-      <aside className={`cyber-sidebar ${isMobileMenuOpen ? "open" : ""}`}>
-        <div className="cyber-brand-block">
-          <div className="cyber-avatar cyber-avatar-large">
-            <PrometheusSigil />
+      <header className="cyber-top-nav">
+        {/* Profile Block */}
+        <div style={{ display: "flex", alignItems: "center", gap: "16px", flex: 1 }}>
+          <div className="cyber-account-avatar" style={{ width: "52px", height: "52px", fontSize: "1.4rem", border: "2px solid var(--pink)" }}>
+            {account.profileImage ? (
+              <img src={account.profileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+            ) : (
+              avatarFallback
+            )}
           </div>
-          <div className="cyber-brand-copy">
-            <strong>PROMETHEUS</strong>
-            <span>AI RISK ASSESSMENT</span>
-            <span>PLATFORM</span>
+          <div style={{ flex: 1, maxWidth: "400px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "4px" }}>
+              <div>
+                <strong style={{ display: "block", color: "var(--cyan)", fontSize: "1.2rem", letterSpacing: "0.1em", textTransform: "uppercase", fontStyle: "italic", textShadow: "2px 0 var(--pink)" }}>
+                  OP_0XF
+                </strong>
+                <span style={{ color: "var(--lime)", fontSize: "0.7rem", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "4px" }}>
+                  <span style={{ display: "inline-block", width: "6px", height: "6px", background: "var(--lime)", borderRadius: "50%", boxShadow: "0 0 8px var(--lime)" }}></span>
+                  SYNC_ACTIVE
+                </span>
+              </div>
+              <div style={{ textAlign: "right" }}>
+                <span style={{ display: "block", color: "var(--text-dim)", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>RANK</span>
+                <strong style={{ color: "var(--pink)", fontSize: "0.9rem", letterSpacing: "0.1em" }}>LVL.{String(currentLevel).padStart(2, '0')}</strong>
+              </div>
+            </div>
+            {/* XP Bar */}
+            <div style={{ height: "4px", background: "rgba(255,255,255,0.1)", marginTop: "8px", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", left: 0, top: 0, bottom: 0, width: `${(xpIntoLevel / xpQuota) * 100}%`, background: "linear-gradient(90deg, var(--cyan), var(--lime))", boxShadow: "0 0 10px var(--lime)" }}></div>
+            </div>
           </div>
         </div>
 
-        <nav className="cyber-nav cyber-nav-top" aria-label="Primary navigation">
+        {/* Navigation Tabs */}
+        <nav className="cyber-nav">
           {links.map((link) => (
             <NavLink
               key={link.path}
@@ -308,121 +182,12 @@ function Layout({ children }) {
               className={({ isActive }) =>
                 `cyber-nav-link${isActive ? " active" : ""}`
               }
-              onClick={() => setIsMobileMenuOpen(false)}
             >
               {link.label}
             </NavLink>
           ))}
         </nav>
-
-        <div className="cyber-stat-block">
-          <div className="cyber-led">Current Rank</div>
-          <div className="scan-list">
-            <div className="scan-list-item">
-              <span>LEVEL</span>
-              <strong className="status-cyan">
-                {String(Math.floor((progressData.totalXp || 0) / 100) + 1).padStart(2, "0")}
-              </strong>
-            </div>
-            <div className="scan-list-item">
-              <span>XP DATA</span>
-              <strong className="status-good">
-                {(progressData.totalXp || 0) % 100} / 100
-              </strong>
-            </div>
-          </div>
-        </div>
-
-        <div className="cyber-sidebar-footer">
-          <div className="cyber-led">Account</div>
-          <div className="cyber-account-box">
-            <div className="cyber-account-top">
-              {account.profileImage ? (
-                <img
-                  src={account.profileImage}
-                  alt={`${displayName} profile`}
-                  className="cyber-account-avatar-image"
-                />
-              ) : (
-                <div className="cyber-account-avatar">{avatarFallback}</div>
-              )}
-              <div className="cyber-account-copy">
-                <strong>{displayName}</strong>
-                <span>{displayEmail || "Active user"}</span>
-              </div>
-            </div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="cyber-file-input"
-              onChange={handlePhotoChange}
-            />
-            <div className="scan-list">
-              <div className="scan-list-item">
-                <span>ACCESS</span>
-                <strong className="status-good">VERIFIED</strong>
-              </div>
-              <div className="scan-list-item">
-                <span>SESSION</span>
-                <strong className="status-cyan">{isAccountLoading ? "SYNCING" : "ONLINE"}</strong>
-              </div>
-              <div className="scan-list-item">
-                <span>MODE</span>
-                <strong className="status-alert">FOCUS</strong>
-              </div>
-            </div>
-            <div className="cyber-account-actions">
-              <button
-                type="button"
-                className="cyber-account-btn"
-                onClick={handlePhotoSelect}
-                disabled={isSavingPhoto}
-              >
-                {isSavingPhoto ? "Uploading..." : "Profile Photo"}
-              </button>
-              <button
-                type="button"
-                className="cyber-account-btn"
-                onClick={() => setShowPasswordForm((current) => !current)}
-              >
-                {showPasswordForm ? "Close" : "Change Password"}
-              </button>
-            </div>
-            {accountMessage ? (
-              <div className={`cyber-account-message ${accountMessageType}`}>{accountMessage}</div>
-            ) : null}
-            {showPasswordForm ? (
-              <form className="cyber-account-form" onSubmit={handlePasswordSubmit}>
-                <input
-                  type="password"
-                  placeholder="Current password"
-                  value={passwordForm.currentPassword}
-                  onChange={(event) => handlePasswordFieldChange("currentPassword", event.target.value)}
-                  className="cyber-account-input"
-                />
-                <input
-                  type="password"
-                  placeholder="New password"
-                  value={passwordForm.newPassword}
-                  onChange={(event) => handlePasswordFieldChange("newPassword", event.target.value)}
-                  className="cyber-account-input"
-                />
-                <input
-                  type="password"
-                  placeholder="Confirm new password"
-                  value={passwordForm.confirmPassword}
-                  onChange={(event) => handlePasswordFieldChange("confirmPassword", event.target.value)}
-                  className="cyber-account-input"
-                />
-                <button type="submit" className="cyber-account-submit" disabled={isSavingPassword}>
-                  {isSavingPassword ? "Updating..." : "Update Password"}
-                </button>
-              </form>
-            ) : null}
-          </div>
-        </div>
-      </aside>
+      </header>
 
       <main className="cyber-main">{children}</main>
     </div>

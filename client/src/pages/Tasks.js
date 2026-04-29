@@ -124,128 +124,135 @@ function Tasks() {
 
   return (
     <Layout>
-      <div className="page-console">
-        <p className="page-kicker">Task Engine</p>
-        <h1 className="page-title">
-          Build <span className="accent-cyan">Your Queue</span>
-        </h1>
-        <p className="page-copy">
-          Convert risk countermeasures into execution. Add your own tasks below, then mark them complete inside the
-          feed to keep your queue and completion percentage live.
-        </p>
+      <div className="page-console" style={{ padding: 0, border: "none", background: "transparent", boxShadow: "none" }}>
+        
+        {/* Top Stats Row */}
+        <div className="mini-grid tasks-feed-grid" style={{ marginBottom: "24px" }}>
+          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(0, 255, 255, 0.2)" }}>
+            <p className="page-kicker" style={{ color: "var(--cyan)", fontSize: "0.7rem" }}>TOTAL_DIRECTIVES</p>
+            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
+              {String(totalTasks).padStart(2, "0")}
+            </h3>
+            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--cyan)", opacity: 0.5 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            </div>
+          </section>
+          
+          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(255, 0, 255, 0.2)" }}>
+            <p className="page-kicker" style={{ color: "var(--pink)", fontSize: "0.7rem" }}>PENDING_ACTIONS</p>
+            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
+              {String(pendingTasks).padStart(2, "0")}
+            </h3>
+            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--pink)", opacity: 0.5 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0zM12 9v4M12 17h.01"/></svg>
+            </div>
+          </section>
 
-        <div
-          className="mini-grid tasks-feed-grid"
-          style={{ marginTop: "18px" }}
-        >
-          {taskFeed.map((item) => (
-            <section className="neon-card" key={item.label}>
-              <p className="page-kicker">{item.label}</p>
-              <h3 className={item.tone} style={{ margin: 0, fontSize: "2rem" }}>
-                {item.value}
-              </h3>
-            </section>
-          ))}
+          <section className="neon-card" style={{ padding: "16px", borderColor: "rgba(0, 255, 0, 0.2)" }}>
+            <p className="page-kicker" style={{ color: "var(--lime)", fontSize: "0.7rem" }}>SYNC_COMPLETION</p>
+            <h3 className="pixel-font" style={{ margin: 0, fontSize: "2.8rem", color: "var(--text-main)" }}>
+              {completionRate}%
+            </h3>
+            <div style={{ position: "absolute", bottom: "16px", right: "16px", color: "var(--lime)", opacity: 0.5 }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            </div>
+          </section>
         </div>
 
-        <div className="mini-grid tasks-split-grid" style={{ marginTop: "18px" }}>
-          <section className="neon-card">
-            <h3 className="neon-card-title">Task Generator Feed</h3>
-            <div className="scan-list">
-              {tasks.map((task) => (
+        <div className="mini-grid tasks-split-grid">
+          {/* ACTIVE QUEUE */}
+          <div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
+              <h3 className="neon-card-title" style={{ margin: 0, color: "var(--cyan)" }}>ACTIVE_QUEUE</h3>
+              <span style={{ fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>SCROLL_TO_EXPLORE</span>
+            </div>
+            
+            <div className="scan-list" style={{ maxHeight: "600px", overflowY: "auto", paddingRight: "8px" }}>
+              {tasks.map((task, idx) => (
                 <div
                   key={task.id}
-                  className="scan-list-item"
+                  className="neon-card"
                   style={{
+                    padding: "16px",
+                    display: "flex",
+                    justifyContent: "space-between",
                     alignItems: "center",
-                    opacity: task.completed ? 0.65 : 1,
+                    gap: "16px",
+                    borderLeft: `3px solid ${task.completed ? 'var(--lime)' : 'var(--cyan)'}`,
+                    opacity: task.completed ? 0.5 : 1,
+                    transition: "opacity 0.2s"
                   }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => toggleTask(task.id)}
-                    style={{
-                      flex: 1,
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      gap: "16px",
-                      border: 0,
-                      background: "transparent",
-                      color: "inherit",
-                      textAlign: "left",
-                      cursor: "pointer",
-                      padding: 0,
-                    }}
-                  >
-                    <span style={{ textDecoration: task.completed ? "line-through" : "none" }}>
+                  <div style={{ flex: 1 }}>
+                    <span style={{ display: "block", fontSize: "0.65rem", color: "var(--cyan)", letterSpacing: "0.1em", marginBottom: "4px" }}>UID: P0{idx + 1}-X</span>
+                    <strong style={{ display: "block", fontSize: "1.1rem", textDecoration: task.completed ? "line-through" : "none", textTransform: "uppercase", letterSpacing: "0.05em" }}>
                       {task.title}
-                    </span>
-                    <strong className={task.completed ? "status-good" : "status-cyan"}>
-                      {task.completed ? "DONE" : "READY"}
                     </strong>
-                  </button>
+                    <span style={{ display: "block", fontSize: "0.8rem", color: "var(--text-dim)", marginTop: "4px" }}>Execute subroutine and maintain sync alignment.</span>
+                  </div>
 
-                  <button
-                    type="button"
-                    onClick={() => removeTask(task.id)}
-                    aria-label={`Delete ${task.title}`}
-                    style={{
-                      marginLeft: "12px",
-                      border: "1px solid rgba(255, 0, 255, 0.28)",
-                      background: "rgba(255, 0, 255, 0.08)",
-                      color: "var(--pink)",
-                      minWidth: "36px",
-                      height: "36px",
-                      cursor: "pointer",
-                      fontFamily: "Orbitron, sans-serif",
-                    }}
-                  >
-                    X
-                  </button>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <button
+                      onClick={() => toggleTask(task.id)}
+                      style={{ width: "36px", height: "36px", background: "rgba(0, 255, 0, 0.05)", border: "1px solid rgba(0, 255, 0, 0.2)", color: "var(--lime)", cursor: "pointer", display: "grid", placeItems: "center" }}
+                    >
+                      ✓
+                    </button>
+                    <button
+                      onClick={() => removeTask(task.id)}
+                      style={{ width: "36px", height: "36px", background: "rgba(255, 0, 255, 0.05)", border: "1px solid rgba(255, 0, 255, 0.2)", color: "var(--pink)", cursor: "pointer", display: "grid", placeItems: "center" }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
-          </section>
+          </div>
 
-          <section className="neon-card">
-            <h3 className="neon-card-title">Write Task</h3>
-            <p className="page-copy">
-              Enter a task here and add it to your feed. Click any task in the feed to mark it complete or reopen it.
-            </p>
-
-            <textarea
-              value={taskInput}
-              onChange={(e) => setTaskInput(e.target.value)}
-              placeholder="Write your next task here..."
-              style={{
-                width: "100%",
-                minHeight: "140px",
-                marginTop: "12px",
-                padding: "14px",
-                border: "1px solid rgba(255, 0, 255, 0.24)",
-                background:
-                  "linear-gradient(180deg, rgba(10, 4, 20, 0.96), rgba(2, 2, 8, 0.98))",
-                color: "var(--text-main)",
-                resize: "vertical",
-                outline: "none",
-              }}
-            />
-
-            <button
-              type="button"
-              onClick={addTask}
-              className="terminal-pill"
-              style={{ marginTop: "14px", cursor: "pointer" }}
-            >
-              ADD TASK
-            </button>
-
-            <div style={{ marginTop: "16px" }} className="progress-meter">
-              <span style={{ width: `${completionRate}%` }} />
+          {/* DIRECT COMMAND ENTRY */}
+          <div>
+            <div style={{ marginBottom: "16px", borderBottom: "1px solid rgba(255,255,255,0.05)", paddingBottom: "8px" }}>
+              <h3 className="neon-card-title" style={{ margin: 0, color: "var(--pink)" }}>DIRECT_COMMAND_ENTRY</h3>
             </div>
-          </section>
+
+            <div className="neon-card" style={{ padding: "24px" }}>
+              <label style={{ display: "block", fontSize: "0.7rem", color: "var(--pink)", letterSpacing: "0.1em", marginBottom: "8px", textTransform: "uppercase" }}>DIRECTIVE_TITLE</label>
+              <input
+                value={taskInput}
+                onChange={(e) => setTaskInput(e.target.value)}
+                placeholder="ENTER_TASK_HEADING"
+                style={{ width: "100%", padding: "12px", background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--text-main)", fontFamily: "inherit", marginBottom: "20px" }}
+              />
+
+              <label style={{ display: "block", fontSize: "0.7rem", color: "var(--pink)", letterSpacing: "0.1em", marginBottom: "8px", textTransform: "uppercase" }}>SUBROUTINE_PARAMETERS</label>
+              <textarea
+                placeholder="SPECIFY_TASK_DESCRIPTION_AND_GOALS"
+                style={{ width: "100%", height: "100px", padding: "12px", background: "rgba(0,0,0,0.4)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--text-main)", fontFamily: "inherit", resize: "none", marginBottom: "20px" }}
+              />
+
+              <div style={{ display: "flex", gap: "16px", marginBottom: "24px" }}>
+                <div style={{ flex: 1, background: "rgba(0, 255, 255, 0.05)", border: "1px solid rgba(0, 255, 255, 0.1)", padding: "12px", textAlign: "center" }}>
+                  <span style={{ display: "block", fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>XP_REWARD</span>
+                  <strong style={{ color: "var(--cyan)", fontSize: "1.1rem" }}>+10 CREDITS</strong>
+                </div>
+                <div style={{ flex: 1, background: "rgba(255, 0, 255, 0.05)", border: "1px solid rgba(255, 0, 255, 0.1)", padding: "12px", textAlign: "center" }}>
+                  <span style={{ display: "block", fontSize: "0.6rem", color: "var(--text-dim)", letterSpacing: "0.1em" }}>RISK_FACTOR</span>
+                  <strong style={{ color: "var(--pink)", fontSize: "1.1rem" }}>LOW_LATENCY</strong>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={addTask}
+                style={{ width: "100%", padding: "16px", background: "var(--pink)", border: "none", color: "black", fontSize: "1.1rem", fontWeight: "bold", letterSpacing: "0.1em", cursor: "pointer", clipPath: "polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px)" }}
+              >
+                INITIALIZE_TASK
+              </button>
+            </div>
+          </div>
         </div>
+
       </div>
     </Layout>
   );

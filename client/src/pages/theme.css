@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;800;900&family=Rajdhani:wght@500;600;700&family=VT323&display=swap");
 
 :root {
   --bg-void: #05010a;
@@ -39,7 +39,7 @@ body {
     radial-gradient(circle at 52% 84%, rgba(0, 255, 0, 0.1), transparent 18%),
     linear-gradient(180deg, #07010d 0%, #030106 55%, #000000 100%);
   color: var(--text-main);
-  font-family: "Rajdhani", sans-serif;
+  font-family: "Orbitron", sans-serif;
   overflow-y: auto;
 }
 
@@ -97,22 +97,32 @@ textarea {
 .app-shell {
   position: relative;
   z-index: 1;
-  display: grid;
-  grid-template-columns: 280px minmax(0, 1fr);
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
-.cyber-sidebar {
+.cyber-top-nav {
   position: relative;
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 22px 18px;
-  border-right: 1px solid rgba(255, 0, 255, 0.2);
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
   background:
     linear-gradient(180deg, rgba(6, 4, 16, 0.98), rgba(2, 2, 7, 0.98)),
     linear-gradient(135deg, rgba(255, 0, 255, 0.08), transparent 35%, rgba(0, 255, 255, 0.06));
-  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+  z-index: 40;
+}
+
+.cyber-top-nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.55), transparent);
 }
 
 .cyber-brand-block {
@@ -297,8 +307,8 @@ textarea {
 
 .cyber-nav {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
 }
 
 .cyber-nav-link {
@@ -634,8 +644,13 @@ textarea {
     0 0 20px rgba(0, 255, 255, 0.22);
 }
 
-.mobile-header {
-  display: none;
+.pixel-font {
+  font-family: "VT323", monospace;
+  letter-spacing: 0.05em;
+}
+
+.tasks-split-grid {
+  grid-template-columns: 1fr 1fr;
 }
 
 .tasks-split-grid {
@@ -647,67 +662,33 @@ textarea {
 }
 
 @media (max-width: 980px) {
-  .app-shell {
-    display: flex;
+  .cyber-top-nav {
     flex-direction: column;
-    height: 100vh;
-    overflow: hidden;
-  }
-
-  .mobile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
     padding: 12px 16px;
-    background: linear-gradient(180deg, rgba(10, 4, 20, 0.98), rgba(4, 3, 10, 0.98));
-    border-bottom: 1px solid rgba(255, 0, 255, 0.3);
-    z-index: 50;
-    flex-shrink: 0;
+    gap: 16px;
   }
 
-  .mobile-menu-btn {
-    background: rgba(0, 255, 255, 0.08);
-    border: 1px solid rgba(0, 255, 255, 0.4);
-    color: var(--cyan);
-    padding: 6px 14px;
-    font-family: "Orbitron", sans-serif;
-    font-size: 0.85rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
+  .cyber-nav {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
   }
 
-  .cyber-sidebar {
-    position: fixed;
-    top: 55px;
-    left: 0;
-    width: 100%;
-    height: calc(100vh - 55px);
-    z-index: 40;
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    background: rgba(5, 1, 10, 0.98);
-    backdrop-filter: blur(8px);
-    overflow-y: auto;
-    border-right: none;
-    border-bottom: none;
-    padding-bottom: 80px;
+  .cyber-nav::-webkit-scrollbar {
+    height: 4px;
+  }
+  .cyber-nav::-webkit-scrollbar-thumb {
+    background: var(--pink);
   }
 
-  .cyber-sidebar.open {
-    transform: translateX(0);
+  .cyber-nav-link {
+    white-space: nowrap;
+    padding: 10px 20px;
   }
 
   .cyber-main {
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 16px;
-    height: calc(100vh - 55px);
-  }
-
-  .page-console {
-    padding: 16px;
+    padding: 12px;
   }
 
   .tasks-split-grid {

@@ -88,135 +88,106 @@ function Signup() {
       <div className="corner-circuits corner-top" />
 
       <main className="auth-layout">
-        <section className="auth-panel">
-          <header className="brand-row">
-            <div className="brand-mark-shell">
-              <div className="brand-mark-frame">
-                <FlameMark />
+        
+        {/* DUAL PANEL WRAPPER */}
+        <div className="auth-dual-panel">
+          
+          {/* LEFT PANEL: INFO */}
+          <div className="auth-info-panel">
+            <header className="brand-row" style={{ marginBottom: "40px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+                <div style={{ width: "48px", height: "48px", border: "2px solid var(--pink)", display: "grid", placeItems: "center", background: "rgba(255,0,255,0.1)", borderRadius: "4px" }}>
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" strokeWidth="2"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/></svg>
+                </div>
+                <div>
+                  <h1 className="glitch-line" style={{ margin: 0, fontSize: "2rem", letterSpacing: "0.1em", fontStyle: "italic", textShadow: "2px 0 var(--pink), -2px 0 var(--cyan)" }}>PROMETHEUS</h1>
+                  <span style={{ color: "var(--lime)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase" }}>CENTRAL_AUTH_PROTOCOL_V2.4</span>
+                </div>
+              </div>
+            </header>
+
+            <div className="auth-headline-box" style={{ background: "linear-gradient(135deg, rgba(255,0,255,0.1), transparent)", border: "1px solid rgba(255,0,255,0.2)", padding: "32px", clipPath: "polygon(0 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%)", marginBottom: "32px" }}>
+              <h2 style={{ margin: 0, fontSize: "2.4rem", fontStyle: "italic", color: "var(--text-main)", letterSpacing: "0.05em", textTransform: "uppercase", lineHeight: 1.1 }}>
+                REGISTER_<br/><span style={{ color: "var(--cyan)" }}>NEW_OPERATIVE</span>
+              </h2>
+              <p style={{ marginTop: "24px", color: "var(--text-dim)", fontSize: "0.85rem", letterSpacing: "0.05em", lineHeight: 1.6, textTransform: "uppercase" }}>
+                WELCOME RECRUIT. INITIALIZE YOUR NEURAL LINK TO ACCESS THE RISK ASSESSMENT MATRIX AND SURVIVAL DIRECTIVES.
+              </p>
+
+              <div style={{ marginTop: "32px", display: "grid", gap: "12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "var(--lime)", boxShadow: "0 0 8px var(--lime)" }}></span>
+                  <span style={{ color: "var(--lime)", fontSize: "0.7rem", letterSpacing: "0.1em" }}>SYSTEM_STATUS: SECURE_UPLINK</span>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ display: "inline-block", width: "8px", height: "8px", borderRadius: "50%", background: "var(--cyan)", boxShadow: "0 0 8px var(--cyan)" }}></span>
+                  <span style={{ color: "var(--cyan)", fontSize: "0.7rem", letterSpacing: "0.1em" }}>LATENCY: 12MS // NODES_SYNCED</span>
+                </div>
               </div>
             </div>
 
-            <div className="brand-copy">
-              <h1 className="brand-title">PROMETHEUS</h1>
-              <p className="brand-subtitle">AI RISK ASSESSMENT PLATFORM</p>
+            <div style={{ position: "absolute", bottom: "-20px", left: "20px", fontSize: "4rem", color: "rgba(255,255,255,0.03)", fontWeight: 900, pointerEvents: "none", whiteSpace: "nowrap" }}>
+              ACCESS_GRANTED
             </div>
-          </header>
+          </div>
 
-          <div className="field-group">
-            <label className="field-label" htmlFor="signup-email">
-              EMAIL
-            </label>
-            <div className="input-shell">
-              <span className="input-icon">
+          {/* RIGHT PANEL: FORM */}
+          <div className="auth-form-panel" style={{ background: "rgba(5, 2, 10, 0.95)", border: "1px solid rgba(255,0,255,0.15)", padding: "40px", display: "flex", flexDirection: "column", justifyContent: "center", clipPath: "polygon(24px 0, 100% 0, 100% calc(100% - 24px), calc(100% - 24px) 100%, 0 100%, 0 24px)" }}>
+            
+            <div className="field-group" style={{ marginBottom: "24px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <label style={{ color: "var(--pink)", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>NEW_OPERATIVE_ID</label>
                 <UserIcon />
-              </span>
+              </div>
               <input
-                id="signup-email"
                 type="email"
                 autoComplete="email"
-                placeholder="ENTER EMAIL"
+                placeholder="EMAIL_OR_USERNAME"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="auth-input"
+                style={{ width: "100%", padding: "16px", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)", color: "var(--text-main)", fontFamily: "inherit", letterSpacing: "0.05em", outline: "none" }}
               />
             </div>
-          </div>
 
-          <div className="field-group">
-            <label className="field-label" htmlFor="signup-password">
-              PASSWORD
-            </label>
-            <div className="input-shell">
-              <span className="input-icon">
+            <div className="field-group" style={{ marginBottom: "32px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
+                <label style={{ color: "var(--cyan)", fontSize: "0.7rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>NEW_NEURAL_KEY</label>
                 <LockIcon />
-              </span>
+              </div>
               <input
-                id="signup-password"
                 type="password"
                 autoComplete="new-password"
-                placeholder="ENTER PASSWORD"
+                placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="auth-input"
+                style={{ width: "100%", padding: "16px", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)", color: "var(--text-main)", fontFamily: "inherit", letterSpacing: "0.1em", outline: "none" }}
               />
             </div>
+
+            <button onClick={handleSignup} style={{ width: "100%", padding: "18px", background: "var(--cyan)", border: "none", color: "black", fontSize: "1.2rem", fontWeight: "bold", letterSpacing: "0.1em", cursor: "pointer", clipPath: "polygon(16px 0, 100% 0, 100% calc(100% - 16px), calc(100% - 16px) 100%, 0 100%, 0 16px)" }}>
+              INITIALIZE_REGISTRATION
+            </button>
+
+            <div style={{ display: "flex", alignItems: "center", gap: "16px", margin: "32px 0" }}>
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.1)" }}></div>
+              <span style={{ color: "var(--text-dim)", fontSize: "0.6rem", letterSpacing: "0.2em" }}>OR_RETURN_TO_BASE</span>
+              <div style={{ flex: 1, height: "1px", background: "rgba(255,255,255,0.1)" }}></div>
+            </div>
+
+            <button onClick={() => window.location.href = "/login"} style={{ width: "100%", padding: "16px", background: "transparent", border: "1px solid var(--pink)", color: "var(--pink)", fontSize: "0.9rem", letterSpacing: "0.1em", cursor: "pointer" }}>
+              ACCESS_EXISTING_LINK
+            </button>
+
           </div>
+        </div>
 
-          <button onClick={handleSignup} className="auth-btn">
-            <span>SIGN UP</span>
-            <span className="auth-btn-arrow">{">"}</span>
-          </button>
+        {/* BOTTOM WATERMARK BAR */}
+        <div style={{ position: "absolute", bottom: "16px", left: "24px", right: "24px", display: "flex", justifyContent: "space-between", color: "var(--text-dim)", fontSize: "0.6rem", letterSpacing: "0.2em", opacity: 0.5 }}>
+          <span>UPLINK_ENCRYPTED: 256_BIT</span>
+          <span>LOCATION: UNKNOWN_NODE_4</span>
+          <span style={{ display: "flex", alignItems: "center", gap: "6px" }}><span style={{ color: "var(--lime)" }}>✓</span> FIREWALL: ACTIVE</span>
+        </div>
 
-          <div className="auth-switch" aria-label="Authentication switch">
-            <button
-              type="button"
-              className="switch-btn"
-              onClick={() => {
-                window.location.href = "/login";
-              }}
-            >
-              LOG IN
-            </button>
-            <button type="button" className="switch-btn switch-btn-active">
-              SIGN UP
-            </button>
-          </div>
-
-          <div className="social-row" aria-label="Social sign in">
-            <button type="button" className="social-btn">
-              G
-            </button>
-            <button type="button" className="social-btn">
-              in
-            </button>
-            <button type="button" className="social-btn">
-              GH
-            </button>
-          </div>
-
-          <nav className="bottom-nav" aria-label="Terminal sections">
-            <button
-              type="button"
-              className="nav-item"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
-            >
-              <span className="nav-dot profile-icon" />
-              <span>PROFILE</span>
-            </button>
-            <button
-              type="button"
-              className="nav-item"
-              onClick={() => {
-                window.location.href = "/tasks";
-              }}
-            >
-              <span className="nav-dot tasks-icon" />
-              <span>TASKS</span>
-            </button>
-            <button
-              type="button"
-              className="nav-item active"
-              onClick={() => {
-                window.location.href = "/dashboard";
-              }}
-            >
-              <span className="nav-dot risk-icon" />
-              <span>RISK ANALYSIS</span>
-            </button>
-          </nav>
-        </section>
-
-        <section className="hero-panel" aria-hidden="true">
-          <div className="hero-image-frame">
-            <img
-              src="/prometheus-hero-upscaled.png"
-              alt="Prometheus holographic intelligence"
-              className="hero-image"
-            />
-          </div>
-        </section>
       </main>
     </div>
   );
