@@ -447,27 +447,106 @@ function RiskManagement() {
                 {riskData.explanation}
               </p>
 
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "24px" }}>
-                {riskData.tips.map((tip, i) => (
-                  <div key={i} className="clip-corner" style={{ position: "relative", background: "linear-gradient(to bottom right, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.8))", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "32px", display: "flex", flexDirection: "column", transition: "all 0.3s" }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "24px" }}>
-                      <div style={{ display: "flex", flexDirection: "column" }}>
-                        <span className="font-tech" style={{ fontSize: "0.6rem", color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "0.3em" }}>MOD_0{i+1} // TACTIC</span>
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 280px), 1fr))", gap: "20px" }}>
+                {riskData.tips.map((tip, i) => {
+                  const isAdded = Boolean(addedSuggestions[tip]);
+                  const PRIORITY_LABELS = ["CRITICAL", "HIGH", "MEDIUM", "LOW"];
+                  const PRIORITY_COLORS = ["var(--accent-amber)", "var(--accent-purple)", "var(--accent-emerald)", "rgba(180,180,255,0.8)"];
+                  const color = isAdded ? "var(--accent-emerald)" : PRIORITY_COLORS[i % 4];
+                  const label = PRIORITY_LABELS[i % 4];
+                  const ICONS = [
+                    <svg key="s" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+                    <svg key="t" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+                    <svg key="u" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
+                    <svg key="z" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+                  ];
+                  const firstStop = tip.search(/[.,]/);
+                  const headline = firstStop > 10 && firstStop < 90 ? tip.slice(0, firstStop) : tip.slice(0, 70);
+                  return (
+                    <div key={i} style={{
+                      position: "relative", overflow: "hidden",
+                      background: isAdded ? "linear-gradient(135deg,rgba(16,185,129,0.08),rgba(2,6,23,0.97))" : "linear-gradient(135deg,rgba(20,28,52,0.97),rgba(2,6,23,0.99))",
+                      border: `1px solid ${isAdded ? "rgba(16,185,129,0.35)" : "rgba(255,255,255,0.07)"}`,
+                      borderTop: `3px solid ${color}`,
+                      padding: "20px", display: "flex", flexDirection: "column", gap: "14px",
+                      transition: "all 0.3s ease",
+                    }}>
+                      {/* Ghost watermark */}
+                      <div style={{ position:"absolute", bottom:"-8px", right:"10px", fontSize:"5.5rem", fontWeight:900, fontStyle:"italic", color:"rgba(255,255,255,0.025)", lineHeight:1, userSelect:"none", pointerEvents:"none" }}>
+                        {String(i+1).padStart(2,"0")}
                       </div>
+
+                      {/* Header row */}
+                      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between" }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+                          <div style={{ width:"26px", height:"26px", background:`linear-gradient(135deg,${color},rgba(0,0,0,0.4))`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:"0.65rem", fontWeight:900, color:"#000", clipPath:"polygon(5px 0,100% 0,100% calc(100% - 5px),calc(100% - 5px) 100%,0 100%,0 5px)" }}>
+                            {i+1}
+                          </div>
+                          <span className="font-tech" style={{ fontSize:"0.5rem", color, textTransform:"uppercase", letterSpacing:"0.25em", padding:"2px 8px", border:`1px solid ${color}`, background:`${color}15` }}>
+                            {label}
+                          </span>
+                        </div>
+                        <div style={{ color, opacity:0.65 }}>{ICONS[i % 4]}</div>
+                      </div>
+
+                      {/* Gradient rule */}
+                      <div style={{ height:"1px", background:`linear-gradient(to right,${color}55,transparent)` }} />
+
+                      {/* Module tag + Headline */}
+                      <div>
+                        <span className="font-tech" style={{ fontSize:"0.5rem", color:"rgba(255,255,255,0.22)", textTransform:"uppercase", letterSpacing:"0.3em", display:"block", marginBottom:"6px" }}>
+                          MOD_{String(i+1).padStart(2,"0")} // TACTIC
+                        </span>
+                        <h4 style={{ margin:0, fontSize:"0.82rem", fontWeight:900, color:"rgba(255,255,255,0.92)", textTransform:"uppercase", letterSpacing:"-0.01em", lineHeight:1.3 }}>
+                          {headline}
+                        </h4>
+                      </div>
+
+                      {/* Body */}
+                      <p className="font-tech" style={{ fontSize:"0.73rem", color:"rgba(255,255,255,0.48)", lineHeight:1.75, margin:0, flex:1, borderLeft:`2px solid ${color}35`, paddingLeft:"10px" }}>
+                        {tip}
+                      </p>
+
+                      {/* XP reward badge */}
+                      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", padding:"6px 10px", background:"rgba(255,255,255,0.025)", border:"1px solid rgba(255,255,255,0.05)" }}>
+                        <span className="font-tech" style={{ fontSize:"0.5rem", color:"rgba(255,255,255,0.28)", textTransform:"uppercase", letterSpacing:"0.2em" }}>
+                          XP on completion
+                        </span>
+                        <span className="font-led" style={{ fontSize:"0.88rem", color:"var(--accent-amber)" }}>+10 XP</span>
+                      </div>
+
+                      {/* CTA */}
+                      <button
+                        onClick={() => addSuggestionToTasks(tip)}
+                        disabled={isAdded}
+                        className="font-tech"
+                        style={{
+                          width:"100%", padding:"11px 16px",
+                          background: isAdded ? "rgba(16,185,129,0.12)" : `linear-gradient(to right,${color}20,rgba(255,255,255,0.03))`,
+                          border:`1px solid ${color}`,
+                          color,
+                          fontSize:"0.62rem", fontWeight:900, textTransform:"uppercase", letterSpacing:"0.22em",
+                          cursor: isAdded ? "not-allowed" : "pointer",
+                          transition:"all 0.2s",
+                          display:"flex", alignItems:"center", justifyContent:"center", gap:"8px",
+                          clipPath:"polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px)",
+                        }}
+                      >
+                        {isAdded ? (
+                          <>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            QUEUED_TO_TASKS
+                          </>
+                        ) : (
+                          <>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+                            DEPLOY_TO_TASK_QUEUE
+                          </>
+                        )}
+                      </button>
                     </div>
-                    <p className="font-tech" style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.4)", textTransform: "uppercase", lineHeight: 1.6, marginBottom: "32px", flex: 1 }}>
-                      {tip}
-                    </p>
-                    <button 
-                      onClick={() => addSuggestionToTasks(tip)}
-                      disabled={Boolean(addedSuggestions[tip])}
-                      className="clip-angle font-tech"
-                      style={{ marginTop: "auto", width: "100%", padding: "16px", background: addedSuggestions[tip] ? "rgba(16, 185, 129, 0.1)" : "rgba(255, 255, 255, 0.05)", border: `1px solid ${addedSuggestions[tip] ? "var(--accent-emerald)" : "rgba(255, 255, 255, 0.1)"}`, color: addedSuggestions[tip] ? "var(--accent-emerald)" : "var(--accent-amber)", fontSize: "0.75rem", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.3em", cursor: addedSuggestions[tip] ? "not-allowed" : "pointer", transition: "all 0.2s" }}
-                    >
-                      {addedSuggestions[tip] ? "PROTOCOL_ADDED" : "DEPLOY_DIRECTIVE"}
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
               {taskActionMessage && <div className="font-tech" style={{ padding: "12px", border: "1px solid var(--accent-emerald)", color: "var(--accent-emerald)", background: "rgba(16, 185, 129, 0.05)", fontSize: "0.8rem", textTransform: "uppercase" }}>{taskActionMessage}</div>}
             </div>
