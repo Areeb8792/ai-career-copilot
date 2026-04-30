@@ -124,21 +124,58 @@ function Layout({ children }) {
   const handleProfileImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > MAX_PROFILE_IMAGE_SIZE) {
-      alert("Image must be smaller than 2MB.");
+
+    // Accept any reasonable file size — we'll compress it client-side
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Image must be smaller than 10MB.");
       return;
     }
-    const reader = new FileReader();
-    reader.onload = async (ev) => {
-      const base64 = ev.target.result;
-      try {
-        await axios.patch(`${API_BASE_URL}/api/profile`, { profileImage: base64 }, { headers: { authorization: token } });
-        setAccount((prev) => ({ ...prev, profileImage: base64 }));
-      } catch (err) {
-        alert("Failed to update profile image");
+
+    // Compress via canvas: max 400×400, JPEG quality 0.82
+    const compressImage = (file) =>
+      new Promise((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          const MAX = 400;
+          let { width, height } = img;
+          if (width > MAX || height > MAX) {
+            const ratio = Math.min(MAX / width, MAX / height);
+            width  = Math.round(width  * ratio);
+            height = Math.round(height * ratio);
+          }
+          const canvas = document.createElement("canvas");
+          canvas.width  = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(url);
+          resolve(canvas.toDataURL("image/jpeg", 0.82));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Failed to load image")); };
+        img.src = url;
+      });
+
+    try {
+      const base64 = await compressImage(file);
+
+      // Sanity check: compressed result should be well under 2 MB
+      if (base64.length > 2_000_000) {
+        alert("Image is still too large after compression. Please choose a smaller image.");
+        return;
       }
-    };
-    reader.readAsDataURL(file);
+
+      await axios.patch(
+        `${API_BASE_URL}/api/profile`,
+        { profileImage: base64 },
+        { headers: { authorization: token }, timeout: 15000 }
+      );
+      setAccount((prev) => ({ ...prev, profileImage: base64 }));
+      setPasswordStatus("Avatar updated successfully.");
+    } catch (err) {
+      const msg = err?.response?.data?.message || err?.message || "Unknown error";
+      alert(`Failed to update profile image: ${msg}`);
+    }
   };
 
   const handleChangePassword = async (e) => {
@@ -162,12 +199,26 @@ function Layout({ children }) {
   useEffect(() => {
     loadProfile();
 
+    // Load progress from server (merge with localStorage fallback)
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+    if (token) {
+      import("axios").then(({ default: ax }) => {
+        ax.get(`${API_BASE_URL}/api/progress`, {
+          headers: { authorization: token },
+          timeout: 6000,
+        }).then(({ data }) => {
+          if (data.progress && typeof data.progress.totalXp === "number") {
+            setProgressData(data.progress);
+            try { localStorage.setItem("prometheus_progress", JSON.stringify(data.progress)); } catch {}
+          }
+        }).catch(() => {/* keep localStorage value */});
+      });
+    }
+
     const handleProgressUpdate = () => {
       try {
         const raw = localStorage.getItem("prometheus_progress");
-        if (raw) {
-          setProgressData(JSON.parse(raw));
-        }
+        if (raw) setProgressData(JSON.parse(raw));
       } catch {}
     };
 

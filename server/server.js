@@ -20,7 +20,9 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json());
+// Allow up to 5 MB JSON bodies so base64-encoded profile images fit
+app.use(express.json({ limit: "5mb" }));
+app.use(express.urlencoded({ limit: "5mb", extended: true }));
 
 app.get("/", (req, res) => {
   res.send("AI Career Copilot Backend Running");
@@ -81,19 +83,29 @@ mongoose.connection.on("error", (err) => {
 const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: String,
-  xp: { type: Number, default: 0 },
-  quests: { type: Array, default: [] },
   profileImage: { type: String, default: "" },
+  // --- Persisted progress ---
+  tasks: {
+    type: Array,
+    default: [],
+  },
+  progress: {
+    type: new mongoose.Schema({
+      totalXp:       { type: Number, default: 0 },
+      totalCompleted:{ type: Number, default: 0 },
+      dailyHistory:  { type: Map, of: Number, default: {} },
+    }, { _id: false }),
+    default: () => ({ totalXp: 0, totalCompleted: 0, dailyHistory: {} }),
+  },
 });
 
-  
 const User = mongoose.model("User", userSchema);
 
 const toPublicUser = (user) => ({
   id: user._id,
   email: user.email,
-  xp: user.xp ?? 0,
-  questCount: Array.isArray(user.quests) ? user.quests.length : 0,
+  xp: user.progress?.totalXp ?? 0,
+  questCount: Array.isArray(user.tasks) ? user.tasks.filter(t => t.completed).length : 0,
   profileImage: user.profileImage || "",
 });
 
@@ -390,6 +402,51 @@ app.patch("/api/profile/password", authMiddleware, async (req, res) => {
     await user.save();
 
     res.json({ message: "Password updated successfully." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ─── GET /api/progress ─────────────────────────────────────────
+app.get("/api/progress", authMiddleware, async (req, res) => {
+  if (!(await ensureDatabaseReady(res))) return;
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({
+      tasks:    user.tasks    || [],
+      progress: {
+        totalXp:        user.progress?.totalXp        ?? 0,
+        totalCompleted: user.progress?.totalCompleted ?? 0,
+        dailyHistory:   user.progress?.dailyHistory
+                          ? Object.fromEntries(user.progress.dailyHistory)
+                          : {},
+      },
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// ─── PATCH /api/progress ────────────────────────────────────────
+app.patch("/api/progress", authMiddleware, async (req, res) => {
+  if (!(await ensureDatabaseReady(res))) return;
+  const { tasks, progress } = req.body;
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+    if (Array.isArray(tasks))   user.tasks    = tasks;
+    if (progress && typeof progress === "object") {
+      user.progress = {
+        totalXp:        Number(progress.totalXp)        || 0,
+        totalCompleted: Number(progress.totalCompleted) || 0,
+        dailyHistory:   progress.dailyHistory || {},
+      };
+    }
+    await user.save();
+    res.json({ message: "Progress saved" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
