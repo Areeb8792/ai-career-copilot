@@ -1,0 +1,410 @@
+/* ── Font imports ──────────────────────────────────────────── */
+@import url('https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&f[]=satoshi@400,500,700&display=swap');
+
+/* ── Theme Variables ──────────────────────────────────────── */
+.premium-login-wrapper {
+  --bg-deep: #0f1837;
+  --bg-main: #1f3055;
+  --bg-elevated: #182352;
+  --accent-primary: #6366f1;
+  --accent-secondary: #8b5cf6;
+  --accent-glow: rgba(99, 102, 241, 0.4);
+  --text-main: #e2e8f0;
+  --text-dim: #94a3b8;
+  --text-header: #ffffff;
+  --shadow-dark: #0a0f1d;
+  --shadow-light: rgba(255, 255, 255, 0.02);
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --ambient-1: rgba(99, 102, 241, 0.15);
+  --ambient-2: rgba(139, 92, 246, 0.15);
+}
+
+.premium-login-wrapper.theme-default {
+  --accent-primary: #6366f1; --accent-secondary: #8b5cf6; --accent-glow: rgba(99, 102, 241, 0.4);
+  --ambient-1: rgba(99, 102, 241, 0.15); --ambient-2: rgba(139, 92, 246, 0.15);
+}
+
+.premium-login-wrapper.theme-emerald {
+  --accent-primary: #10b981; --accent-secondary: #14b8a6; --accent-glow: rgba(16, 185, 129, 0.4);
+  --ambient-1: rgba(16, 185, 129, 0.15); --ambient-2: rgba(20, 184, 166, 0.15);
+}
+
+.premium-login-wrapper.theme-purple {
+  --accent-primary: #9333ea; --accent-secondary: #ec4899; --accent-glow: rgba(147, 51, 234, 0.4);
+  --ambient-1: rgba(147, 51, 234, 0.15); --ambient-2: rgba(236, 72, 153, 0.15);
+}
+
+.premium-login-wrapper.theme-coral {
+  --accent-primary: #ff6b6b; --accent-secondary: #ff8c42; --accent-glow: rgba(255, 107, 107, 0.4);
+  --ambient-1: rgba(255, 107, 107, 0.15); --ambient-2: rgba(255, 140, 66, 0.15);
+}
+
+.premium-login-wrapper.theme-light {
+  --bg-deep: #f5f7fa; --bg-main: #ffffff; --bg-elevated: #ffffff;
+  --accent-primary: #3b82f6; --accent-secondary: #6366f1; --accent-glow: rgba(59, 130, 246, 0.2);
+  --text-main: #334155; --text-dim: #64748b; --text-header: #1e293b;
+  --shadow-dark: #d1d9e6; --shadow-light: #ffffff;
+  --glass-bg: rgba(255, 255, 255, 0.8); --glass-border: rgba(0, 0, 0, 0.05);
+  --ambient-1: rgba(59, 130, 246, 0.05); --ambient-2: rgba(99, 102, 241, 0.05);
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
+.premium-login-wrapper {
+  font-family: 'Satoshi', 'Inter', -apple-system, sans-serif;
+  color: var(--text-main);
+  background: var(--bg-deep);
+  transition: background-color 0.5s ease;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  overflow: hidden;
+}
+
+.premium-login-wrapper *,
+.premium-login-wrapper *::before,
+.premium-login-wrapper *::after {
+  box-sizing: border-box;
+}
+
+.premium-login-wrapper h1, 
+.premium-login-wrapper h2, 
+.premium-login-wrapper h3, 
+.premium-login-wrapper h4 {
+  font-family: 'General Sans', 'Inter', sans-serif;
+  color: var(--text-header);
+}
+
+/* ── Neumorphic Surfaces ──────────────────────────────────── */
+.premium-login-wrapper .neumorphic-flat {
+  background: var(--bg-elevated);
+  box-shadow: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
+  transition: background-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.premium-login-wrapper .neumorphic-recessed {
+  background: var(--bg-deep);
+  box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.premium-login-wrapper .glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+}
+
+/* ── Ambient Glows ────────────────────────────────────────── */
+.premium-login-wrapper .ambient-glow {
+  position: absolute;
+  width: 800px;
+  height: 800px;
+  border-radius: 50%;
+  filter: blur(140px);
+  z-index: 0;
+  pointer-events: none;
+  animation: pulse-login 12s infinite alternate ease-in-out;
+}
+
+@keyframes pulse-login {
+  from { transform: scale(1) translate(0, 0); opacity: 0.5; }
+  to   { transform: scale(1.2) translate(10%, 10%); opacity: 0.8; }
+}
+
+/* ── Noise Texture — MUST be below interactions (z-index: -1 on pointer-events) */
+.premium-login-wrapper .noise-texture {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Stagger Animations ───────────────────────────────────── */
+.premium-login-wrapper .stagger-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUpLogin 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fadeInUpLogin {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Input Focus Ring ─────────────────────────────────────── */
+.premium-login-wrapper .input-group {
+  position: relative;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.premium-login-wrapper .input-group:focus-within {
+  box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -2px -2px 6px var(--shadow-light), 0 0 0 3px var(--accent-glow);
+  border-color: var(--accent-primary) !important;
+}
+
+.premium-login-wrapper .input-group:focus-within .input-icon {
+  color: var(--accent-primary);
+}
+
+.premium-login-wrapper .input-icon {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin-left: 20px;
+  color: var(--text-dim);
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.premium-login-wrapper .input-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.premium-login-wrapper .input-field {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 16px 16px 16px 14px;
+  font-size: 14px;
+  font-family: 'Satoshi', sans-serif;
+  color: var(--text-main);
+  outline: none;
+}
+
+.premium-login-wrapper .input-field::placeholder {
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+/* ── Custom Checkbox ──────────────────────────────────────── */
+.premium-login-wrapper .custom-checkbox {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  border: 2px solid var(--accent-primary);
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  background: transparent;
+  position: relative;
+  vertical-align: middle;
+}
+
+.premium-login-wrapper .custom-checkbox:checked {
+  background: var(--accent-primary);
+}
+
+.premium-login-wrapper .custom-checkbox:checked::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+/* ── CTA Button ───────────────────────────────────────────── */
+.premium-login-wrapper .btn-cta {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
+  color: white;
+  font-weight: 800;
+  font-family: 'General Sans', sans-serif;
+  font-size: 15px;
+  letter-spacing: 0.02em;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 10px 25px var(--accent-glow);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.premium-login-wrapper .btn-cta:hover {
+  transform: scale(1.02) translateY(-2px);
+  box-shadow: 0 15px 35px var(--accent-glow);
+}
+
+.premium-login-wrapper .btn-cta:active {
+  transform: scale(0.98);
+  box-shadow: 0 5px 15px var(--accent-glow);
+}
+
+.premium-login-wrapper .btn-cta:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.premium-login-wrapper .btn-cta.success {
+  background: linear-gradient(to right, #10b981, #34d399);
+  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+}
+
+.premium-login-wrapper .btn-cta .btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.premium-login-wrapper .btn-cta:hover .btn-arrow {
+  transform: translateX(4px);
+}
+
+/* ── Social Buttons ───────────────────────────────────────── */
+.premium-login-wrapper .social-btn {
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.premium-login-wrapper .social-btn:hover {
+  transform: scale(1.1);
+  color: var(--text-header);
+}
+
+.premium-login-wrapper .social-btn:active {
+  transform: scale(0.95);
+}
+
+.premium-login-wrapper .social-btn svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* ── Eye Toggle ───────────────────────────────────────────── */
+.premium-login-wrapper .eye-toggle {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  margin-right: 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.premium-login-wrapper .eye-toggle:hover {
+  color: var(--accent-primary);
+}
+
+.premium-login-wrapper .eye-toggle svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* ── Theme Switcher ───────────────────────────────────────── */
+.premium-login-wrapper .theme-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+}
+
+.premium-login-wrapper .theme-switcher:hover .theme-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.premium-login-wrapper .theme-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  cursor: pointer;
+  text-align: left;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.2s ease;
+}
+
+.premium-login-wrapper .theme-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ── Orb Gradient ─────────────────────────────────────────── */
+.premium-login-wrapper .orb-gradient {
+  background: radial-gradient(circle at 30% 30%, var(--accent-primary), var(--accent-secondary));
+  box-shadow: 0 0 50px var(--accent-glow);
+}
+
+/* ── Spin Animation ───────────────────────────────────────── */
+.premium-login-wrapper .spin-icon {
+  animation: login-spin 1s linear infinite;
+}
+
+@keyframes login-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Register Link ────────────────────────────────────────── */
+.premium-login-wrapper .register-link {
+  background: transparent;
+  border: none;
+  font-weight: 800;
+  color: var(--accent-primary);
+  cursor: pointer;
+  text-decoration: none;
+  padding: 0;
+  font-family: 'Satoshi', sans-serif;
+  font-size: 14px;
+  transition: opacity 0.2s ease;
+}
+
+.premium-login-wrapper .register-link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+/* ── Scrollbar ────────────────────────────────────────────── */
+.premium-login-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+.premium-login-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+.premium-login-wrapper::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 10px;
+}

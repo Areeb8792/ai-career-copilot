@@ -1,368 +1,232 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import API_BASE_URL from "../config/api";
+import "../pages/theme-dynamic.css";
 
-
-const MAX_PROFILE_IMAGE_SIZE = 2 * 1024 * 1024;
-
-function PrometheusSigil() {
-  return (
-    <svg viewBox="0 0 64 64" aria-hidden="true">
-      <path
-        d="M32 4 50 14v20c0 12.2-7.6 22.2-18 26-10.4-3.8-18-13.8-18-26V14L32 4Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-      <path
-        d="M35.2 13.6c1.8 7-1.9 10.2-5.4 14.1-2.6 2.9-4.1 5.5-4.1 9 0 5.2 3.8 8.7 8.5 8.7 5.5 0 9.3-4.2 9.3-10 0-5.1-2.8-9.4-8.3-21.8Z"
-        fill="currentColor"
-      />
-      <path
-        d="M31.8 44.2 24.6 52h14.8l-7.6-7.8Z"
-        fill="currentColor"
-      />
-      <path
-        d="M20 20h7M37 20h7M18 28h5M41 28h5M21 37h4M39 37h4"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        opacity="0.85"
-      />
-    </svg>
-  );
-}
-
-const formatDisplayName = (email) => {
-  const value = String(email || "").trim().toLowerCase();
-
-  if (!value) {
-    return "Operator";
-  }
-
-  return value
-    .split("@")[0]
-    .replace(/[._-]+/g, " ")
-    .split(" ")
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+const fmt = (email) => {
+  const v = String(email||"").trim().toLowerCase();
+  if(!v) return "Operator";
+  return v.split("@")[0].replace(/[._-]+/g," ").split(" ").filter(Boolean).map(p=>p.charAt(0).toUpperCase()+p.slice(1)).join(" ");
 };
 
+const themes = {
+  purple:{primary:'#a855f7',primary_rgb:'168,85,247',a1:'#6366f1',a1_rgb:'99,102,241',a2:'#22d3ee',a2_rgb:'34,211,238',a3:'#f97316',a3_rgb:'249,115,22',a4:'#ec4899',a4_rgb:'236,72,153'},
+  navy:{primary:'#3b82f6',primary_rgb:'59,130,246',a1:'#2563eb',a1_rgb:'37,99,235',a2:'#22d3ee',a2_rgb:'34,211,238',a3:'#f59e0b',a3_rgb:'245,158,11',a4:'#f472b6',a4_rgb:'244,114,182'},
+  blue:{primary:'#3b82f6',primary_rgb:'59,130,246',a1:'#3b82f6',a1_rgb:'59,130,246',a2:'#10b981',a2_rgb:'16,185,129',a3:'#f97316',a3_rgb:'249,115,22',a4:'#8b5cf6',a4_rgb:'139,92,246'},
+  emerald:{primary:'#10b981',primary_rgb:'16,185,129',a1:'#10b981',a1_rgb:'16,185,129',a2:'#3b82f6',a2_rgb:'59,130,246',a3:'#f59e0b',a3_rgb:'245,158,11',a4:'#8b5cf6',a4_rgb:'139,92,246'},
+  rose:{primary:'#ec4899',primary_rgb:'236,72,153',a1:'#ec4899',a1_rgb:'236,72,153',a2:'#10b981',a2_rgb:'16,185,129',a3:'#f59e0b',a3_rgb:'245,158,11',a4:'#22d3ee',a4_rgb:'34,211,238'},
+  orange:{primary:'#f97316',primary_rgb:'249,115,22',a1:'#f97316',a1_rgb:'249,115,22',a2:'#10b981',a2_rgb:'16,185,129',a3:'#ec4899',a3_rgb:'236,72,153',a4:'#8b5cf6',a4_rgb:'139,92,246'},
+  light:{primary:'#6366f1',primary_rgb:'99,102,241',a1:'#6366f1',a1_rgb:'99,102,241',a2:'#0891b2',a2_rgb:'8,145,178',a3:'#ea580c',a3_rgb:'234,88,12',a4:'#db2777',a4_rgb:'219,39,119'},
+};
+
+const themeLabels = { purple:"Purple Cosmos", navy:"Navy Blue", blue:"Ocean Blue", emerald:"Emerald", rose:"Rose Pink", orange:"Sunset", light:"☀ Light" };
+
 function Layout({ children }) {
-  const links = [
-    { label: "Home", path: "/dashboard" },
-    { label: "Risk", path: "/risk-management" },
-    { label: "Tasks", path: "/tasks" },
-    { label: "Progress", path: "/progress" },
-  ];
-  
-  const [progressData, setProgressData] = useState(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const raw = localStorage.getItem("prometheus_progress");
-        return raw ? JSON.parse(raw) : { totalXp: 0 };
-      } catch {
-        return { totalXp: 0 };
-      }
+  const [pd, setPd] = useState({ totalXp:0 });
+  const [acct, setAcct] = useState({ email:"", profileImage:"" });
+  const [showTheme, setShowTheme] = useState(false);
+  const nav = useNavigate();
+
+  const token = localStorage.getItem("token")||"";
+  const fallback = localStorage.getItem("prometheus_username")||"";
+  const name = fmt(acct.email||fallback);
+  const totalXp = pd.totalXp||0;
+  const level = Math.floor(totalXp/100)+1;
+  const TIERS=["BRONZE","SILVER","GOLD","PLATINUM","DIAMOND","CROWN","ACE","CONQUEROR"];
+  const tierName=TIERS[Math.min(Math.floor((level-1)/5),TIERS.length-1)];
+  const roman=["I","II","III","IV","V"];
+  const tierSub=((level-1)%5)+1;
+
+  useEffect(()=>{
+    if(token){
+      axios.get(`${API_BASE_URL}/api/profile`,{headers:{authorization:token}}).then(r=>{
+        const u=r.data?.user||{};
+        setAcct({email:u.email||fallback,profileImage:u.profileImage||""});
+        if(u.email) localStorage.setItem("prometheus_username",u.email);
+      }).catch(()=>setAcct({email:fallback,profileImage:""}));
+      axios.get(`${API_BASE_URL}/api/progress`,{headers:{authorization:token},timeout:6000}).then(({data})=>{
+        if(data.progress&&typeof data.progress.totalXp==="number"){
+          setPd(data.progress);
+          try{localStorage.setItem("prometheus_progress",JSON.stringify(data.progress))}catch{}
+        }
+      }).catch(()=>{try{const r=localStorage.getItem("prometheus_progress");if(r)setPd(JSON.parse(r))}catch{}});
     }
-    return { totalXp: 0 };
-  });
-
-  const [account, setAccount] = useState({
-    email: "",
-    profileImage: "",
-  });
-  const [isAccountLoading, setIsAccountLoading] = useState(true);
-  
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [passwordStatus, setPasswordStatus] = useState("");
-
-  const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
-  const fallbackEmail = typeof window !== "undefined" ? localStorage.getItem("prometheus_username") || "" : "";
-  const displayEmail = account.email || fallbackEmail;
-  const displayName = formatDisplayName(displayEmail);
-  const avatarFallback = displayName.charAt(0).toUpperCase() || "O";
-
-  const totalXp = progressData.totalXp || 0;
-  const currentLevel = Math.floor(totalXp / 100) + 1;
-  const xpIntoLevel = totalXp % 100;
-  const xpQuota = 100;
-
-  const loadProfile = async () => {
-    if (!token) {
-      setAccount({ email: fallbackEmail, profileImage: "" });
-      setIsAccountLoading(false);
-      return;
-    }
-
-    try {
-      const res = await axios.get(`${API_BASE_URL}/api/profile`, {
-        headers: { authorization: token },
-      });
-      const user = res.data?.user || {};
-      const nextAccount = {
-        email: user.email || fallbackEmail,
-        profileImage: user.profileImage || "",
-      };
-
-      setAccount(nextAccount);
-      if (nextAccount.email) {
-        localStorage.setItem("prometheus_username", nextAccount.email);
-      }
-    } catch (error) {
-      setAccount({ email: fallbackEmail, profileImage: "" });
-    } finally {
-      setIsAccountLoading(false);
-    }
-  };
-
-  const handleProfileImageUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    // Accept any reasonable file size — we'll compress it client-side
-    if (file.size > 10 * 1024 * 1024) {
-      alert("Image must be smaller than 10MB.");
-      return;
-    }
-
-    // Compress via canvas: max 400×400, JPEG quality 0.82
-    const compressImage = (file) =>
-      new Promise((resolve, reject) => {
-        const img = new Image();
-        const url = URL.createObjectURL(file);
-        img.onload = () => {
-          const MAX = 400;
-          let { width, height } = img;
-          if (width > MAX || height > MAX) {
-            const ratio = Math.min(MAX / width, MAX / height);
-            width  = Math.round(width  * ratio);
-            height = Math.round(height * ratio);
-          }
-          const canvas = document.createElement("canvas");
-          canvas.width  = width;
-          canvas.height = height;
-          const ctx = canvas.getContext("2d");
-          ctx.drawImage(img, 0, 0, width, height);
-          URL.revokeObjectURL(url);
-          resolve(canvas.toDataURL("image/jpeg", 0.82));
-        };
-        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("Failed to load image")); };
-        img.src = url;
-      });
-
-    try {
-      const base64 = await compressImage(file);
-
-      // Sanity check: compressed result should be well under 2 MB
-      if (base64.length > 2_000_000) {
-        alert("Image is still too large after compression. Please choose a smaller image.");
-        return;
-      }
-
-      await axios.patch(
-        `${API_BASE_URL}/api/profile`,
-        { profileImage: base64 },
-        { headers: { authorization: token }, timeout: 15000 }
-      );
-      setAccount((prev) => ({ ...prev, profileImage: base64 }));
-      setPasswordStatus("Avatar updated successfully.");
-    } catch (err) {
-      const msg = err?.response?.data?.message || err?.message || "Unknown error";
-      alert(`Failed to update profile image: ${msg}`);
-    }
-  };
-
-  const handleChangePassword = async (e) => {
-    e.preventDefault();
-    if (newPassword.length < 6) {
-      setPasswordStatus("New password must be at least 6 characters.");
-      return;
-    }
-    try {
-      await axios.patch(`${API_BASE_URL}/api/profile/password`, {
-        currentPassword, newPassword
-      }, { headers: { authorization: token } });
-      setPasswordStatus("Password updated.");
-      setCurrentPassword("");
-      setNewPassword("");
-    } catch (err) {
-      setPasswordStatus(err.response?.data?.message || "Failed to update password");
-    }
-  };
-
-  useEffect(() => {
-    loadProfile();
-
-    // Load progress from server (merge with localStorage fallback)
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
-    if (token) {
-      import("axios").then(({ default: ax }) => {
-        ax.get(`${API_BASE_URL}/api/progress`, {
-          headers: { authorization: token },
-          timeout: 6000,
-        }).then(({ data }) => {
-          if (data.progress && typeof data.progress.totalXp === "number") {
-            setProgressData(data.progress);
-            try { localStorage.setItem("prometheus_progress", JSON.stringify(data.progress)); } catch {}
-          }
-        }).catch(() => {/* keep localStorage value */});
-      });
-    }
-
-    const handleProgressUpdate = () => {
-      try {
-        const raw = localStorage.getItem("prometheus_progress");
-        if (raw) setProgressData(JSON.parse(raw));
-      } catch {}
-    };
-
-    window.addEventListener("prometheus_progress_update", handleProgressUpdate);
-    window.addEventListener("storage", handleProgressUpdate);
-
-    return () => {
-      window.removeEventListener("prometheus_progress_update", handleProgressUpdate);
-      window.removeEventListener("storage", handleProgressUpdate);
-    };
+    const saved=localStorage.getItem('prometheus-theme');
+    applyTheme(saved&&themes[saved]?saved:'purple');
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  },[]);
+
+  const applyTheme=(k)=>{
+    const t=themes[k]; if(!t) return;
+    const r=document.documentElement;
+    r.style.setProperty('--accent-primary',t.primary);
+    r.style.setProperty('--accent-primary-rgb',t.primary_rgb);
+    r.style.setProperty('--accent-1',t.a1); r.style.setProperty('--accent-1-rgb',t.a1_rgb);
+    r.style.setProperty('--accent-2',t.a2); r.style.setProperty('--accent-2-rgb',t.a2_rgb);
+    r.style.setProperty('--accent-3',t.a3); r.style.setProperty('--accent-3-rgb',t.a3_rgb);
+    r.style.setProperty('--accent-4',t.a4); r.style.setProperty('--accent-4-rgb',t.a4_rgb);
+    if(k==='light'){
+      r.style.setProperty('--bg-body','#e3e8f0');
+      r.style.setProperty('--bg-main-end','227,232,240');
+      r.style.setProperty('--bg-sidebar','#e3e8f0');
+      r.style.setProperty('--bg-card','#e3e8f0');
+      r.style.setProperty('--bg-card-border','transparent');
+      r.style.setProperty('--bg-input','#dce1e9');
+      r.style.setProperty('--bg-elevated','#dce1e9');
+      r.style.setProperty('--border-subtle','rgba(0,0,0,0.04)');
+      r.style.setProperty('--text-primary','#0f1119');
+      r.style.setProperty('--text-secondary','#1a1f33');
+      r.style.setProperty('--text-muted','#374057');
+      r.style.setProperty('--text-dim','#535d73');
+      r.style.setProperty('--dot-grid','rgba(99,102,241,0.04)');
+      r.style.setProperty('--scrollbar-track','#d5dbe5');
+      r.style.setProperty('--scrollbar-thumb','#b0b8c8');
+      r.style.setProperty('--card-shadow','8px 8px 16px #c0c5cf, -8px -8px 16px #ffffff');
+      r.style.setProperty('--card-shadow-hover','10px 10px 20px #b8bdc7, -10px -10px 20px #ffffff');
+      r.style.setProperty('--input-shadow','inset 4px 4px 8px #c0c5cf, inset -4px -4px 8px #ffffff');
+      document.body.classList.add('theme-light');
+    } else {
+      r.style.setProperty('--bg-body','#10172e');
+      r.style.setProperty('--bg-main-end','34,48,91');
+      r.style.setProperty('--bg-sidebar','rgba(13,14,26,0.7)');
+      r.style.setProperty('--bg-card','rgba(30,33,73,0.75)');
+      r.style.setProperty('--bg-card-border','rgba(255,255,255,0.07)');
+      r.style.setProperty('--bg-input','rgba(0,0,0,0.3)');
+      r.style.setProperty('--bg-elevated','rgba(17,24,39,0.4)');
+      r.style.setProperty('--border-subtle','rgba(255,255,255,0.05)');
+      r.style.setProperty('--text-primary','#ffffff');
+      r.style.setProperty('--text-secondary','#e2e8f0');
+      r.style.setProperty('--text-muted','#9ca3af');
+      r.style.setProperty('--text-dim','#6b7280');
+      r.style.setProperty('--dot-grid','rgba(19,30,104,0.03)');
+      r.style.setProperty('--scrollbar-track','#05060d');
+      r.style.setProperty('--scrollbar-thumb','#1e1e30');
+      r.style.setProperty('--card-shadow','0 10px 30px -10px rgba(0,0,0,0.5)');
+      r.style.setProperty('--card-shadow-hover','0 15px 40px -10px rgba(0,0,0,0.6)');
+      r.style.setProperty('--input-shadow','none');
+      document.body.classList.remove('theme-light');
+    }
+    localStorage.setItem('prometheus-theme',k); setShowTheme(false);
+  };
+
+  const greeting=()=>{const h=new Date().getHours();return h<12?"Good morning":h<17?"Good afternoon":"Good evening";};
 
   return (
-    <div className="app-shell" style={{ overflow: "hidden", maxWidth: "100vw" }}>
-      {/* Background Overlays */}
-      <div className="cyber-grid-vanguard" />
-      <div className="scanlines" />
+    <div className="flex min-h-screen p-4 lg:p-6 gap-6 relative" style={{background: "var(--bg-body)", color: "var(--text-primary)", zIndex: 1, overflowX: "hidden", fontFamily: "'Satoshi', sans-serif"}}>
+      {/* Cosmic background elements */}
+      <div className="cosmic-bg" style={{ position: "fixed", inset: 0, zIndex: -2, background: "radial-gradient(circle at 20% 30%, rgba(var(--accent-1-rgb), 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(var(--accent-1-rgb), 0.1) 0%, transparent 50%), linear-gradient(180deg, var(--bg-body) 0%, rgb(var(--bg-main-end)) 100%)" }} />
+      <div className="grid-overlay" style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
+      <div className="star" style={{ width: 4, height: 4, top: "10%", left: "20%" }} />
+      <div className="star" style={{ width: 2, height: 2, top: "40%", left: "80%" }} />
+      <div className="star" style={{ width: 4, height: 4, top: "70%", left: "15%" }} />
+      <div className="star" style={{ width: 2, height: 2, top: "25%", left: "60%" }} />
 
-      <header className="cyber-top-nav" style={{ background: "rgba(15,23,42,0.6)", backdropFilter: "blur(12px)", borderBottom: "1px solid rgba(255,255,255,0.05)", position: "relative" }}>
-        {/* Profile Block */}
-        <div style={{ display: "flex", alignItems: "center", gap: "16px", flex: 1 }}>
-          <div 
-            className="cyber-account-avatar clip-angle" 
-            style={{ width: "52px", height: "52px", fontSize: "1.4rem", border: "2px solid var(--accent-amber)", background: "rgba(251,191,36,0.1)", cursor: "pointer", position: "relative" }}
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-          >
-            {account.profileImage ? (
-              <img src={account.profileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-            ) : (
-              avatarFallback
-            )}
-            <div style={{ position: "absolute", bottom: "-4px", right: "-4px", background: "var(--accent-purple)", width: "16px", height: "16px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", border: "2px solid #0f172a" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m18 15-6-6-6 6"/></svg>
-            </div>
+      {/* Sidebar */}
+      <aside className="hidden lg:flex flex-col w-72 glass-card p-6 relative overflow-hidden" style={{ height: "calc(100vh - 3rem)", position: "sticky", top: 24, borderRadius: 24, flexShrink: 0 }}>
+        <div style={{ position: "absolute", top: -96, left: -96, width: 192, height: 192, background: "rgba(var(--accent-1-rgb), 0.1)", filter: "blur(80px)", borderRadius: "50%" }} />
+        
+        <div className="flex items-center gap-3 mb-10">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-[0_0_20px_rgba(var(--accent-1-rgb),0.4)]" style={{ background: "var(--accent-1)" }}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           </div>
-          <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "4px" }}>
-              <div>
-                <strong className="glitch-text" style={{ display: "block", color: "var(--accent-purple)", fontSize: "1.2rem", letterSpacing: "0.1em", textTransform: "uppercase", fontStyle: "italic", fontWeight: 900 }}>
-                  OP_0XF
-                </strong>
-                <span className="font-tech" style={{ color: "var(--accent-emerald)", fontSize: "0.7rem", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "4px" }}>
-                  <span className="animate-pulse" style={{ display: "inline-block", width: "6px", height: "6px", background: "currentColor", borderRadius: "50%", boxShadow: "0 0 8px currentColor" }}></span>
-                  SYNC_ACTIVE
-                </span>
-              </div>
-              <div style={{ textAlign: "right" }}>
-                <span className="font-tech" style={{ display: "block", color: "var(--text-dim)", fontSize: "0.6rem", letterSpacing: "0.1em", textTransform: "uppercase" }}>RANK</span>
-                <strong className="font-led" style={{ color: "var(--accent-amber)", fontSize: "1.2rem", letterSpacing: "0.1em" }}>LVL.{String(currentLevel).padStart(2, '0')}</strong>
-              </div>
-            </div>
-            {/* XP Bar */}
-            <div style={{ height: "6px", background: "var(--bg-slate-800)", border: "1px solid rgba(255,255,255,0.05)", padding: "1px", marginTop: "8px", position: "relative", overflow: "hidden" }}>
-              <div style={{ height: "100%", width: `${(xpIntoLevel / xpQuota) * 100}%`, transition: "width 0.5s ease", background: "linear-gradient(90deg, var(--accent-purple), var(--accent-emerald))", boxShadow: "0 0 8px var(--accent-purple)" }}></div>
-            </div>
-          </div>
-          
-          {/* Dropdown Menu */}
-          {showProfileMenu && (
-            <div className="clip-angle font-tech profile-dropdown-panel" style={{ position: "absolute", top: "80px", left: "12px", width: "min(320px, calc(100vw - 24px))", background: "rgba(15, 23, 42, 0.97)", border: "1px solid var(--accent-purple)", backdropFilter: "blur(12px)", padding: "20px", zIndex: 100, boxShadow: "0 0 20px rgba(124, 58, 237, 0.2)" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: "8px" }}>
-                <span style={{ fontSize: "0.7rem", color: "var(--accent-amber)", letterSpacing: "0.1em", textTransform: "uppercase" }}>UPLINK_CONFIG</span>
-                <button onClick={() => setShowProfileMenu(false)} style={{ background: "none", border: "none", color: "white", cursor: "pointer" }}>✕</button>
-              </div>
-
-              {/* Upload PFP */}
-              <div style={{ marginBottom: "24px" }}>
-                <label style={{ display: "block", fontSize: "0.6rem", color: "rgba(255,255,255,0.5)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.1em" }}>AVATAR_UPLOAD</label>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                  <label className="clip-angle" style={{ padding: "8px 16px", background: "rgba(124, 58, 237, 0.1)", border: "1px solid var(--accent-purple)", color: "var(--accent-purple)", fontSize: "0.6rem", cursor: "pointer", textTransform: "uppercase" }}>
-                    Select_File
-                    <input type="file" accept="image/*" style={{ display: "none" }} onChange={handleProfileImageUpload} />
-                  </label>
-                  <span style={{ fontSize: "0.5rem", color: "rgba(255,255,255,0.3)", textTransform: "uppercase" }}>MAX_SIZE: 2MB</span>
-                </div>
-              </div>
-
-              {/* Change Password */}
-              <form onSubmit={handleChangePassword}>
-                <label style={{ display: "block", fontSize: "0.6rem", color: "rgba(255,255,255,0.5)", marginBottom: "8px", textTransform: "uppercase", letterSpacing: "0.1em" }}>SECURITY_KEY_UPDATE</label>
-                <input 
-                  type="password" 
-                  placeholder="CURRENT_KEY" 
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="clip-angle"
-                  style={{ width: "100%", padding: "10px", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--accent-emerald)", fontSize: "0.7rem", marginBottom: "8px", outline: "none" }} 
-                />
-                <input 
-                  type="password" 
-                  placeholder="NEW_KEY" 
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="clip-angle"
-                  style={{ width: "100%", padding: "10px", background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", color: "var(--accent-amber)", fontSize: "0.7rem", marginBottom: "12px", outline: "none" }} 
-                />
-                <button type="submit" className="clip-angle" style={{ width: "100%", padding: "10px", background: "var(--accent-purple)", border: "none", color: "black", fontWeight: 900, fontSize: "0.7rem", cursor: "pointer", textTransform: "uppercase" }}>
-                  EXECUTE_CHANGE
-                </button>
-                {passwordStatus && (
-                  <div style={{ marginTop: "12px", fontSize: "0.6rem", color: passwordStatus === "Password updated." ? "var(--accent-emerald)" : "#ef4444", textTransform: "uppercase" }}>
-                    {passwordStatus}
-                  </div>
-                )}
-              </form>
-            </div>
-          )}
+          <span className="text-xl font-bold tracking-tight uppercase font-display" style={{ color: "var(--text-primary)" }}>Prometheus</span>
         </div>
 
-        {/* Navigation Tabs */}
-        <nav className="cyber-nav" style={{ paddingBottom: "4px" }}>
-          {links.map((link) => (
-            <NavLink
-              key={link.path}
-              to={link.path}
-              className={({ isActive }) =>
-                `clip-tab font-tech ${isActive ? "active" : ""}`
-              }
-              style={({ isActive }) => ({
-                display: "block",
-                padding: "8px 16px",
-                color: isActive ? "#0f172a" : "#f1f5f9",
-                background: isActive ? "var(--accent-amber)" : "var(--bg-slate-800)",
-                border: "1px solid rgba(255,255,255,0.05)",
-                fontSize: "0.7rem",
-                fontWeight: "bold",
-                textTransform: "uppercase",
-                letterSpacing: "0.15em",
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                boxShadow: isActive ? "0 0 12px var(--accent-amber)" : "none"
-              })}
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-      </header>
+        <div className="flex-1 space-y-8">
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest px-4 mb-4" style={{ color: "var(--text-dim)" }}>Core</p>
+            <nav className="space-y-2 px-1">
+              <NavLink to="/progress" className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                <span>Dashboard</span>
+              </NavLink>
+              <NavLink to="/tasks" className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                <span>Tasks</span>
+              </NavLink>
+              <NavLink to="/risk-management" className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                <span>Risk</span>
+              </NavLink>
+            </nav>
+          </div>
 
-      <main className="cyber-main">{children}</main>
+          <div className="space-y-1">
+            <p className="text-[10px] font-bold uppercase tracking-widest px-4 mb-4" style={{ color: "var(--text-dim)" }}>Intelligence</p>
+            <nav className="space-y-2 px-1">
+              <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group hover:text-white" style={{ color: "var(--text-muted)", fontWeight: 500 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 20V4.5z"/><path d="M16 8V5c0-1.1.9-2 2-2"/><path d="M12 13h4M12 17h6"/></svg>
+                <span>Coaching</span>
+              </a>
+            </nav>
+          </div>
+
+          {/* AI Assistant Card inside Sidebar */}
+          <div className="mt-auto p-4 rounded-2xl relative group overflow-hidden" style={{ background: "rgba(var(--accent-1-rgb),0.05)", border: "1px solid rgba(var(--accent-1-rgb),0.2)" }}>
+            <div className="absolute -right-4 -bottom-4 w-20 h-20 blur-xl" style={{ background: "rgba(var(--accent-1-rgb),0.1)" }} />
+            <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color: "var(--accent-1)" }}>AI Assistant</p>
+            <p className="text-xs mb-4 leading-relaxed" style={{ color: "var(--text-dim)" }}>Get AI-powered insights to improve your progress and achieve your goals faster.</p>
+            <button className="w-full py-2.5 rounded-xl text-xs font-semibold transition-all" style={{ background: "rgba(var(--accent-1-rgb),0.2)", border: "1px solid rgba(var(--accent-1-rgb),0.4)", color: "var(--accent-1)", boxShadow: "0 0 15px rgba(var(--accent-1-rgb),0.1)" }}>CONSULT COPILOT</button>
+          </div>
+        </div>
+
+        <div className="pt-6 border-t flex items-center gap-3" style={{ borderColor: "var(--border-subtle)", marginTop: 24 }}>
+          <div className="w-10 h-10 rounded-full p-0.5 overflow-hidden ring-2" style={{ background: "var(--bg-elevated)", borderColor: "var(--border-subtle)", border: "1px solid", ringColor: "rgba(var(--accent-1-rgb),0.2)" }}>
+            {acct.profileImage ? <img src={acct.profileImage} alt="Avatar" className="w-full h-full object-cover rounded-full" /> : <div className="w-full h-full flex items-center justify-center font-bold text-white rounded-full bg-slate-800">{name.charAt(0)}</div>}
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold truncate" style={{ color: "var(--text-primary)" }}>{name}</p>
+            <div className="flex items-center gap-1.5">
+              <span className="text-[10px] font-bold uppercase tracking-tighter" style={{ color: "var(--accent-1)" }}>{tierName} {roman[tierSub-1]}</span>
+              <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--accent-1)" }} />
+            </div>
+          </div>
+          <button onClick={() => nav("/profile")} className="p-2 transition-colors" style={{ color: "var(--text-dim)" }}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="3"/></svg></button>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col gap-6 w-full max-w-[1200px] mx-auto z-10">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
+          <div className="space-y-1">
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: "var(--text-primary)" }}>{greeting()}, {name.split(" ")[0]}</h1>
+              <p className="text-sm" style={{ color: "var(--text-muted)" }}>You're on a <span className="font-semibold" style={{ color: "var(--accent-1)" }}>14-day streak!</span> Let's hit Level {level+1} today.</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-4">
+            <div className="relative flex-1 md:w-64">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-dim)" }}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" placeholder="Search commands..." className="w-full rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-primary)" }} />
+            </div>
+            <div className="flex items-center gap-2">
+              <div style={{ position: "relative" }}>
+                <button onClick={() => setShowTheme(!showTheme)} className="p-2.5 rounded-xl transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-dim)" }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>
+                </button>
+                {showTheme && <>
+                  <div style={{ position: "fixed", inset: 0, zIndex: 40 }} onClick={() => setShowTheme(false)} />
+                  <div style={{ position: "absolute", right: 0, top: 48, width: 200, background: "var(--bg-card)", border: "1px solid var(--bg-card-border)", borderRadius: 16, padding: 8, zIndex: 50, boxShadow: "0 20px 60px rgba(0,0,0,0.3)", backdropFilter: "blur(12px)" }}>
+                    <div style={{ fontSize: 10, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em", padding: "8px 12px" }}>Select Theme</div>
+                    {Object.keys(themes).map(k => <button key={k} onClick={() => applyTheme(k)} style={{ width: "100%", display: "flex", alignItems: "center", gap: 12, padding: "10px 12px", borderRadius: 10, border: "none", background: "transparent", color: "var(--text-muted)", fontSize: 12, fontWeight: 700, cursor: "pointer", textTransform: "capitalize" }}><div style={{ width: 12, height: 12, borderRadius: "50%", background: k === 'light' ? 'linear-gradient(135deg,#6366f1,#f0f2f5)' : themes[k].primary, boxShadow: `0 0 8px ${themes[k].primary}66` }} />{themeLabels[k] || k}</button>)}
+                  </div>
+                </>}
+              </div>
+              <button className="p-2.5 rounded-xl transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-dim)" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 3a6 6 0 009 9 9 9 0 11-9-9Z"/></svg>
+              </button>
+              <button onClick={() => nav("/tasks")} className="px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center gap-2 transition-all glow-primary" style={{ background: "var(--accent-1)", color: "#fff", boxShadow: "0 0 25px rgba(var(--accent-1-rgb),0.4)" }}>
+                + New Task
+              </button>
+            </div>
+          </div>
+        </header>
+
+        {children}
+      </main>
     </div>
   );
 }
 
 export default Layout;
-

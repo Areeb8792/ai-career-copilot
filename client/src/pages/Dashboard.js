@@ -1,317 +1,381 @@
-import { useNavigate } from "react-router-dom";
-import Layout from "../components/layout";
-import "./theme.css";
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './dashboard-noir.css';
+import './theme-dynamic.css';
 
-const featureCards = [
-  {
-    id: "01",
-    title: "Skill_Matrix_v2",
-    accent: "var(--accent-purple)",
-    bg: "rgba(124, 58, 237, 0.1)",
-    border: "rgba(124, 58, 237, 0.3)",
-    copy: "Real-time skill comparison against the global labor ledger. Identifies critical leveling points for your professional avatar.",
-    link: "ACCESS_MATRIX",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
-    ),
-    path: "/risk-management",
-  },
-  {
-    id: "02",
-    title: "Daily_Quests",
-    accent: "var(--accent-amber)",
-    bg: "rgba(251, 191, 36, 0.1)",
-    border: "rgba(251, 191, 36, 0.3)",
-    copy: "Receive objective-based tasks daily. Each completion boosts your sync-factor and unlocks new high-tier project opportunities.",
-    link: "VIEW_QUEST_LOG",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-    ),
-    path: "/tasks",
-  },
-  {
-    id: "03",
-    title: "Proxy_Agent",
-    accent: "var(--accent-emerald)",
-    bg: "rgba(16, 185, 129, 0.1)",
-    border: "rgba(16, 185, 129, 0.3)",
-    copy: "Deploy an AI sub-routine that manages low-level logic, allowing your primary processor to focus on high-stakes human interaction.",
-    link: "DEPLOY_PROXY",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
-    ),
-    path: "/progress",
-  },
-];
+const Icon = ({ name, className }) => {
+  const svgs = {
+    'arrow-right': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>,
+    'github': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.03c3.18-.35 6.5-1.5 6.5-7.1a5.1 5.1 0 0 0-1.4-3.5 4.9 4.9 0 0 0-.1-3.5s-1.1-.3-3.5 1.3a12.1 12.1 0 0 0-6 0c-2.4-1.6-3.5-1.3-3.5-1.3a4.9 4.9 0 0 0-.1 3.5 5.1 5.1 0 0 0-1.4 3.5c0 5.6 3.3 6.7 6.5 7.1a4.8 4.8 0 0 0-1 3.03v4"/><path d="M9 20c-5 1.5-5-2.5-7-3"/></svg>,
+    'bot': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>,
+    'code': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+    'zap': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+    'layers': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+    'star': <svg className={className} viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>,
+    'user': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
+    'check': <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+  };
+  return svgs[name] || null;
+};
 
-function Dashboard() {
-  const navigate = useNavigate();
+// Use Blue Navy Accent
+const ACCENT_COLOR = "var(--accent-1)";
+const ACCENT_LIGHT = "rgba(59, 130, 246, 0.4)";
+
+export default function Dashboard() {
+  const nav = useNavigate();
+  const token = localStorage.getItem("token");
+
+  // Generate dense stars for parallax background
+  const shadowsSmall = useMemo(() => {
+    let value = `${~~(Math.random()*2000)}px ${~~(Math.random()*2000)}px #FFF`;
+    for(let i=1; i<700; i++) value += `, ${~~(Math.random()*2000)}px ${~~(Math.random()*2000)}px #FFF`;
+    return value;
+  }, []);
+  const shadowsMedium = useMemo(() => {
+    let value = `${~~(Math.random()*2000)}px ${~~(Math.random()*2000)}px #FFF`;
+    for(let i=1; i<200; i++) value += `, ${~~(Math.random()*2000)}px ${~~(Math.random()*2000)}px #FFF`;
+    return value;
+  }, []);
 
   return (
-    <Layout>
-      <div className="relative flex flex-col min-h-screen overflow-hidden" style={{ background: "var(--bg-dark)", margin: "-24px" }}>
-        
-        {/* Dynamic Overlays */}
-        <div className="fixed inset-0 cyber-grid-3d pointer-events-none"></div>
-        <div className="fixed inset-0 scanlines pointer-events-none"></div>
-        <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0" style={{ background: "radial-gradient(circle at 50% -20%, rgba(30, 27, 75, 0.6) 0%, transparent 75%)" }}></div>
-
-        {/* Hero Section */}
-        <section className="relative z-10 pt-24 pb-36 px-6 flex flex-col items-center text-center overflow-hidden">
-          {/* Floating Decorations */}
-          <div className="absolute -top-10 -left-10 w-64 h-64 blur-[100px] animate-pulse" style={{ background: "rgba(124, 58, 237, 0.05)" }}></div>
-          <div className="absolute top-1/4 -right-20 w-80 h-80 blur-[120px] animate-pulse" style={{ background: "rgba(251, 191, 36, 0.05)" }}></div>
-          
-          <div className="relative mb-8 inline-block">
-            <div className="absolute -inset-1 blur opacity-30" style={{ background: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))" }}></div>
-            <span className="relative px-5 py-2 font-tech uppercase" style={{ background: "rgba(15, 23, 42, 0.9)", border: "1px solid rgba(255, 255, 255, 0.1)", fontSize: "0.6rem", letterSpacing: "0.4em", color: "var(--accent-emerald)" }}>
-              PROTOCOL_STATUS: ACTIVE // SESSION_ID: G4ME_X1
-            </span>
+    <div className="selection-blue min-h-screen bg-[var(--bg-body)] text-white font-inter relative overflow-x-hidden">
+      
+      {/* Global Background */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-b from-[var(--bg-body)] to-[rgb(var(--bg-main-end))]"></div>
+          <div className="absolute top-0 left-0 w-[1px] h-[1px] bg-transparent animate-[animStar_50s_linear_infinite]" style={{boxShadow: shadowsSmall}}>
+            <div className="absolute top-[2000px] left-0 w-[1px] h-[1px] bg-transparent" style={{boxShadow: shadowsSmall}}></div>
           </div>
-
-          <h1 className="italic uppercase glitch-hero w-full" data-text="EVOLVE_OR_LOSE_CONTROL" style={{ fontSize: "clamp(2rem, 10vw, 8rem)", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1, marginBottom: "40px", wordBreak: "break-word" }}>
-            EVOLVE_OR_<br />
-            <span style={{ color: "transparent", backgroundImage: "linear-gradient(to right, var(--accent-purple), var(--accent-amber))", WebkitBackgroundClip: "text", backgroundClip: "text" }}>LOSE_CONTROL</span>
-          </h1>
-
-          <p className="max-w-3xl font-tech uppercase leading-relaxed" style={{ fontSize: "clamp(1rem, 1.5vw, 1.25rem)", color: "rgba(255, 255, 255, 0.6)", marginBottom: "56px" }}>
-            The next level of productivity is human-driven. Calculate your <span style={{ color: "var(--accent-amber)" }}>skill gap</span>, generate <span style={{ color: "var(--accent-purple)" }}>level-up tasks</span>, and deploy a <span style={{ color: "var(--accent-emerald)" }}>neural companion</span> to win.
-          </p>
-
-          <div style={{ display: "flex", gap: "32px", alignItems: "center", justifyContent: "center", flexWrap: "wrap" }}>
-            <button onClick={() => navigate("/risk-management")} className="clip-angle group relative font-tech uppercase" style={{ padding: "20px 48px", background: "linear-gradient(to right, var(--accent-amber), #f59e0b)", color: "#000", fontWeight: 900, fontSize: "1.25rem", letterSpacing: "0.1em", border: "none", cursor: "pointer", boxShadow: "0 0 20px rgba(251, 191, 36, 0.2)", transition: "all 0.2s" }}>
-              <span className="relative z-10 flex items-center gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
-                START_DIAGNOSTIC
-              </span>
-            </button>
-            <div style={{ textAlign: "left" }}>
-              <div className="font-tech uppercase tracking-widest" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.3)", marginBottom: "8px" }}>Operatives_Online</div>
-              <div style={{ display: "flex", gap: "-12px", marginLeft: "12px" }}>
-                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=X" style={{ width: "40px", height: "40px", border: "2px solid #0f172a", borderRadius: "8px", marginLeft: "-12px", background: "rgba(255,255,255,0.1)" }} alt="u" />
-                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=Y" style={{ width: "40px", height: "40px", border: "2px solid #0f172a", borderRadius: "8px", marginLeft: "-12px", background: "rgba(255,255,255,0.1)" }} alt="u" />
-                <img src="https://api.dicebear.com/7.x/pixel-art/svg?seed=Z" style={{ width: "40px", height: "40px", border: "2px solid #0f172a", borderRadius: "8px", marginLeft: "-12px", background: "rgba(255,255,255,0.1)" }} alt="u" />
-                <div style={{ width: "40px", height: "40px", border: "2px solid #0f172a", borderRadius: "8px", marginLeft: "-12px", background: "rgba(30, 27, 75, 1)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "0.6rem", fontWeight: 900, color: "var(--accent-purple)" }}>+12K</div>
-              </div>
-            </div>
+          <div className="absolute top-0 left-0 w-[2px] h-[2px] bg-transparent animate-[animStar_80s_linear_infinite]" style={{boxShadow: shadowsMedium}}>
+            <div className="absolute top-[2000px] left-0 w-[2px] h-[2px] bg-transparent" style={{boxShadow: shadowsMedium}}></div>
           </div>
-
-          {/* Interactive Risk Matrix Mini-Demo */}
-          <div className="clip-angle group relative mx-auto" style={{ marginTop: "112px", width: "100%", maxWidth: "1024px", background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "4px", backdropFilter: "blur(12px)" }}>
-            <div className="animate-float" style={{ position: "absolute", top: "-48px", right: "48px", color: "var(--accent-purple)" }}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
-            </div>
-            <div className="clip-angle p-6 md:p-14" style={{ border: "1px solid rgba(255, 255, 255, 0.05)", background: "linear-gradient(to bottom right, rgba(99, 102, 241, 0.05), transparent)" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "48px", alignItems: "center" }}>
-                
-                <div style={{ textAlign: "left" }}>
-                  <h3 style={{ fontSize: "1.875rem", fontWeight: 900, fontStyle: "italic", marginBottom: "20px", color: "var(--accent-amber)", textTransform: "uppercase", letterSpacing: "-0.05em" }}>SKILL_SYNC_CALC</h3>
-                  <p className="font-tech" style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.6)", marginBottom: "40px", textTransform: "uppercase" }}>Assess your current role parameters to identify neural augmentation priorities.</p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-                    <input type="text" placeholder="ROLE_IDENTIFIER" className="font-tech" style={{ width: "100%", background: "rgba(2, 6, 23, 0.8)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "16px 20px", fontSize: "0.75rem", textTransform: "uppercase", color: "var(--accent-purple)", outline: "none", transition: "all 0.2s" }} />
-                    <button onClick={() => navigate("/risk-management")} className="clip-angle font-tech" style={{ width: "100%", padding: "16px", background: "rgba(99, 102, 241, 0.1)", border: "1px solid rgba(99, 102, 241, 0.3)", color: "var(--accent-purple)", fontWeight: 900, fontSize: "0.6rem", textTransform: "uppercase", cursor: "pointer", transition: "all 0.2s" }}>Initiate_Analysis</button>
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
-                  <div className="clip-angle" style={{ background: "rgba(2, 6, 23, 0.9)", border: "1px solid rgba(255, 255, 255, 0.1)", padding: "32px", position: "relative", overflow: "hidden" }}>
-                    <div className="font-tech" style={{ position: "absolute", top: "8px", right: "8px", fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)" }}>NODE_ID: 808-PX</div>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "20px" }}>
-                      <span className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.3em" }}>Threat_Level_Output</span>
-                      <span style={{ fontSize: "3rem", fontWeight: 400, color: "var(--accent-purple)", lineHeight: 1 }}>72.8%</span>
-                    </div>
-                    <div className="clip-angle" style={{ height: "20px", width: "100%", background: "rgba(30, 41, 59, 1)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "2px", position: "relative" }}>
-                      <div style={{ height: "100%", width: "72.8%", background: "linear-gradient(to right, var(--accent-purple), #3b82f6)", boxShadow: "0 0 15px var(--accent-purple)", transition: "width 1.2s" }}></div>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(80px, 1fr))", gap: "12px", textAlign: "center", marginTop: "32px" }}>
-                      <div className="clip-angle" style={{ padding: "12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                        <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.2)", textTransform: "uppercase", marginBottom: "4px" }}>Risk</div>
-                        <div style={{ fontSize: "0.75rem", fontWeight: 900, color: "var(--accent-amber)" }}>MODERATE</div>
-                      </div>
-                      <div className="clip-angle" style={{ padding: "12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                        <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.2)", textTransform: "uppercase", marginBottom: "4px" }}>XP_Potential</div>
-                        <div style={{ fontSize: "0.75rem", fontWeight: 900, color: "var(--accent-purple)" }}>850</div>
-                      </div>
-                      <div className="clip-angle" style={{ padding: "12px", background: "rgba(255, 255, 255, 0.05)", border: "1px solid rgba(255, 255, 255, 0.05)" }}>
-                        <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.2)", textTransform: "uppercase", marginBottom: "4px" }}>Stability</div>
-                        <div style={{ fontSize: "0.75rem", fontWeight: 900, color: "var(--accent-emerald)" }}>SECURE</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Modules Section */}
-        <section className="relative z-10 py-36 px-6">
-          <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "32px", marginBottom: "96px", alignItems: "flex-start", "@media (min-width: 768px)": { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-end" } }}>
-              <div>
-                <h2 style={{ fontSize: "clamp(2.5rem, 8vw, 4.5rem)", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", marginBottom: "24px", margin: 0, wordBreak: "break-word" }}>
-                  GAME_<span style={{ color: "var(--accent-purple)" }}>MODULES</span>
-                </h2>
-                <p className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Advanced protocols for professional leveling.</p>
-              </div>
-              <div style={{ fontSize: "clamp(2rem, 8vw, 4.5rem)", fontWeight: 400, color: "rgba(255, 255, 255, 0.05)", userSelect: "none", letterSpacing: "-0.05em", wordBreak: "break-all" }}>PRO_GEAR_X9</div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px" }}>
-              {featureCards.map((card) => (
-                <div key={card.id} className="group clip-angle game-card-gradient" style={{ position: "relative", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "40px", transition: "all 0.3s", cursor: "pointer" }} onClick={() => navigate(card.path)}>
-                  <div style={{ position: "absolute", bottom: "-40px", right: "-40px", fontSize: "8rem", color: "rgba(255, 255, 255, 0.02)", fontWeight: 900, transition: "color 0.3s" }}>{card.id}</div>
-                  <div className="clip-angle" style={{ width: "56px", height: "56px", background: card.bg, border: `1px solid ${card.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "40px", color: card.accent }}>
-                    {card.icon}
-                  </div>
-                  <h4 style={{ fontSize: "1.5rem", fontWeight: 900, fontStyle: "italic", textTransform: "uppercase", letterSpacing: "-0.05em", marginBottom: "20px", transition: "color 0.3s" }}>{card.title}</h4>
-                  <p className="font-tech" style={{ fontSize: "0.875rem", color: "rgba(255, 255, 255, 0.4)", lineHeight: 1.6, marginBottom: "40px" }}>
-                    {card.copy}
-                  </p>
-                  <span className="font-tech" style={{ display: "flex", alignItems: "center", gap: "12px", fontSize: "0.6rem", color: card.accent, textTransform: "uppercase", letterSpacing: "0.1em", transition: "all 0.3s" }}>
-                    {card.link} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Global Metrics */}
-        <section className="relative z-10 py-32" style={{ background: "rgba(2, 6, 23, 0.4)", borderTop: "1px solid rgba(255, 255, 255, 0.05)", borderBottom: "1px solid rgba(255, 255, 255, 0.05)" }}>
-           <div style={{ maxWidth: "1280px", margin: "0 auto", padding: "0 24px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "48px", textAlign: "center" }}>
-              <div className="group">
-                 <div style={{ fontSize: "3rem", fontWeight: 400, color: "var(--accent-purple)", marginBottom: "12px", transition: "transform 0.3s" }}>1.2M+</div>
-                 <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Levels_Reached</div>
-              </div>
-              <div className="group">
-                 <div style={{ fontSize: "3rem", fontWeight: 400, color: "var(--accent-amber)", marginBottom: "12px", transition: "transform 0.3s" }}>92.1%</div>
-                 <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Sync_Precision</div>
-              </div>
-              <div className="group">
-                 <div style={{ fontSize: "3rem", fontWeight: 400, color: "var(--accent-emerald)", marginBottom: "12px", transition: "transform 0.3s" }}>420K</div>
-                 <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Quests_Completed</div>
-              </div>
-              <div className="group">
-                 <div style={{ fontSize: "3rem", fontWeight: 400, color: "rgba(255, 255, 255, 0.4)", marginBottom: "12px", transition: "transform 0.3s" }}>99.9%</div>
-                 <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", textTransform: "uppercase", letterSpacing: "0.4em" }}>Server_Uptime</div>
-              </div>
-           </div>
-        </section>
-
-        {/* Access Tiers */}
-        <section className="relative z-10 py-40 px-6">
-          <div style={{ maxWidth: "1280px", margin: "0 auto", textAlign: "center" }}>
-             <h2 style={{ fontSize: "clamp(2.5rem, 8vw, 3.75rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "96px", textTransform: "uppercase", letterSpacing: "-0.05em", wordBreak: "break-word" }}>SYNC_TIERS</h2>
-             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "40px", alignItems: "center" }}>
-                
-                {/* Tier 1 */}
-                <div className="clip-angle" style={{ background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "48px", display: "flex", flexDirection: "column", transition: "border-color 0.3s" }}>
-                   <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", marginBottom: "32px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tier_01</div>
-                   <h5 style={{ fontSize: "1.5rem", fontWeight: 900, fontStyle: "italic", marginBottom: "12px", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.7)" }}>PLAYER</h5>
-                   <div style={{ fontSize: "3.75rem", fontWeight: 400, marginBottom: "40px", letterSpacing: "-0.05em", color: "var(--accent-purple)" }}>$0.00</div>
-                   <ul className="font-tech" style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "56px", fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.3)", padding: 0 }}>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-purple)" }}>✔</span> 1 Weekly Scan</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-purple)" }}>✔</span> Basic Quest Log</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", opacity: 0.2 }}><span>🔒</span> Full Neural Proxy</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", opacity: 0.2 }}><span>🔒</span> Priority Latency</li>
-                   </ul>
-                   <button onClick={() => navigate("/signup")} className="clip-angle font-tech" style={{ marginTop: "auto", width: "100%", padding: "16px", background: "transparent", border: "1px solid rgba(255, 255, 255, 0.1)", color: "rgba(255, 255, 255, 0.4)", fontWeight: 900, textTransform: "uppercase", fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s" }}>Initiate_Play</button>
-                </div>
-
-                {/* Tier 2 */}
-                <div className="clip-angle" style={{ background: "rgba(30, 27, 75, 0.2)", border: "1px solid rgba(124, 58, 237, 0.4)", padding: "48px", display: "flex", flexDirection: "column", boxShadow: "0 0 20px rgba(124, 58, 237, 0.1)", transform: "scale(1.05)", zIndex: 20, position: "relative" }}>
-                   <div className="clip-angle" style={{ position: "absolute", top: "-20px", right: "40px", background: "linear-gradient(to right, var(--accent-purple), #3b82f6)", color: "white", padding: "6px 20px", fontWeight: 900, fontSize: "0.5rem", textTransform: "uppercase", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>Recommended</div>
-                   <div className="font-tech" style={{ fontSize: "0.5rem", color: "var(--accent-purple)", marginBottom: "32px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tier_02</div>
-                   <h5 style={{ fontSize: "1.875rem", fontWeight: 900, fontStyle: "italic", marginBottom: "12px", textTransform: "uppercase", color: "white" }}>ELITE</h5>
-                   <div style={{ fontSize: "3.75rem", fontWeight: 400, marginBottom: "40px", letterSpacing: "-0.05em", color: "var(--accent-amber)" }}>$29.00</div>
-                   <ul className="font-tech" style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "56px", fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.7)", padding: 0 }}>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px" }}><span style={{ color: "var(--accent-amber)" }}>✔</span> Unlimited Sync Scans</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px" }}><span style={{ color: "var(--accent-amber)" }}>✔</span> Full skill Mapping</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px" }}><span style={{ color: "var(--accent-amber)" }}>✔</span> Standard Neural Proxy</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px" }}><span style={{ color: "var(--accent-amber)" }}>✔</span> Weekly Performance Stats</li>
-                   </ul>
-                   <button onClick={() => navigate("/signup")} className="clip-angle font-tech" style={{ marginTop: "auto", width: "100%", padding: "16px", background: "linear-gradient(to right, var(--accent-purple), #6d28d9)", color: "white", fontWeight: 900, textTransform: "uppercase", fontSize: "0.75rem", cursor: "pointer", border: "none", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}>Upgrade_Now</button>
-                </div>
-
-                {/* Tier 3 */}
-                <div className="clip-angle" style={{ background: "rgba(15, 23, 42, 0.6)", border: "1px solid rgba(255, 255, 255, 0.05)", padding: "48px", display: "flex", flexDirection: "column", transition: "border-color 0.3s" }}>
-                   <div className="font-tech" style={{ fontSize: "0.5rem", color: "rgba(255, 255, 255, 0.3)", marginBottom: "32px", textTransform: "uppercase", letterSpacing: "0.1em" }}>Tier_03</div>
-                   <h5 style={{ fontSize: "1.5rem", fontWeight: 900, fontStyle: "italic", marginBottom: "12px", textTransform: "uppercase", color: "rgba(255, 255, 255, 0.7)" }}>LEGEND</h5>
-                   <div style={{ fontSize: "3.75rem", fontWeight: 400, marginBottom: "40px", letterSpacing: "-0.05em", color: "var(--accent-emerald)" }}>$99.00</div>
-                   <ul className="font-tech" style={{ textAlign: "left", display: "flex", flexDirection: "column", gap: "20px", marginBottom: "56px", fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.3)", padding: 0 }}>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-emerald)" }}>✔</span> Enterprise Neural Sync</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-emerald)" }}>✔</span> Custom Proxy Training</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-emerald)" }}>✔</span> Master Level Clearance</li>
-                      <li style={{ display: "flex", alignItems: "center", gap: "16px", color: "rgba(255, 255, 255, 0.5)" }}><span style={{ color: "var(--accent-emerald)" }}>✔</span> Early Patch Access</li>
-                   </ul>
-                   <button onClick={() => navigate("/signup")} className="clip-angle font-tech" style={{ marginTop: "auto", width: "100%", padding: "16px", background: "transparent", border: "1px solid rgba(255, 255, 255, 0.1)", color: "rgba(255, 255, 255, 0.4)", fontWeight: 900, textTransform: "uppercase", fontSize: "0.75rem", cursor: "pointer", transition: "all 0.2s" }}>Request_Admin</button>
-                </div>
-             </div>
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="relative z-10 py-40 px-6 overflow-hidden">
-            <div className="clip-angle mx-auto" style={{ maxWidth: "1024px", background: "linear-gradient(to right, rgba(124, 58, 237, 0.3), rgba(251, 191, 36, 0.3), rgba(16, 185, 129, 0.3))", padding: "2px" }}>
-              <div className="clip-angle p-8 md:p-16 lg:p-24" style={{ background: "rgba(2, 6, 23, 1)", textAlign: "center", position: "relative" }}>
-                 <h2 className="glitch-hero w-full" data-text="WIN_THE_FUTURE" style={{ fontSize: "clamp(2.5rem, 8vw, 6rem)", fontWeight: 900, fontStyle: "italic", marginBottom: "40px", textTransform: "uppercase", letterSpacing: "-0.05em", wordBreak: "break-word" }}>WIN_THE_FUTURE</h2>
-                 <p className="font-tech" style={{ fontSize: "1.125rem", color: "rgba(255, 255, 255, 0.5)", marginBottom: "56px", maxWidth: "672px", margin: "0 auto 56px auto", textTransform: "uppercase" }}>The game has changed. Don't play by the old rules. Augment your reality now.</p>
-                 <div style={{ display: "flex", gap: "32px", justifyContent: "center", flexWrap: "wrap" }}>
-                    <button onClick={() => navigate("/signup")} className="clip-angle font-tech" style={{ padding: "20px 56px", background: "var(--accent-purple)", color: "white", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", cursor: "pointer", border: "none", boxShadow: "0 0 20px rgba(124, 58, 237, 0.3)", transition: "all 0.2s" }}>ENTER_SERVER</button>
-                    <button className="clip-angle font-tech" style={{ padding: "20px 56px", border: "1px solid rgba(255, 255, 255, 0.1)", background: "transparent", color: "rgba(255, 255, 255, 0.7)", fontWeight: 900, textTransform: "uppercase", letterSpacing: "0.1em", cursor: "pointer", transition: "all 0.2s" }}>READ_STRATEGY</button>
-                 </div>
-              </div>
-           </div>
-        </section>
-
-        {/* Footer */}
-        <footer className="relative z-10 pt-24 pb-12 px-6" style={{ background: "rgba(2, 6, 23, 1)", borderTop: "1px solid rgba(255, 255, 255, 0.05)" }}>
-           <div style={{ maxWidth: "1280px", margin: "0 auto" }}>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "64px", marginBottom: "96px" }}>
-                 <div style={{ gridColumn: "span 2" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "40px" }}>
-                      <div className="clip-angle" style={{ width: "40px", height: "40px", background: "var(--accent-purple)", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)" }}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="6" x2="10" y1="12" y2="12"/><line x1="8" x2="8" y1="10" y2="14"/><line x1="15" x2="15.01" y1="13" y2="13"/><line x1="18" x2="18.01" y1="11" y2="11"/><rect width="20" height="12" x="2" y="6" rx="2"/></svg>
-                      </div>
-                      <span style={{ fontSize: "1.875rem", fontWeight: 900, fontStyle: "italic", letterSpacing: "-0.05em", color: "white" }}>PROMETHEUS</span>
-                    </div>
-                    <p className="font-tech" style={{ fontSize: "0.75rem", color: "rgba(255, 255, 255, 0.5)", maxWidth: "450px", textTransform: "uppercase", lineHeight: 1.6 }}>
-                      Engineered by Sayyed Areeb. Professional neural augmentation platform. Leveling up the global labor market through high-fidelity diagnostic protocols.
-                    </p>
-                 </div>
-                 <div>
-                    <h6 style={{ fontSize: "0.75rem", fontWeight: 900, color: "rgba(255, 255, 255, 0.7)", textTransform: "uppercase", marginBottom: "40px", letterSpacing: "0.4em" }}>LOBBIES</h6>
-                    <ul className="font-tech" style={{ display: "flex", flexDirection: "column", gap: "20px", fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.5)", textTransform: "uppercase", letterSpacing: "0.2em", listStyle: "none", padding: 0 }}>
-                       <li><a href="/" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-purple)'} onMouseOut={e => e.target.style.color = 'inherit'}>Main_Hall</a></li>
-                       <li><a href="/risk-management" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-amber)'} onMouseOut={e => e.target.style.color = 'inherit'}>Diag_Chamber</a></li>
-                       <li><a href="/progress" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-emerald)'} onMouseOut={e => e.target.style.color = 'inherit'}>Proxy_Terminal</a></li>
-                       <li><a href="/tasks" style={{ textDecoration: "none", color: "inherit", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'white'} onMouseOut={e => e.target.style.color = 'inherit'}>Gear_Store</a></li>
-                    </ul>
-                 </div>
-                 <div>
-                    <h6 style={{ fontSize: "0.75rem", fontWeight: 900, color: "rgba(255, 255, 255, 0.7)", textTransform: "uppercase", marginBottom: "40px", letterSpacing: "0.4em" }}>UPLINK_PORTALS</h6>
-                    <ul style={{ display: "flex", flexDirection: "column", gap: "20px", fontSize: "0.8rem", color: "rgba(255, 255, 255, 0.5)", listStyle: "none", padding: 0 }}>
-                       <li><a href="https://www.linkedin.com/in/areeb564/" target="_blank" rel="noreferrer" className="font-tech" style={{ textDecoration: "none", color: "inherit", textTransform: "uppercase", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-purple)'} onMouseOut={e => e.target.style.color = 'inherit'}>LINKEDIN</a></li>
-                       <li><a href="https://www.instagram.com/areeb_._._?igsh=MWVsbHN0Y2tlMG4wOA==" target="_blank" rel="noreferrer" className="font-tech" style={{ textDecoration: "none", color: "inherit", textTransform: "uppercase", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-amber)'} onMouseOut={e => e.target.style.color = 'inherit'}>INSTAGRAM</a></li>
-                       <li><a href="mailto:sayyedareeb90@gmail.com" className="font-tech" style={{ textDecoration: "none", color: "inherit", textTransform: "uppercase", transition: "color 0.2s" }} onMouseOver={e => e.target.style.color = 'var(--accent-emerald)'} onMouseOut={e => e.target.style.color = 'inherit'}>SAYYEDAREEB90@GMAIL.COM</a></li>
-                    </ul>
-                 </div>
-              </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: "24px", paddingTop: "40px", borderTop: "1px solid rgba(255, 255, 255, 0.05)", "@media (min-width: 768px)": { flexDirection: "row", justifyContent: "space-between", alignItems: "center" } }}>
-                 <div className="font-tech" style={{ fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.4)", textTransform: "uppercase", letterSpacing: "0.6em" }}>© 2024 CORE_STATION_NET // ALL_DATA_SAVED</div>
-                 <div className="font-tech" style={{ display: "flex", gap: "40px", fontSize: "0.6rem", color: "rgba(255, 255, 255, 0.4)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                    <a href="#" style={{ textDecoration: "none", color: "inherit" }}>EULA_PROTOCOL</a>
-                    <a href="#" style={{ textDecoration: "none", color: "inherit" }}>SERVER_RULES</a>
-                 </div>
-              </div>
-           </div>
-        </footer>
-
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[var(--accent-1)]/5 rounded-full blur-[120px]"></div>
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(circle_at_center,black_40%,transparent_80%)]"></div>
       </div>
-    </Layout>
+
+      {/* Top Blur Header */}
+      <div className="gradient-blur"></div>
+
+      {/* Navbar */}
+      <header className="fixed top-0 left-0 w-full z-50 pt-6 px-4">
+          <nav className="max-w-5xl mx-auto flex items-center justify-between bg-[var(--bg-body)]/60 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 shadow-2xl">
+              <div className="flex items-center gap-2">
+                  <div className="w-5 h-5 bg-[var(--accent-1)] rounded-sm rotate-45"></div>
+                  <span className="text-lg font-bold font-manrope tracking-tight">PROMETHEUS</span>
+              </div>
+              
+              <div className="hidden md:flex items-center gap-8">
+                  <a href="#product" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Product</a>
+                  <a href="#solutions" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Solutions</a>
+                  <a href="#resources" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Resources</a>
+                  <a href="#pricing" className="text-sm font-medium text-zinc-400 hover:text-white transition-colors">Pricing</a>
+              </div>
+
+              <div className="flex items-center gap-4">
+                  {token ? (
+                    <button onClick={() => nav("/dashboard")} className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white/5 px-6 py-2 transition-transform active:scale-95">
+                        <span className="absolute inset-0 border border-white/10 rounded-full"></span>
+                        <span className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_75%,var(--accent-1)_100%)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                        <span className="absolute inset-[1px] rounded-full bg-[var(--bg-body)]"></span>
+                        <span className="relative z-10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                            Go to App <Icon name="arrow-right" className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                        </span>
+                    </button>
+                  ) : (
+                    <>
+                      <button onClick={() => nav("/login")} className="hidden md:block text-sm font-medium text-zinc-300 hover:text-white">Log In</button>
+                      <button onClick={() => nav("/signup")} className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white/5 px-6 py-2 transition-transform active:scale-95">
+                          <span className="absolute inset-0 border border-white/10 rounded-full"></span>
+                          <span className="absolute inset-[-100%] animate-[spin_3s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,transparent_0%,transparent_75%,var(--accent-1)_100%)] opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                          <span className="absolute inset-[1px] rounded-full bg-[var(--bg-body)]"></span>
+                          <span className="relative z-10 flex items-center gap-2 text-xs font-bold uppercase tracking-wider">
+                              Get Access <Icon name="arrow-right" className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                          </span>
+                      </button>
+                    </>
+                  )}
+              </div>
+          </nav>
+      </header>
+
+      <main className="relative z-10">
+          {/* Hero Section */}
+          <section className="min-h-screen flex flex-col items-center justify-center pt-32 pb-20 px-6">
+              <div className="text-center max-w-5xl mx-auto">
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 animate-fade-up" style={{animationDelay: "0.1s"}}>
+                      <span className="relative flex h-2 w-2">
+                          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-1)]"></span>
+                      </span>
+                      <span className="text-xs font-medium text-blue-100/90 tracking-wide font-manrope">
+                          Prometheus AI 2.0 is now live
+                      </span>
+                      <Icon name="arrow-right" className="w-3 h-3 text-[var(--accent-1)]" />
+                  </div>
+
+                  <h1 className="text-6xl md:text-8xl font-semibold tracking-tighter font-manrope leading-[1.1] mb-8 animate-fade-up" style={{animationDelay: "0.2s"}}>
+                      <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Career Intelligence</span>
+                      <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
+                          for the <span className="text-[var(--accent-1)] inline-block relative">
+                              Future
+                              <svg className="absolute w-full h-3 -bottom-2 left-0 text-[var(--accent-1)] opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
+                                  <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
+                              </svg>
+                          </span>
+                      </span>
+                  </h1>
+
+                  <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{animationDelay: "0.3s"}}>
+                      Prometheus blends Gemini AI with gamified progression to help you navigate your career 10x smarter.
+                  </p>
+
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-up" style={{animationDelay: "0.4s"}}>
+                      <button onClick={() => nav(token ? "/risk-management" : "/signup")} className="shiny-cta group">
+                          <span className="relative z-10 flex items-center gap-2 text-white font-medium">
+                              Start Your Journey <Icon name="arrow-right" className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                          </span>
+                      </button>
+                      
+                      <button onClick={() => window.open('https://github.com')} className="group px-8 py-4 rounded-full bg-zinc-900 border border-zinc-800 text-zinc-300 font-medium hover:text-white hover:bg-zinc-800 transition-all flex items-center gap-2">
+                          <Icon name="github" className="w-5 h-5" />
+                          View on GitHub
+                      </button>
+                  </div>
+              </div>
+
+              {/* Logo Strip */}
+              <div className="w-full mt-32 border-y border-white/5 bg-white/[0.02] backdrop-blur-sm py-10 opacity-60 hover:opacity-100 transition-opacity">
+                  <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-8 md:gap-16">
+                      <p className="text-sm font-bold tracking-widest text-zinc-500 uppercase shrink-0">Integrated with:</p>
+                      <div className="flex flex-wrap justify-center gap-8 md:gap-16 items-center w-full">
+                          <div className="flex items-center gap-2 font-manrope font-semibold"><div className="w-6 h-6 bg-white/20 rounded-full"></div>Gemini AI</div>
+                          <div className="flex items-center gap-2 font-manrope font-semibold"><div className="w-6 h-6 bg-white/20 rounded-full"></div>React</div>
+                          <div className="flex items-center gap-2 font-manrope font-semibold"><div className="w-6 h-6 bg-white/20 rounded-full"></div>Node.js</div>
+                          <div className="flex items-center gap-2 font-manrope font-semibold"><div className="w-6 h-6 bg-white/20 rounded-full"></div>Vercel</div>
+                          <div className="flex items-center gap-2 font-manrope font-semibold"><div className="w-6 h-6 bg-white/20 rounded-full"></div>MongoDB</div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          {/* Features Bento Grid */}
+          <section id="product" className="py-32 px-6">
+              <div className="max-w-7xl mx-auto">
+                  <div className="mb-20 text-center max-w-3xl mx-auto animate-fade-up">
+                      <h2 className="text-4xl md:text-5xl font-semibold text-white tracking-tight font-manrope mb-6">
+                          The Operating System for <br />
+                          <span className="text-[var(--accent-1)]">Career Acceleration</span>
+                      </h2>
+                      <p className="text-lg text-zinc-400 font-light">
+                          Replace guesswork with one cohesive platform driven by AI.
+                      </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 h-auto lg:h-[700px]">
+                      {/* Main Feature Card */}
+                      <div className="lg:col-span-2 lg:row-span-2 group relative overflow-hidden p-8 border border-white/10 bg-gradient-to-b from-zinc-900/50 to-black hover:border-white/20 transition-all rounded-xl">
+                          <div className="relative z-10 h-full flex flex-col">
+                              <div className="mb-6 inline-flex p-3 rounded-lg bg-white/5 border border-white/10 text-[var(--accent-1)]">
+                                  <Icon name="bot" className="w-6 h-6" />
+                              </div>
+                              <h3 className="text-3xl font-semibold text-white font-manrope mb-4 tracking-tight">AI Career Roadmaps</h3>
+                              <p className="text-zinc-400 text-lg leading-relaxed">Instantly generate comprehensive career plans from a single prompt. Skills, milestones, and timelines are automatically mapped against industry benchmarks.</p>
+                              <div className="mt-auto flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                  <span className="text-xs font-mono text-[var(--accent-1)]">EXPLORE FEATURE</span>
+                                  <Icon name="arrow-right" className="w-4 h-4 text-[var(--accent-1)]" />
+                              </div>
+                          </div>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" style={{background: 'radial-gradient(circle at top right, var(--accent-1), transparent 70%)'}}></div>
+                      </div>
+
+                      {/* Feature 2 */}
+                      <div className="lg:col-span-2 group relative overflow-hidden p-8 border border-white/10 bg-[var(--bg-body)] hover:border-white/20 transition-all rounded-xl">
+                          <div className="relative z-10 flex flex-col h-full">
+                              <div className="mb-4 inline-flex p-3 rounded-lg bg-white/5 border border-white/10 text-emerald-400">
+                                  <Icon name="code" className="w-6 h-6" />
+                              </div>
+                              <h3 className="text-2xl font-semibold text-white font-manrope mb-2">Risk Analysis</h3>
+                              <p className="text-zinc-400">Skill gap reports powered by Gemini AI, delivered in seconds to keep your career trajectory optimal.</p>
+                          </div>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" style={{background: 'radial-gradient(circle at top right, #10b981, transparent 70%)'}}></div>
+                      </div>
+
+                      {/* Feature 3 */}
+                      <div className="group relative overflow-hidden p-8 border border-white/10 bg-[var(--bg-body)] hover:border-white/20 transition-all rounded-xl">
+                          <div className="relative z-10">
+                              <div className="mb-4 inline-flex p-3 rounded-lg bg-white/5 border border-white/10 text-yellow-400">
+                                  <Icon name="zap" className="w-6 h-6" />
+                              </div>
+                              <h3 className="text-xl font-semibold text-white font-manrope mb-2">Smart Tasks</h3>
+                              <p className="text-sm text-zinc-400">Daily objectives generated by AI based on your career trajectory and goals.</p>
+                          </div>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" style={{background: 'radial-gradient(circle at top right, #eab308, transparent 70%)'}}></div>
+                      </div>
+
+                      {/* Feature 4 */}
+                      <div className="group relative overflow-hidden p-8 border border-white/10 bg-[var(--bg-body)] hover:border-white/20 transition-all rounded-xl">
+                          <div className="relative z-10">
+                              <div className="mb-4 inline-flex p-3 rounded-lg bg-white/5 border border-white/10 text-purple-400">
+                                  <Icon name="layers" className="w-6 h-6" />
+                              </div>
+                              <h3 className="text-xl font-semibold text-white font-manrope mb-2">XP Progression</h3>
+                              <p className="text-sm text-zinc-400">Gamified tracking with tiers, levels, and streaks to keep you motivated.</p>
+                          </div>
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity pointer-events-none" style={{background: 'radial-gradient(circle at top right, #a855f7, transparent 70%)'}}></div>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          {/* Testimonial Banner */}
+          <div className="w-full bg-[var(--accent-1)] py-20 px-6">
+              <div className="max-w-4xl mx-auto text-center">
+                  <div className="flex justify-center gap-1 text-white mb-6">
+                      <Icon name="star" className="w-6 h-6" />
+                      <Icon name="star" className="w-6 h-6" />
+                      <Icon name="star" className="w-6 h-6" />
+                      <Icon name="star" className="w-6 h-6" />
+                      <Icon name="star" className="w-6 h-6" />
+                  </div>
+                  <h3 className="text-3xl md:text-5xl font-bold text-white font-manrope leading-tight mb-8">
+                      "Prometheus completely changed how I approach my career growth. What used to feel overwhelming now feels like a game I'm winning."
+                  </h3>
+                  <div className="flex items-center justify-center gap-4">
+                      <div className="w-12 h-12 bg-[var(--bg-body)] rounded-full overflow-hidden flex items-center justify-center">
+                          <Icon name="user" className="text-white w-6 h-6" />
+                      </div>
+                      <div className="text-left">
+                          <div className="text-white font-bold text-lg">Sarah Chen</div>
+                          <div className="text-blue-100 font-medium">Software Engineer → Tech Lead</div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+          {/* Pricing */}
+          <section id="pricing" className="py-32 px-6 bg-[var(--bg-body)] relative border-t border-white/5">
+              <div className="max-w-7xl mx-auto">
+                  <div className="text-center mb-20">
+                      <h2 className="text-4xl md:text-5xl font-semibold text-white font-manrope mb-4">Simple, Transparent Pricing</h2>
+                      <p className="text-zinc-400">Start for free, scale as you grow.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      {/* Starter */}
+                      <div className="p-8 border border-zinc-800 bg-[var(--bg-body)] hover:border-zinc-700 transition-all rounded-xl flex flex-col">
+                          <h3 className="text-xl font-bold font-manrope mb-2">Starter</h3>
+                          <p className="text-zinc-500 text-sm mb-8 h-10">For individuals exploring AI career tools.</p>
+                          <div className="mb-8 flex items-baseline gap-1">
+                              <span className="text-zinc-500">$</span>
+                              <span className="text-5xl font-bold text-white">0</span>
+                              <span className="text-zinc-500 text-sm">/mo</span>
+                          </div>
+                          <ul className="space-y-4 mb-8 flex-1">
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> 1 Career Path</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Basic AI Analysis</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Community Support</li>
+                          </ul>
+                          <button onClick={() => nav("/signup")} className="w-full py-3 px-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-sm font-bold uppercase tracking-wider transition-all">Get Started</button>
+                      </div>
+
+                      {/* Pro */}
+                      <div className="relative p-8 border border-[var(--accent-1)] bg-zinc-900/40 shadow-[0_0_30px_rgba(59,130,246,0.15)] rounded-xl flex flex-col scale-105 z-10">
+                          <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[var(--accent-1)] text-white text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full">Recommended</div>
+                          <h3 className="text-xl font-bold font-manrope mb-2">Pro</h3>
+                          <p className="text-zinc-400 text-sm mb-8 h-10">For ambitious professionals leveling up fast.</p>
+                          <div className="mb-8 flex items-baseline gap-1">
+                              <span className="text-zinc-500">$</span>
+                              <span className="text-5xl font-bold text-white">19</span>
+                              <span className="text-zinc-500 text-sm">/mo</span>
+                          </div>
+                          <ul className="space-y-4 mb-8 flex-1">
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Unlimited Paths</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Advanced Gemini AI</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Full XP System</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Priority Support</li>
+                          </ul>
+                          <button onClick={() => nav("/signup")} className="w-full py-3 px-4 bg-[var(--accent-1)] hover:bg-[var(--accent-1)] text-white rounded-lg text-sm font-bold uppercase tracking-wider transition-all">Go Pro</button>
+                      </div>
+
+                      {/* Team */}
+                      <div className="p-8 border border-zinc-800 bg-[var(--bg-body)] hover:border-zinc-700 transition-all rounded-xl flex flex-col">
+                          <h3 className="text-xl font-bold font-manrope mb-2">Team</h3>
+                          <p className="text-zinc-500 text-sm mb-8 h-10">For organizations investing in their people.</p>
+                          <div className="mb-8 flex items-baseline gap-1">
+                              <span className="text-zinc-500">$</span>
+                              <span className="text-5xl font-bold text-white">49</span>
+                              <span className="text-zinc-500 text-sm">/mo</span>
+                          </div>
+                          <ul className="space-y-4 mb-8 flex-1">
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Team Collaboration</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> Custom Roadmaps</li>
+                              <li className="flex items-center gap-3 text-sm text-zinc-300"><Icon name="check" className="w-5 h-5 text-[var(--accent-1)]" /> API Access & SSO</li>
+                          </ul>
+                          <button onClick={() => nav("/signup")} className="w-full py-3 px-4 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg text-sm font-bold uppercase tracking-wider transition-all">Contact Sales</button>
+                      </div>
+                  </div>
+              </div>
+          </section>
+
+          {/* CTA Waitlist */}
+          <section className="py-32 px-6 text-center bg-zinc-950/40">
+              <div className="max-w-3xl mx-auto">
+                  <h2 className="text-5xl md:text-7xl font-bold font-manrope mb-8 tracking-tighter">Ready to <span className="text-[var(--accent-1)]">Ascend?</span></h2>
+                  <p className="text-xl text-zinc-400 mb-12">Join thousands of operatives using Prometheus to secure their future in the AI age.</p>
+                  
+                  <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-4">
+                      <input type="email" placeholder="Enter your email" className="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-4 text-white focus:outline-none focus:border-[var(--accent-1)] transition-all" />
+                      <button onClick={() => nav("/signup")} className="bg-[var(--accent-1)] hover:bg-[var(--accent-1)] text-white font-bold rounded-full px-8 py-4 transition-all">Join Now</button>
+                  </div>
+              </div>
+          </section>
+      </main>
+
+      {/* Footer */}
+      <footer className="bg-[var(--bg-body)] border-t border-zinc-900 pt-20 pb-10 relative overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-24 relative z-10">
+              <div className="md:col-span-2">
+                  <div className="flex items-center gap-2 mb-6">
+                      <div className="w-5 h-5 bg-[var(--accent-1)] rounded-sm rotate-45"></div>
+                      <span className="text-2xl font-bold font-manrope tracking-tight">PROMETHEUS</span>
+                  </div>
+                  <p className="text-zinc-500 max-w-xs leading-relaxed">Pioneering the future of career development with artificial intelligence and gamified progression systems.</p>
+              </div>
+              
+              <div>
+                  <h4 className="text-xs font-bold text-[var(--accent-1)] uppercase tracking-widest mb-6">Platform</h4>
+                  <ul className="space-y-4 text-zinc-400 text-sm">
+                      <li><a onClick={() => nav("/tasks")} className="cursor-pointer hover:text-white transition-colors">Tasks</a></li>
+                      <li><a onClick={() => nav("/progress")} className="cursor-pointer hover:text-white transition-colors">Progress</a></li>
+                      <li><a onClick={() => nav("/risk-management")} className="cursor-pointer hover:text-white transition-colors">Risk Analysis</a></li>
+                      <li><a onClick={() => nav("/profile")} className="cursor-pointer hover:text-white transition-colors">Profile</a></li>
+                  </ul>
+              </div>
+              
+              <div>
+                  <h4 className="text-xs font-bold text-[var(--accent-1)] uppercase tracking-widest mb-6">Account</h4>
+                  <ul className="space-y-4 text-zinc-400 text-sm">
+                      <li><a onClick={() => nav("/login")} className="cursor-pointer hover:text-white transition-colors">Log In</a></li>
+                      <li><a onClick={() => nav("/signup")} className="cursor-pointer hover:text-white transition-colors">Sign Up</a></li>
+                  </ul>
+              </div>
+          </div>
+
+          {/* Huge Footer Text */}
+          <div className="flex justify-center items-center py-10 opacity-10 pointer-events-none">
+              <h1 className="text-[15vw] leading-none font-bold font-manrope tracking-tighter text-stroke select-none">PROMETHEUS</h1>
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 border-t border-zinc-900 pt-8 flex flex-col md:flex-row items-center justify-between text-zinc-600 text-[10px] uppercase tracking-widest">
+              <p>&copy; 2026 Prometheus AI Inc. All rights reserved.</p>
+              <div className="flex gap-6 mt-4 md:mt-0">
+                  <span className="hover:text-zinc-400 cursor-pointer">Twitter</span>
+                  <span className="hover:text-zinc-400 cursor-pointer">LinkedIn</span>
+                  <span className="hover:text-zinc-400 cursor-pointer">GitHub</span>
+              </div>
+          </div>
+      </footer>
+    </div>
   );
 }
-
-export default Dashboard;

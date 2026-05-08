@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import RiskManagement from "./pages/RiskManagement";
 import Tasks from "./pages/Tasks";
 import Progress from "./pages/Progress";
+import Profile from "./pages/Profile";
 import "./pages/theme.css";
 
 function ProtectedRoute({ children }) {
@@ -84,6 +85,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Progress />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
