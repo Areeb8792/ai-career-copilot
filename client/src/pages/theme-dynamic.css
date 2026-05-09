@@ -32,6 +32,12 @@
 body { font-family:'Satoshi',sans-serif; background:var(--bg-body); color:var(--text-secondary); overflow-x:hidden; }
 h1,h2,h3,.font-display { font-family:'Cabinet Grotesk',sans-serif; }
 
+.mobile-sidebar-toggle,
+.mobile-sidebar-close,
+.mobile-sidebar-backdrop {
+  display: none;
+}
+
 /* ═══ Backgrounds ═══ */
 .bg-main {
   background:
@@ -261,6 +267,78 @@ h1,h2,h3,.font-display { font-family:'Cabinet Grotesk',sans-serif; }
   .app-workspace {
     display: block !important;
     padding: 16px !important;
+  }
+
+  .mobile-sidebar-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    margin-bottom: 12px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(var(--accent-1-rgb),0.28);
+    background: rgba(var(--accent-1-rgb),0.12);
+    color: var(--accent-1);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(var(--accent-1-rgb),0.16);
+  }
+
+  .mobile-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 80;
+    background: rgba(0,0,0,0.55);
+    border: 0;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+  }
+
+  .mobile-sidebar {
+    display: flex !important;
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    bottom: 12px !important;
+    width: min(82vw, 320px) !important;
+    height: auto !important;
+    max-height: calc(100svh - 24px) !important;
+    z-index: 90 !important;
+    transform: translateX(calc(-100% - 18px));
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto !important;
+    visibility: hidden;
+    pointer-events: none;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.45), 0 0 40px rgba(var(--accent-1-rgb),0.16) !important;
+  }
+
+  .mobile-sidebar.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .mobile-sidebar-close {
+    display: grid;
+    place-items: center;
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-elevated);
+    color: var(--text-muted);
+    z-index: 2;
+  }
+
+  .mobile-sidebar > .flex.items-center.gap-3.mb-10 {
+    padding-right: 44px;
   }
 
   .app-main-content {

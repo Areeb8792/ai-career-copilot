@@ -1,16 +1,110 @@
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import API_BASE_URL from "../config/api";
 import "./theme.css";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const makeStars = () =>
+  Array.from({ length: 140 }, (_, id) => {
+    const size = Math.random() * 2 + 1;
+    return {
+      id,
+      size,
+      top: Math.random() * 100,
+      left: Math.random() * 100,
+      duration: Math.random() * 2 + 2,
+      delay: Math.random() * 5,
+    };
+  });
+
+const makeOrbs = () =>
+  Array.from({ length: 4 }, (_, id) => ({
+    id,
+    size: Math.random() * 200 + 150,
+    top: Math.random() * 80,
+    left: Math.random() * 80,
+    duration: Math.random() * 10 + 15,
+    purple: id % 2 !== 0,
+  }));
+
+const makeParticles = () =>
+  Array.from({ length: 20 }, (_, id) => ({
+    id,
+    size: Math.random() * 3 + 1,
+    left: Math.random() * 100,
+    duration: Math.random() * 15 + 10,
+    delay: Math.random() * 10,
+  }));
+
+function AuthBackground() {
+  const stars = useMemo(makeStars, []);
+  const orbs = useMemo(makeOrbs, []);
+  const particles = useMemo(makeParticles, []);
+
+  return (
+    <div className="prometheus-auth-fx" aria-hidden="true">
+      {stars.map((star) => (
+        <span key={`star-${star.id}`} className="prometheus-auth-star" style={{ width: `${star.size}px`, height: `${star.size}px`, top: `${star.top}%`, left: `${star.left}%`, "--duration": `${star.duration}s`, animationDelay: `${star.delay}s` }} />
+      ))}
+      {orbs.map((orb) => (
+        <span key={`orb-${orb.id}`} className="prometheus-auth-orb" style={{ width: `${orb.size}px`, height: `${orb.size}px`, top: `${orb.top}%`, left: `${orb.left}%`, "--duration": `${orb.duration}s`, background: orb.purple ? "var(--prometheus-auth-purple)" : "var(--prometheus-auth-blue)" }} />
+      ))}
+      {particles.map((particle) => (
+        <span key={`particle-${particle.id}`} className="prometheus-auth-particle" style={{ width: `${particle.size}px`, height: `${particle.size}px`, left: `${particle.left}%`, "--duration": `${particle.duration}s`, animationDelay: `${particle.delay}s` }} />
+      ))}
+    </div>
+  );
+}
+
+function ArrowIcon() {
+  return (
+    <svg className="prometheus-auth-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M5 12h14" />
+      <path d="m12 5 7 7-7 7" />
+    </svg>
+  );
+}
+
+function GithubIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M12 .5A12 12 0 0 0 8.2 23.9c.6.1.8-.3.8-.6v-2.1c-3.3.7-4-1.4-4-1.4-.5-1.3-1.3-1.7-1.3-1.7-1.1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 .1.8 1.6 2.8 1.1.1-.8.4-1.3.7-1.6-2.6-.3-5.4-1.3-5.4-5.9 0-1.3.5-2.4 1.2-3.2-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.3 1.2a11.3 11.3 0 0 1 6 0C17.6 4.5 18.6 4.8 18.6 4.8c.6 1.6.2 2.9.1 3.2.8.8 1.2 1.9 1.2 3.2 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A12 12 0 0 0 12 .5Z" />
+    </svg>
+  );
+}
+
+function GoogleIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true">
+      <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7A19.9 19.9 0 0 0 24 4C13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5Z" />
+      <path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7A19.9 19.9 0 0 0 24 4C16.3 4 9.6 8.3 6.3 14.7Z" />
+      <path fill="#4CAF50" d="M24 44c5.1 0 9.8-2 13.3-5.2l-6.2-5.2A11.9 11.9 0 0 1 12.9 28l-6.6 5.1C9.6 39.6 16.3 44 24 44Z" />
+      <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3a12 12 0 0 1-4.2 5.6l6.2 5.2C36.9 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5Z" />
+    </svg>
+  );
+}
+
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const screenRef = useRef(null);
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      if (!screenRef.current) return;
+      const x = (event.clientX / window.innerWidth) * 100;
+      const y = (event.clientY / window.innerHeight) * 100;
+      screenRef.current.style.setProperty("--mouse-x", `${x}%`);
+      screenRef.current.style.setProperty("--mouse-y", `${y}%`);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => document.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  const handleSignup = async (event) => {
+    event.preventDefault();
     const normalizedEmail = email.trim().toLowerCase();
 
     if (!EMAIL_PATTERN.test(normalizedEmail)) {
@@ -41,165 +135,62 @@ function Signup() {
     }
   };
 
-  const particles = useMemo(() => {
-    return Array.from({ length: 30 }).map((_, i) => ({
-      id: i,
-      left: Math.random() * 100 + "vw",
-      top: Math.random() * 100 + "vh",
-      duration: (Math.random() * 10 + 5) + "s",
-      delay: Math.random() * 5 + "s",
-      opacity: Math.random() * 0.5
-    }));
-  }, []);
-
   return (
-    <div className="auth-screen min-h-screen relative flex items-center justify-center overflow-hidden font-tech" style={{ background: "var(--bg-dark)", color: "#fff" }}>
-      {/* Background Layers */}
-      <div className="absolute inset-0 bg-[#0f172a]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1e1b4b_0%,_#0f172a_80%)]"></div>
-      <div className="cyber-grid-3d" style={{ opacity: 0.3, transformOrigin: "top center" }}></div>
-      <div className="absolute inset-0 scanlines opacity-20 mix-blend-overlay"></div>
-      
-      {/* Animated Particles */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {particles.map(p => (
-          <div 
-            key={p.id}
-            className="particle"
-            style={{
-              position: "absolute",
-              background: "var(--accent-emerald)",
-              width: "2px",
-              height: "2px",
-              borderRadius: "50%",
-              left: p.left,
-              top: p.top,
-              animationDuration: p.duration,
-              animationDelay: p.delay,
-              opacity: p.opacity
-            }}
-          />
-        ))}
-      </div>
+    <div ref={screenRef} className="prometheus-auth-screen">
+      <AuthBackground />
 
-      {/* Main Content Container */}
-      <div className="auth-grid relative z-10 w-full max-w-5xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-        
-        {/* Left Side: Branding & Info */}
-        <div className="auth-brand-panel lg:col-span-7 flex flex-col items-start gap-8">
-          <div className="flex items-center gap-4 group">
-            <div className="clip-angle glow-box-purple" style={{ width: "64px", height: "64px", background: "linear-gradient(to top right, var(--accent-emerald), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px" }}>
-              <div className="clip-angle" style={{ width: "100%", height: "100%", background: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "white", transition: "color 0.3s" }} className="group-hover:text-var(--accent-emerald)"><rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9" rx="1"/><path d="M15 2v2"/><path d="M15 20v2"/><path d="M2 15h2"/><path d="M2 9h2"/><path d="M20 15h2"/><path d="M20 9h2"/><path d="M9 2v2"/><path d="M9 20v2"/></svg>
+      <header className="prometheus-auth-header">
+        <a href="/dashboard" className="prometheus-auth-logo">
+          <span className="prometheus-auth-logo-mark"><span /></span>
+          <span className="prometheus-auth-logo-text">Prometheus</span>
+        </a>
+        <a href="/dashboard" className="prometheus-auth-back">Back to main site &rarr;</a>
+      </header>
+
+      <main className="prometheus-auth-main">
+        <section className="prometheus-auth-panel">
+          <div className="prometheus-auth-intro">
+            <h2>Secure Your <span>Future</span></h2>
+            <p>Create your account to access your neural assistant and survival tasks.</p>
+          </div>
+
+          <div className="prometheus-auth-card">
+            <div className="prometheus-auth-card-glow" />
+            <form className="prometheus-auth-form" onSubmit={handleSignup}>
+              <div>
+                <label htmlFor="email">Email Address</label>
+                <input id="email" type="email" placeholder="name@company.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
               </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="italic uppercase glitch-hero" data-text="PROMETHEUS" style={{ fontSize: "2.5rem", fontWeight: 900, letterSpacing: "-0.05em", lineHeight: 1 }}>PROMETHEUS</span>
-              <span style={{ fontSize: "0.6rem", color: "var(--accent-emerald)", letterSpacing: "0.4em", textTransform: "uppercase" }}>Central_Auth_Protocol_v2.4</span>
-            </div>
-          </div>
 
-          <div className="clip-angle relative p-1" style={{ background: "linear-gradient(to right, rgba(16, 185, 129, 0.4), transparent)" }}>
-            <div className="auth-info-card clip-angle backdrop-blur-xl" style={{ background: "rgba(0,0,0,0.6)", padding: "32px", border: "1px solid rgba(255,255,255,0.05)" }}>
-              <h2 className="italic uppercase" style={{ fontSize: "3rem", fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.05em", lineHeight: 1.1 }}>
-                REGISTER_<br/><span style={{ color: "var(--accent-emerald)" }}>NEW_OPERATIVE</span>
-              </h2>
-              <p style={{ fontSize: "0.875rem", color: "rgba(255,255,255,0.5)", lineHeight: 1.6, maxWidth: "450px", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                Welcome recruit. Initialize your neural link to access the risk assessment matrix and survival directives.
-              </p>
-              
-              <div style={{ marginTop: "40px", display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <div style={{ width: "12px", height: "12px", background: "#00ff00", borderRadius: "50%", boxShadow: "0 0 8px var(--accent-emerald)" }} className="animate-pulse"></div>
-                  <span style={{ fontSize: "0.6rem", color: "var(--accent-emerald)", textTransform: "uppercase", letterSpacing: "0.1em" }}>SYSTEM_STATUS: SECURE_UPLINK</span>
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                  <div style={{ width: "12px", height: "12px", background: "#00ffff", borderRadius: "50%", boxShadow: "0 0 8px var(--accent-purple)" }}></div>
-                  <span style={{ fontSize: "0.6rem", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.1em" }}>LATENCY: 12MS // NODES_SYNCED</span>
-                </div>
+              <div>
+                <label htmlFor="password">Password</label>
+                <input id="password" type="password" placeholder="••••••••" value={password} onChange={(event) => setPassword(event.target.value)} required />
               </div>
+
+              <button type="submit" className="prometheus-auth-submit">
+                <span>Create Account</span>
+                <ArrowIcon />
+              </button>
+            </form>
+
+            <div className="prometheus-auth-divider">
+              <span />
+              <strong>Or continue with</strong>
+            </div>
+
+            <div className="prometheus-auth-socials">
+              <button type="button"><GithubIcon /><span>GitHub</span></button>
+              <button type="button"><GoogleIcon /><span>Google</span></button>
             </div>
           </div>
 
-          {/* Bottom Overlay Label */}
-          <div style={{ position: "absolute", bottom: "-80px", left: 0, fontSize: "6rem", fontWeight: 900, color: "rgba(255,255,255,0.03)", userSelect: "none", letterSpacing: "-0.05em", lineHeight: 1, display: "none", "@media (minWidth: 1024px)": { display: "block" } }}>
-            ACCESS_GRANTED
-          </div>
-        </div>
+          <p className="prometheus-auth-switch">
+            Already have access? <a href="/login">Sign in</a>
+          </p>
+        </section>
+      </main>
 
-        {/* Right Side: Signup Card */}
-        <div className="auth-form-panel lg:col-span-5 relative mt-16 lg:mt-0">
-          {/* Decorative Background Shape */}
-          <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "160px", height: "160px", background: "rgba(16, 185, 129, 0.1)", filter: "blur(40px)", borderRadius: "50%" }}></div>
-          <div style={{ position: "absolute", bottom: "-40px", left: "-40px", width: "160px", height: "160px", background: "rgba(124, 58, 237, 0.1)", filter: "blur(40px)", borderRadius: "50%" }}></div>
-
-          <div className="clip-angle glow-box-emerald backdrop-blur-2xl relative" style={{ background: "rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)", padding: "4px" }}>
-            <div className="auth-form-card clip-angle" style={{ padding: "32px 40px", border: "1px solid rgba(255,255,255,0.05)", background: "linear-gradient(to bottom, rgba(255,255,255,0.05), transparent)" }}>
-              <form onSubmit={handleSignup} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-                
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <label style={{ fontSize: "0.6rem", color: "var(--accent-purple)", textTransform: "uppercase", letterSpacing: "0.1em" }}>NEW_OPERATIVE_ID</label>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent-purple)" }}><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                  </div>
-                  <input 
-                    type="email" 
-                    placeholder="EMAIL_OR_USERNAME" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="clip-angle font-tech" 
-                    style={{ width: "100%", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", padding: "16px", fontSize: "0.875rem", color: "var(--accent-emerald)", outline: "none", textTransform: "uppercase", transition: "all 0.3s" }} 
-                  />
-                </div>
-
-                <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <label style={{ fontSize: "0.6rem", color: "var(--accent-emerald)", textTransform: "uppercase", letterSpacing: "0.1em" }}>NEW_NEURAL_KEY</label>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent-emerald)" }}><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  </div>
-                  <input 
-                    type="password" 
-                    placeholder="••••••••••••" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="clip-angle font-tech" 
-                    style={{ width: "100%", background: "rgba(0,0,0,0.6)", border: "1px solid rgba(255,255,255,0.1)", padding: "16px", fontSize: "0.875rem", color: "var(--accent-purple)", outline: "none", transition: "all 0.3s" }} 
-                  />
-                </div>
-
-                <button type="submit" className="clip-angle font-tech mt-4" style={{ width: "100%", padding: "20px", background: "linear-gradient(to right, var(--accent-emerald), #059669)", color: "black", fontWeight: 900, fontSize: "1.25rem", textTransform: "uppercase", letterSpacing: "0.1em", boxShadow: "0 0 15px rgba(16, 185, 129, 0.3)", cursor: "pointer", border: "none", transition: "all 0.2s" }}>
-                  INITIALIZE_REGISTRATION
-                </button>
-
-                <div style={{ position: "relative", padding: "16px 0" }}>
-                  <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center" }}>
-                    <div style={{ width: "100%", borderTop: "1px solid rgba(255,255,255,0.1)" }}></div>
-                  </div>
-                  <div style={{ position: "relative", display: "flex", justifyContent: "center", fontSize: "0.5rem", textTransform: "uppercase", letterSpacing: "0.5em", color: "rgba(255,255,255,0.2)" }}>
-                    <span style={{ background: "black", padding: "0 16px" }}>OR_RETURN_TO_BASE</span>
-                  </div>
-                </div>
-
-                <button onClick={() => window.location.href = "/login"} type="button" className="clip-angle font-tech" style={{ display: "block", width: "100%", padding: "16px", border: "1px solid rgba(124, 58, 237, 0.5)", color: "var(--accent-purple)", textAlign: "center", fontWeight: 900, fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", background: "transparent", cursor: "pointer", transition: "all 0.2s" }}>
-                  ACCESS_EXISTING_LINK
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Footer Metrics */}
-      <footer className="auth-footer" style={{ position: "absolute", bottom: "32px", left: 0, width: "100%", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.6rem", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", letterSpacing: "0.5em", userSelect: "none" }}>
-        <div style={{ display: "flex", gap: "40px" }}>
-          <div>UPLINK_ENCRYPTED: 256_BIT</div>
-          <div className="hidden md:block">LOCATION: UNKNOWN_NODE_4</div>
-        </div>
-        <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: "var(--accent-emerald)" }}><path d="m12 22-8-4.5v-7L12 6l8 4.5v7Z"/><path d="m12 11 4.5-2.5"/><path d="m12 11-4.5-2.5"/><path d="M12 22v-6.5"/></svg>
-          <span>FIREWALL: ACTIVE</span>
-        </div>
-      </footer>
+      <div className="prometheus-auth-bottom-line" />
     </div>
   );
 }
