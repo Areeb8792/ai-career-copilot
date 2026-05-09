@@ -82,3 +82,120 @@
     -webkit-text-stroke: 1px rgba(255, 255, 255, 0.1);
     color: transparent;
 }
+
+@media (max-width: 768px) {
+    .selection-blue header {
+        padding-top: 0.75rem !important;
+    }
+
+    .selection-blue header nav {
+        border-radius: 1.25rem !important;
+        padding: 0.75rem 0.875rem !important;
+        gap: 0.75rem !important;
+    }
+
+    .selection-blue header nav > div:first-child {
+        min-width: 0;
+    }
+
+    .selection-blue header nav > div:first-child span {
+        font-size: 0.9rem !important;
+        white-space: nowrap;
+    }
+
+    .selection-blue header nav button {
+        padding-left: 0.875rem !important;
+        padding-right: 0.875rem !important;
+    }
+
+    .selection-blue main section {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+
+    .selection-blue main section:first-child {
+        min-height: auto !important;
+        padding-top: 7rem !important;
+        padding-bottom: 2.5rem !important;
+    }
+
+    .selection-blue h1 {
+        font-size: clamp(2.55rem, 13vw, 4.25rem) !important;
+        line-height: 0.98 !important;
+        letter-spacing: -0.055em !important;
+        overflow-wrap: anywhere;
+    }
+
+    .selection-blue h2 {
+        font-size: clamp(2rem, 10vw, 3rem) !important;
+        line-height: 1.05 !important;
+    }
+
+    .selection-blue h3 {
+        line-height: 1.12 !important;
+    }
+
+    .selection-blue p {
+        font-size: 1rem !important;
+        line-height: 1.6 !important;
+    }
+
+    .selection-blue .shiny-cta {
+        width: 100%;
+        padding: 0.95rem 1.25rem;
+    }
+
+    .selection-blue .shiny-cta + button {
+        width: 100%;
+        justify-content: center;
+        padding: 0.95rem 1.25rem !important;
+    }
+
+    .selection-blue .grid {
+        min-width: 0;
+    }
+
+    .selection-blue .rounded-xl {
+        border-radius: 1rem !important;
+    }
+
+    .selection-blue .p-8 {
+        padding: 1.25rem !important;
+    }
+
+    .selection-blue .py-32 {
+        padding-top: 3.5rem !important;
+        padding-bottom: 3.5rem !important;
+    }
+
+    .selection-blue .py-20 {
+        padding-top: 3rem !important;
+        padding-bottom: 3rem !important;
+    }
+
+    .selection-blue .mt-32 {
+        margin-top: 3rem !important;
+    }
+
+    .selection-blue .mb-20 {
+        margin-bottom: 2.5rem !important;
+    }
+
+    .selection-blue .scale-105 {
+        transform: none !important;
+    }
+
+    .selection-blue input[type="email"] {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .selection-blue footer {
+        padding-top: 3rem !important;
+    }
+
+    .selection-blue footer ul,
+    .selection-blue footer p {
+        overflow-wrap: anywhere;
+    }
+}

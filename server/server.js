@@ -341,8 +341,8 @@ app.patch("/api/profile", authMiddleware, async (req, res) => {
 
   const profileImage = String(req.body.profileImage || "");
 
-  if (profileImage && !profileImage.startsWith("data:image/")) {
-    return res.status(400).json({ message: "Profile image must be a valid image file." });
+  if (profileImage && !profileImage.startsWith("data:image/") && !profileImage.startsWith("http")) {
+    return res.status(400).json({ message: "Profile image must be a valid image or URL." });
   }
 
   if (profileImage.length > 2_200_000) {

@@ -68,7 +68,7 @@ function Progress() {
     <Layout>
       <div>
         {/* ── Stat Cards ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16, marginBottom:24 }}>
+        <div className="mobile-stats-grid" style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:16, marginBottom:24 }}>
           {stats.map((s,i) => (
             <div key={i} className={`glass-card stagger-${i+1}`} style={{ padding:24, borderRadius:24, position:"relative", overflow:"hidden" }}>
               <div style={{ position:"absolute", right:-32, bottom:-32, width:96, height:96, background:`rgba(${s.rgb},0.05)`, filter:"blur(40px)", borderRadius:"50%" }}/>
@@ -86,10 +86,10 @@ function Progress() {
         </div>
 
         {/* ── Chart + Level ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:24, marginBottom:24 }}>
+        <div className="mobile-two-col-grid" style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:24, marginBottom:24 }}>
           {/* Progress Chart */}
-          <div className="glass-card" style={{ padding:32, borderRadius:28, position:"relative", overflow:"hidden" }}>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:32 }}>
+          <div className="glass-card mobile-chart-card" style={{ padding:32, borderRadius:28, position:"relative", overflow:"hidden" }}>
+            <div className="mobile-card-header" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:32 }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                 <div style={S.iconBox("var(--accent-1-rgb)")}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
                 <div><h3 className="font-display" style={{ fontSize:16, fontWeight:700, color:"var(--text-primary)", margin:0 }}>Progress Overview</h3><p style={{ fontSize:12, color:"var(--text-dim)", margin:0 }}>Your cumulative XP over the last 30 days</p></div>
@@ -155,11 +155,11 @@ function Progress() {
         </div>
 
         {/* ── Streak + Tier ── */}
-        <div style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:24, marginBottom:24 }}>
+        <div className="mobile-two-col-grid" style={{ display:"grid", gridTemplateColumns:"2fr 1fr", gap:24, marginBottom:24 }}>
           {/* Streak Grid */}
-          <div className="glass-card" style={{ padding:32, borderRadius:28, position:"relative", overflow:"hidden" }}>
+          <div className="glass-card mobile-chart-card" style={{ padding:32, borderRadius:28, position:"relative", overflow:"hidden" }}>
             <div style={{ position:"absolute", right:-64, top:-64, width:128, height:128, background:"rgba(var(--accent-1-rgb),0.04)", filter:"blur(48px)", borderRadius:"50%" }}/>
-            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:28 }}>
+            <div className="mobile-card-header" style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:28 }}>
               <div style={{ display:"flex", alignItems:"center", gap:12 }}>
                 <div style={S.iconBox("var(--accent-1-rgb)")}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" strokeWidth="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg></div>
                 <div><h3 className="font-display" style={{ fontSize:16, fontWeight:700, color:"var(--text-primary)", margin:0 }}>{streak}-Day Streak</h3><p style={{ fontSize:12, color:"var(--text-dim)", margin:0 }}>Stay consistent to build momentum</p></div>
@@ -171,7 +171,7 @@ function Progress() {
                 <span style={{ fontSize:12, fontWeight:700, color:"var(--accent-1)" }}>{streak} Days Active</span>
               </div>
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:12 }}>
+            <div className="mobile-streak-grid" style={{ display:"grid", gridTemplateColumns:"repeat(7,1fr)", gap:12 }}>
               {streakDays.map((d,i) => (
                 <div key={i} style={{ textAlign:"center" }}>
                   <div style={{ aspectRatio:"1", borderRadius:16, background:d.active?"var(--accent-1)":"rgba(255,255,255,0.04)", border:`1px solid ${d.active?"rgba(var(--accent-1-rgb),0.5)":"rgba(255,255,255,0.06)"}`, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:d.active?"0 0 20px rgba(var(--accent-1-rgb),0.2)":"none", transition:"all 0.3s" }}>
@@ -215,7 +215,7 @@ function Progress() {
         </div>
 
         {/* ── Quote ── */}
-        <div className="glass-card" style={{ borderRadius:16, padding:"20px 32px", display:"flex", alignItems:"center", gap:16, position:"relative", overflow:"hidden" }}>
+        <div className="glass-card mobile-quote-card" style={{ borderRadius:16, padding:"20px 32px", display:"flex", alignItems:"center", gap:16, position:"relative", overflow:"hidden" }}>
           <div style={{ position:"absolute", left:0, top:0, width:3, height:"100%", background:"rgba(var(--accent-1-rgb),0.4)" }}/>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(var(--accent-1-rgb),0.3)" strokeWidth="2" style={{ flexShrink:0, transform:"rotate(180deg)" }}><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/></svg>
           <p style={{ flex:1, fontSize:14, color:"var(--text-secondary)", fontStyle:"italic", fontWeight:500, margin:0 }}>"Small daily improvements lead to stunning results."</p>

@@ -91,8 +91,8 @@ function Profile() {
 
   return (
     <Layout>
-      <div style={{ padding: "40px 60px 80px", maxWidth: 1000, margin: "0 auto" }}>
-        <header style={{ marginBottom: 48, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+      <div className="mobile-profile-shell" style={{ padding: "40px 60px 80px", maxWidth: 1000, margin: "0 auto" }}>
+        <header className="mobile-profile-header" style={{ marginBottom: 48, display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <div>
             <h1 className="nm-h1" style={{ fontSize: "2.4rem", fontWeight: 800, margin: 0 }}>Operative Profile</h1>
             <p style={{ fontSize: "1rem", color: "var(--nm-dim)", marginTop: 8, fontWeight: 500 }}>Manage your credentials and visual identity.</p>
@@ -109,12 +109,12 @@ function Profile() {
           </div>
         )}
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
+        <div className="mobile-two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 40 }}>
           
           <section className="nm-card" style={{ padding: 32 }}>
             <h2 className="nm-h1" style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: 24 }}>Visual Identity</h2>
             
-            <div style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 32 }}>
+            <div className="mobile-profile-identity" style={{ display: "flex", alignItems: "center", gap: 24, marginBottom: 32 }}>
               <div style={{ position: "relative" }}>
                 {account.profileImage 
                   ? <img src={account.profileImage} alt="Avatar" style={{ width: 80, height: 80, borderRadius: "50%", border: "3px solid var(--nm-accent)", objectFit: "cover" }} />

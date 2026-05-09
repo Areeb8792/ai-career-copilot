@@ -18,10 +18,6 @@ const Icon = ({ name, className }) => {
   return svgs[name] || null;
 };
 
-// Use Blue Navy Accent
-const ACCENT_COLOR = "var(--accent-1)";
-const ACCENT_LIGHT = "rgba(59, 130, 246, 0.4)";
-
 export default function Dashboard() {
   const nav = useNavigate();
   const token = localStorage.getItem("token");
@@ -115,10 +111,11 @@ export default function Dashboard() {
                   </div>
 
                   <h1 className="text-6xl md:text-8xl font-semibold tracking-tighter font-manrope leading-[1.1] mb-8 animate-fade-up" style={{animationDelay: "0.2s"}}>
-                      <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">Career Intelligence</span>
+                      <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">ARE  YOU  
+OBSOLETE?</span>
                       <span className="block text-transparent bg-clip-text bg-gradient-to-b from-white via-white to-white/40">
-                          for the <span className="text-[var(--accent-1)] inline-block relative">
-                              Future
+                          Evolve Or <span className="text-[var(--accent-1)] inline-block relative">
+                              Perish
                               <svg className="absolute w-full h-3 -bottom-2 left-0 text-[var(--accent-1)] opacity-60" viewBox="0 0 100 10" preserveAspectRatio="none">
                                   <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="2" fill="none" />
                               </svg>
@@ -127,7 +124,7 @@ export default function Dashboard() {
                   </h1>
 
                   <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-fade-up" style={{animationDelay: "0.3s"}}>
-                      Prometheus blends Gemini AI with gamified progression to help you navigate your career 10x smarter.
+                      The AI wave is approaching. We calculate your displacement risk, generate your survival tasks, and deploy a neural assistant to execute them.
                   </p>
 
                   <div className="flex flex-col md:flex-row items-center justify-center gap-6 animate-fade-up" style={{animationDelay: "0.4s"}}>

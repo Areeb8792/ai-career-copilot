@@ -113,7 +113,7 @@ function Layout({ children }) {
   const greeting=()=>{const h=new Date().getHours();return h<12?"Good morning":h<17?"Good afternoon":"Good evening";};
 
   return (
-    <div className="flex min-h-screen p-4 lg:p-6 gap-6 relative" style={{background: "var(--bg-body)", color: "var(--text-primary)", zIndex: 1, overflowX: "hidden", fontFamily: "'Satoshi', sans-serif"}}>
+    <div className="app-workspace flex min-h-screen p-4 lg:p-6 gap-6 relative" style={{background: "var(--bg-body)", color: "var(--text-primary)", zIndex: 1, overflowX: "hidden", fontFamily: "'Satoshi', sans-serif"}}>
       {/* Cosmic background elements */}
       <div className="cosmic-bg" style={{ position: "fixed", inset: 0, zIndex: -2, background: "radial-gradient(circle at 20% 30%, rgba(var(--accent-1-rgb), 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(var(--accent-1-rgb), 0.1) 0%, transparent 50%), linear-gradient(180deg, var(--bg-body) 0%, rgb(var(--bg-main-end)) 100%)" }} />
       <div className="grid-overlay" style={{ position: "fixed", inset: 0, zIndex: -1, pointerEvents: "none", backgroundImage: "linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)", backgroundSize: "40px 40px" }} />
@@ -187,20 +187,20 @@ function Layout({ children }) {
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col gap-6 w-full max-w-[1200px] mx-auto z-10">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
+      <main className="app-main-content flex-1 flex flex-col gap-6 w-full max-w-[1200px] mx-auto z-10">
+        <header className="app-page-header flex flex-col md:flex-row md:items-center justify-between gap-4 mt-2">
           <div className="space-y-1">
             <div>
               <h1 className="text-2xl font-bold tracking-tight font-display" style={{ color: "var(--text-primary)" }}>{greeting()}, {name.split(" ")[0]}</h1>
               <p className="text-sm" style={{ color: "var(--text-muted)" }}>You're on a <span className="font-semibold" style={{ color: "var(--accent-1)" }}>14-day streak!</span> Let's hit Level {level+1} today.</p>
             </div>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 md:w-64">
+          <div className="app-header-actions flex items-center gap-4">
+            <div className="app-search relative flex-1 md:w-64">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: "var(--text-dim)" }}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
               <input type="text" placeholder="Search commands..." className="w-full rounded-xl py-2 pl-10 pr-4 text-sm focus:outline-none transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-primary)" }} />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="app-action-buttons flex items-center gap-2">
               <div style={{ position: "relative" }}>
                 <button onClick={() => setShowTheme(!showTheme)} className="p-2.5 rounded-xl transition-all" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border-subtle)", color: "var(--text-dim)" }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg>

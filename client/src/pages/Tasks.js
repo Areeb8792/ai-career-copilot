@@ -73,7 +73,7 @@ function Tasks() {
         </div>
 
         {/* ── Top Stats ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 28 }}>
+        <div className="mobile-stats-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 20, marginBottom: 28 }}>
           {[
             { label: "TOTAL TASKS", val: total, rgb: "var(--accent-1-rgb)", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" strokeWidth="2"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>, trend: `${total}`, color: "var(--accent-1)", pct: 100, barClass: "progress-bar-primary" },
             { label: "COMPLETED", val: done, rgb: "var(--accent-2-rgb)", icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent-2)" strokeWidth="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>, trend: `↑ ${pct}%`, color: "#22c55e", pct: pct, barClass: "progress-bar-accent2" },
@@ -93,10 +93,10 @@ function Tasks() {
         </div>
 
         {/* ── Main Grid ── */}
-        <div style={{ display: "grid", gridTemplateColumns: "7fr 5fr", gap: 24, marginBottom: 28 }}>
+        <div className="mobile-two-col-grid" style={{ display: "grid", gridTemplateColumns: "7fr 5fr", gap: 24, marginBottom: 28 }}>
           {/* Task List */}
           <div className="glass-card" style={{ borderRadius: 24, overflow: "hidden" }}>
-            <div style={{ padding: "20px 28px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div className="mobile-card-header" style={{ padding: "20px 28px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                 <h2 className="font-display" style={{ fontSize: 18, fontWeight: 700, color: "var(--text-primary)", margin: 0 }}>Your Tasks</h2>
@@ -112,7 +112,7 @@ function Tasks() {
               {!loaded ? <div style={{ padding: 48, textAlign: "center", color: "var(--text-dim)", fontSize: 13 }}>Loading...</div> :
                 filtered.length === 0 ? <div style={{ padding: 48, textAlign: "center", color: "var(--text-dim)", fontSize: 13 }}>No tasks found.</div> :
                 filtered.map(task => (
-                  <div key={task.id} onClick={() => toggleTask(task.id)} style={{ padding: "16px 28px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid rgba(255,255,255,0.03)", cursor: "pointer", transition: "background 0.2s" }}>
+                  <div className="mobile-task-row" key={task.id} onClick={() => toggleTask(task.id)} style={{ padding: "16px 28px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid rgba(255,255,255,0.03)", cursor: "pointer", transition: "background 0.2s" }}>
                     <div style={{ width: 22, height: 22, borderRadius: 7, border: task.completed ? "none" : "2px solid var(--text-dim)", background: task.completed ? "var(--accent-1)" : "transparent", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, transition: "all 0.3s cubic-bezier(0.34,1.56,0.64,1)", boxShadow: task.completed ? "0 0 12px rgba(var(--accent-1-rgb),0.4)" : "none" }}>
                       {task.completed && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
                     </div>
@@ -169,13 +169,13 @@ function Tasks() {
         </div>
 
         {/* ── Bottom Quote ── */}
-        <div className="glass-card" style={{ borderRadius: 20, padding: "20px 32px", display: "flex", alignItems: "center", gap: 16 }}>
-          <div style={{ display: "flex", gap: 24, flex: 1, alignItems: "center" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, borderRight: "1px solid rgba(255,255,255,0.06)", paddingRight: 24 }}>
+        <div className="glass-card mobile-quote-card" style={{ borderRadius: 20, padding: "20px 32px", display: "flex", alignItems: "center", gap: 16 }}>
+          <div className="mobile-quote-inner" style={{ display: "flex", gap: 24, flex: 1, alignItems: "center" }}>
+            <div className="mobile-quote-stat" style={{ display: "flex", alignItems: "center", gap: 12, borderRight: "1px solid rgba(255,255,255,0.06)", paddingRight: 24 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-1)" strokeWidth="2"><path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z"/></svg>
               <div><div style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)" }}>{streak}</div><div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Day Streak</div></div>
             </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12, borderRight: "1px solid rgba(255,255,255,0.06)", paddingRight: 24 }}>
+            <div className="mobile-quote-stat" style={{ display: "flex", alignItems: "center", gap: 12, borderRight: "1px solid rgba(255,255,255,0.06)", paddingRight: 24 }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent-primary)" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
               <div><div style={{ fontSize: 22, fontWeight: 900, color: "var(--text-primary)" }}>{weekXp}</div><div style={{ fontSize: 9, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.1em" }}>Weekly XP</div></div>
             </div>

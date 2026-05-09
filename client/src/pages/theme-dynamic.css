@@ -257,6 +257,212 @@ h1,h2,h3,.font-display { font-family:'Cabinet Grotesk',sans-serif; }
 .theme-light .bloom-primary::after, .theme-light .bloom-accent2::after { display:none; }
 .theme-light .divider-glow { background:linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.06) 50%, transparent 100%); }
 
+@media (max-width: 1023px) {
+  .app-workspace {
+    display: block !important;
+    padding: 16px !important;
+  }
+
+  .app-main-content {
+    max-width: 100% !important;
+    gap: 18px !important;
+  }
+
+  .mobile-stats-grid,
+  .mobile-compare-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .mobile-two-col-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .mobile-card-header,
+  .mobile-risk-score,
+  .mobile-profile-header,
+  .mobile-profile-identity {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .mobile-input-row,
+  .mobile-metric-row {
+    flex-wrap: wrap !important;
+  }
+
+  .mobile-input-row > input,
+  .mobile-input-row > div,
+  .mobile-input-row > button {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+}
+
+@media (max-width: 640px) {
+  body {
+    min-width: 0;
+  }
+
+  .app-workspace {
+    padding: 12px !important;
+  }
+
+  .app-page-header {
+    gap: 12px !important;
+    margin-top: 0 !important;
+  }
+
+  .app-page-header h1 {
+    font-size: 1.45rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .app-header-actions,
+  .app-action-buttons {
+    width: 100% !important;
+    align-items: stretch !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .app-search {
+    width: 100% !important;
+    flex: 1 1 100% !important;
+  }
+
+  .app-action-buttons > div,
+  .app-action-buttons > button {
+    flex: 1 1 auto !important;
+  }
+
+  .app-action-buttons > button:last-child {
+    flex-basis: 100% !important;
+    justify-content: center !important;
+  }
+
+  .glass-card {
+    border-radius: 18px !important;
+  }
+
+  .mobile-stats-grid,
+  .mobile-compare-grid,
+  .mobile-streak-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 12px !important;
+  }
+
+  .mobile-stats-grid > .glass-card,
+  .mobile-two-col-grid > .glass-card,
+  .mobile-chart-card,
+  .mobile-profile-shell .nm-card {
+    padding: 18px !important;
+  }
+
+  .mobile-card-header {
+    gap: 12px !important;
+    padding: 16px 18px !important;
+  }
+
+  .mobile-card-header > div {
+    flex-wrap: wrap !important;
+  }
+
+  .mobile-task-row {
+    align-items: flex-start !important;
+    padding: 14px 18px !important;
+  }
+
+  .mobile-task-row p {
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .mobile-task-row span {
+    white-space: nowrap !important;
+  }
+
+  .mobile-quote-card {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    padding: 18px !important;
+  }
+
+  .mobile-quote-inner {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    width: 100% !important;
+  }
+
+  .mobile-quote-stat {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+    padding: 0 0 12px !important;
+  }
+
+  .mobile-chart-card svg {
+    min-width: 0 !important;
+  }
+
+  .mobile-chart-card [style*="height: 240px"],
+  .mobile-chart-card [style*="height:240"] {
+    height: 190px !important;
+  }
+
+  .mobile-metric-row {
+    gap: 8px !important;
+  }
+
+  .mobile-metric-row > div {
+    flex: 1 1 100% !important;
+  }
+
+  .mobile-risk-score {
+    gap: 20px !important;
+    text-align: left !important;
+  }
+
+  .mobile-risk-score > div {
+    width: 100% !important;
+  }
+
+  .mobile-risk-score > div:first-child {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .mobile-profile-shell {
+    padding: 20px 0 56px !important;
+    max-width: 100% !important;
+  }
+
+  .mobile-profile-header {
+    gap: 16px !important;
+    margin-bottom: 24px !important;
+  }
+
+  .mobile-profile-header button {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .mobile-profile-identity {
+    gap: 16px !important;
+  }
+
+  .mobile-profile-identity label {
+    width: 100% !important;
+    text-align: center !important;
+  }
+
+  input,
+  textarea,
+  button {
+    max-width: 100% !important;
+  }
+}
+
 /* Force dark text on hardcoded inline white/gray colors */
 .theme-light h1, .theme-light h2, .theme-light h3, .theme-light h4 { color:#0f1119 !important; }
 .theme-light p { color:#374057 !important; }

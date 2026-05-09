@@ -772,6 +772,102 @@ html {
    MOBILE (≤ 640px) — full phone optimisation
    ============================================= */
 @media (max-width: 640px) {
+  .auth-screen {
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    min-height: 100svh !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding: 24px 0 96px !important;
+  }
+
+  .auth-grid {
+    gap: 24px !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .auth-brand-panel {
+    gap: 20px !important;
+  }
+
+  .auth-brand-panel > .group {
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .auth-brand-panel > .group > .clip-angle {
+    width: 48px !important;
+    height: 48px !important;
+    flex: 0 0 48px !important;
+  }
+
+  .auth-brand-panel .glitch-hero {
+    font-size: 1.75rem !important;
+    line-height: 1 !important;
+    letter-spacing: -0.04em !important;
+  }
+
+  .auth-brand-panel .glitch-hero + span {
+    font-size: 0.48rem !important;
+    letter-spacing: 0.16em !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .auth-info-card,
+  .auth-form-card {
+    padding: 20px !important;
+  }
+
+  .auth-info-card h2 {
+    font-size: 2rem !important;
+    line-height: 1 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .auth-info-card p {
+    letter-spacing: 0.06em !important;
+  }
+
+  .auth-form-panel {
+    margin-top: 0 !important;
+    width: 100% !important;
+  }
+
+  .auth-form-card form {
+    gap: 18px !important;
+  }
+
+  .auth-form-card button[type="submit"] {
+    font-size: 0.95rem !important;
+    letter-spacing: 0.06em !important;
+    padding: 16px !important;
+  }
+
+  .auth-form-card [style*="justify-content: space-between"] {
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+  }
+
+  .auth-form-card [style*="letter-spacing: 0.5em"] {
+    letter-spacing: 0.16em !important;
+  }
+
+  .auth-footer {
+    position: static !important;
+    width: auto !important;
+    padding: 24px 16px 0 !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+    letter-spacing: 0.16em !important;
+  }
+
+  .auth-footer > div {
+    flex-wrap: wrap !important;
+    gap: 10px !important;
+  }
+
   .cyber-brand-block {
     display: none;
   }

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import axios from "axios";
 import API_BASE_URL from "../config/api";
 import "./theme.css";
@@ -54,7 +54,7 @@ function Login() {
   }, []);
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-hidden font-tech" style={{ background: "var(--bg-dark)", color: "#fff" }}>
+    <div className="auth-screen min-h-screen relative flex items-center justify-center overflow-hidden font-tech" style={{ background: "var(--bg-dark)", color: "#fff" }}>
       {/* Background Layers */}
       <div className="absolute inset-0 bg-[#0f172a]"></div>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#1e1b4b_0%,_#0f172a_80%)]"></div>
@@ -84,10 +84,10 @@ function Login() {
       </div>
 
       {/* Main Content Container */}
-      <div className="relative z-10 w-full max-w-5xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+      <div className="auth-grid relative z-10 w-full max-w-5xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
         {/* Left Side: Branding & Info */}
-        <div className="lg:col-span-7 flex flex-col items-start gap-8">
+        <div className="auth-brand-panel lg:col-span-7 flex flex-col items-start gap-8">
           <div className="flex items-center gap-4 group">
             <div className="clip-angle glow-box-purple" style={{ width: "64px", height: "64px", background: "linear-gradient(to top right, var(--accent-amber), var(--accent-purple))", display: "flex", alignItems: "center", justifyContent: "center", padding: "4px" }}>
               <div className="clip-angle" style={{ width: "100%", height: "100%", background: "black", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -101,7 +101,7 @@ function Login() {
           </div>
 
           <div className="clip-angle relative p-1" style={{ background: "linear-gradient(to right, rgba(251, 191, 36, 0.4), transparent)" }}>
-            <div className="clip-angle backdrop-blur-xl" style={{ background: "rgba(0,0,0,0.6)", padding: "32px", border: "1px solid rgba(255,255,255,0.05)" }}>
+            <div className="auth-info-card clip-angle backdrop-blur-xl" style={{ background: "rgba(0,0,0,0.6)", padding: "32px", border: "1px solid rgba(255,255,255,0.05)" }}>
               <h2 className="italic uppercase" style={{ fontSize: "3rem", fontWeight: 900, marginBottom: "24px", letterSpacing: "-0.05em", lineHeight: 1.1 }}>
                 ESTABLISH_<br/><span style={{ color: "var(--accent-purple)" }}>CONNECTION</span>
               </h2>
@@ -129,13 +129,13 @@ function Login() {
         </div>
 
         {/* Right Side: Login Card */}
-        <div className="lg:col-span-5 relative mt-16 lg:mt-0">
+        <div className="auth-form-panel lg:col-span-5 relative mt-16 lg:mt-0">
           {/* Decorative Background Shape */}
           <div style={{ position: "absolute", top: "-40px", right: "-40px", width: "160px", height: "160px", background: "rgba(251, 191, 36, 0.1)", filter: "blur(40px)", borderRadius: "50%" }}></div>
           <div style={{ position: "absolute", bottom: "-40px", left: "-40px", width: "160px", height: "160px", background: "rgba(0, 255, 255, 0.1)", filter: "blur(40px)", borderRadius: "50%" }}></div>
 
           <div className="clip-angle glow-box-amber backdrop-blur-2xl relative" style={{ background: "rgba(0,0,0,0.8)", border: "1px solid rgba(255,255,255,0.1)", padding: "4px" }}>
-            <div className="clip-angle" style={{ padding: "32px 40px", border: "1px solid rgba(255,255,255,0.05)", background: "linear-gradient(to bottom, rgba(255,255,255,0.05), transparent)" }}>
+            <div className="auth-form-card clip-angle" style={{ padding: "32px 40px", border: "1px solid rgba(255,255,255,0.05)", background: "linear-gradient(to bottom, rgba(255,255,255,0.05), transparent)" }}>
               <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -202,7 +202,7 @@ function Login() {
       </div>
 
       {/* Footer Metrics */}
-      <footer style={{ position: "absolute", bottom: "32px", left: 0, width: "100%", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.6rem", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", letterSpacing: "0.5em", userSelect: "none" }}>
+      <footer className="auth-footer" style={{ position: "absolute", bottom: "32px", left: 0, width: "100%", padding: "0 32px", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.6rem", color: "rgba(255,255,255,0.2)", textTransform: "uppercase", letterSpacing: "0.5em", userSelect: "none" }}>
         <div style={{ display: "flex", gap: "40px" }}>
           <div>UPLINK_ENCRYPTED: 256_BIT</div>
           <div className="hidden md:block">LOCATION: UNKNOWN_NODE_4</div>

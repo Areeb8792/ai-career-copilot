@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Layout from "../components/layout";
 import "./theme-dynamic.css";
@@ -127,7 +127,7 @@ function RiskManagement() {
         </div>
 
         {/* Top: Analyzer + Counter Measures */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
+        <div className="mobile-two-col-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 32 }}>
           {/* Left: Analyzer */}
           <div className="glass-card bloom-primary" style={{ padding: 32, borderRadius: 24 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 24 }}>
@@ -135,7 +135,7 @@ function RiskManagement() {
               <span style={{ fontSize: 10, fontWeight: 900, padding: "2px 8px", borderRadius: 6, background: "rgba(var(--accent-2-rgb),0.15)", color: "var(--accent-2)", border: "1px solid rgba(var(--accent-2-rgb),0.3)" }}>BETA</span>
             </div>
             <p style={{ fontSize: 13, color: "var(--text-dim)", marginBottom: 16 }}>Enter a job role or career path</p>
-            <div style={{ display: "flex", gap: 12, marginBottom: 32 }}>
+            <div className="mobile-input-row" style={{ display: "flex", gap: 12, marginBottom: 32 }}>
               <div style={{ flex: 1, position: "relative" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2" style={{ position: "absolute", left: 16, top: "50%", transform: "translateY(-50%)" }}><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 <input value={jobTitle} onChange={e => setJobTitle(e.target.value)} onKeyDown={e => e.key === "Enter" && analyze()} placeholder="Frontend Developer" className="input-glass" style={{ width: "100%", borderRadius: 16, padding: "14px 16px 14px 44px", fontSize: 14, outline: "none" }}/>
@@ -144,7 +144,7 @@ function RiskManagement() {
             </div>
 
             {/* Risk Score */}
-            <div style={{ display: "flex", gap: 32, alignItems: "center", marginBottom: 24 }}>
+            <div className="mobile-risk-score" style={{ display: "flex", gap: 32, alignItems: "center", marginBottom: 24 }}>
               <div style={{ textAlign: "center" }}>
                 <p style={{ fontSize: 11, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>AI Replacement Risk Score</p>
                 <div style={{ position: "relative", width: 180, height: 180 }}>
@@ -158,7 +158,7 @@ function RiskManagement() {
               <div style={{ flex: 1 }}>
                 <h3 className="font-display" style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 8 }}>Analysis Summary</h3>
                 <p style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16 }}>{riskData.explanation}</p>
-                <div style={{ display: "flex", gap: 16 }}>
+                <div className="mobile-metric-row" style={{ display: "flex", gap: 16 }}>
                   {[{ l: "AI Impact", v: riskData.risk < 40 ? "Low" : riskData.risk < 60 ? "Medium" : "High", c: riskData.risk < 40 ? "var(--accent-2)" : riskData.risk < 60 ? "var(--accent-3)" : "var(--accent-4)" }, { l: "Job Demand", v: "High", c: "var(--accent-primary)" }, { l: "Future Outlook", v: riskData.risk < 50 ? "Stable" : "Uncertain", c: riskData.risk < 50 ? "var(--accent-2)" : "var(--accent-3)" }].map((m, i) => (
                     <div key={i} style={{ padding: "8px 16px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, textAlign: "center" }}>
                       <div style={{ fontSize: 11, color: "var(--text-dim)", marginBottom: 4 }}>{m.l}</div>
@@ -209,7 +209,7 @@ function RiskManagement() {
             <p style={{ fontSize: 13, color: "var(--text-muted)" }}>Compare up to 3 career paths and their AI replacement risk.</p>
           </div>
           {/* Inputs */}
-          <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+          <div className="mobile-input-row" style={{ display: "flex", gap: 12, marginBottom: 24 }}>
             {careers.map((c, i) => (
               <input key={i} value={c} onChange={e => setCareers(p => p.map((v, j) => j === i ? e.target.value : v))} placeholder={fallbackCompare[i]?.role || `Career ${i + 1}`} className="input-glass" style={{ flex: 1, borderRadius: 14, padding: "12px 16px", fontSize: 14, outline: "none" }}/>
             ))}
@@ -217,7 +217,7 @@ function RiskManagement() {
           </div>
 
           {/* Cards */}
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
+          <div className="mobile-compare-grid" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 24 }}>
             {compareData.map((item, i) => {
               const rl = item.risk < 30 ? "Low Risk" : item.risk < 60 ? "Medium Risk" : "High Risk";
               const rc = item.risk < 30 ? "var(--accent-2)" : item.risk < 60 ? "var(--accent-3)" : "var(--accent-4)";
@@ -257,7 +257,7 @@ function RiskManagement() {
         </div>
 
         {/* AI Insight Banner */}
-        <div className="glass-card" style={{ marginTop: 24, borderRadius: 16, padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
+        <div className="glass-card mobile-quote-card" style={{ marginTop: 24, borderRadius: 16, padding: 16, display: "flex", alignItems: "center", gap: 12 }}>
           <span style={{ fontSize: 10, fontWeight: 900, padding: "2px 8px", borderRadius: 6, background: "rgba(var(--accent-1-rgb),0.15)", color: "var(--accent-1)" }}>AI</span>
           <p style={{ fontSize: 13, color: "var(--text-muted)", margin: 0 }}><strong style={{ color: "var(--text-primary)" }}>AI Insight:</strong> Roles that combine creativity, strategy, and human empathy are least likely to be replaced.</p>
         </div>
