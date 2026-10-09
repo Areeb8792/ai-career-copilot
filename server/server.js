@@ -4,7 +4,9 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
-require("dotenv").config();
+if (process.env.SKIP_DOTENV !== "true") {
+  require("dotenv").config();
+}
 
 const app = express();
 const AI_TIMEOUT_MS = 1500;
@@ -198,11 +200,13 @@ const connectToMongo = async () => {
   return mongoConnectPromise;
 };
 
-connectToMongo().catch((err) => {
-  mongoLastError = err;
-  console.error("MongoDB initial connection failed:");
-  console.error(err.message);
-});
+if (require.main === module) {
+  connectToMongo().catch((err) => {
+    mongoLastError = err;
+    console.error("MongoDB initial connection failed:");
+    console.error(err.message);
+  });
+}
 
 const ensureDatabaseReady = async (res) => {
   if (isDatabaseReady) {
@@ -1077,8 +1081,10 @@ app.post("/api/generate-roadmap", async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 module.exports = app;
