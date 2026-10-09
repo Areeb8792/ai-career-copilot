@@ -6,6 +6,7 @@ import RiskManagement from "./pages/RiskManagement";
 import Tasks from "./pages/Tasks";
 import Progress from "./pages/Progress";
 import Profile from "./pages/Profile";
+import CareerProfile from "./pages/CareerProfile";
 import "./pages/theme.css";
 
 function ProtectedRoute({ children }) {
@@ -61,6 +62,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/career-profile"
+          element={
+            <ProtectedRoute>
+              <CareerProfile />
             </ProtectedRoute>
           }
         />

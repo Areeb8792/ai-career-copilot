@@ -57,7 +57,7 @@ const roleProfiles = [
 const getRoleTips = (job) => { const l = job.toLowerCase(); const p = roleProfiles.find(p => p.keywords.some(k => l.includes(k))); return roleTips[p?.tipsKey || "default"]; };
 const getRoleProfile = (job) => { const l = job.toLowerCase(); return roleProfiles.find(p => p.keywords.some(k => l.includes(k))) || defaultRisk; };
 const createFallback = (job, skill) => { const p = getRoleProfile(job); const adj = Math.round((50 - skill) * 0.35); return { risk: Math.max(12, Math.min(92, (p.baseRisk || 42) + adj)), explanation: p.explanation || defaultRisk.explanation, tips: getRoleTips(job) }; };
-const createCompareFallback = (roles) => roles.map((r, i) => { const p = getRoleProfile(r); const off = r.split("").reduce((s, c) => s + c.charCodeAt(0), 0) % 9; return { role: r, sub: "", risk: Math.max(14, Math.min(88, (p.baseRisk || 42) + off - i * 3)), aiImpact: (p.baseRisk || 42) > 50 ? "High" : "Medium", jobDemand: "High", outlook: (p.baseRisk || 42) > 50 ? "Uncertain" : "Stable" }; });
+const createCompareFallback = (roles) => roles.map((r) => { const p = getRoleProfile(r); const off = r.split("").reduce((s, c) => s + c.charCodeAt(0), 0) % 9; const risk = Math.max(14, Math.min(88, (p.baseRisk || 42) + off)); return { role: r, sub: "AI Estimated", risk, aiImpact: risk > 60 ? "High" : risk > 35 ? "Medium" : "Low", jobDemand: "Estimated", outlook: risk < 50 ? "Stable" : "Uncertain" }; });
 
 function RiskManagement() {
   const [jobTitle, setJobTitle] = useState("");
@@ -78,33 +78,72 @@ function RiskManagement() {
     if (!jobTitle.trim()) return;
     setIsCalc(true);
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/predict-risk`, { role: jobTitle }, { timeout: 1800 });
-      const t = res.data.result || ""; const rm = t.match(/Risk:\s*(\d+)/i);
-      setRiskData({ risk: rm ? Number(rm[1]) : createFallback(jobTitle, 50).risk, explanation: getRoleProfile(jobTitle).explanation || defaultRisk.explanation, tips: getRoleTips(jobTitle) });
-    } catch { setRiskData(createFallback(jobTitle, 50)); }
-    setIsCalc(false); setAddedTips({}); setMsg("");
+      const res = await axios.post(`${API_BASE_URL}/api/predict-risk`, { role: jobTitle }, { timeout: 15000 });
+      const details = res.data.details;
+      const riskVal = res.data.riskScore ?? (res.data.result ? Number(res.data.result.match(/\d+/)?.[0] || 42) : 42);
+
+      setRiskData({
+        risk: riskVal,
+        explanation: details?.explanation || getRoleProfile(jobTitle).explanation || defaultRisk.explanation,
+        tips: details?.countermeasures && details.countermeasures.length > 0 ? details.countermeasures : getRoleTips(jobTitle),
+        subfactors: details?.subfactors,
+      });
+    } catch {
+      setRiskData(createFallback(jobTitle, 50));
+    }
+    setIsCalc(false);
+    setAddedTips({});
+    setMsg("");
   };
 
   const compare = async () => {
-    const cl = careers.map(c => c.trim()).filter(Boolean);
-    if (cl.length !== 3) { alert("Enter 3 careers."); return; }
+    const cl = careers.map((c) => c.trim()).filter(Boolean);
+    if (cl.length !== 3) {
+      alert("Enter 3 careers to compare.");
+      return;
+    }
     setIsComp(true);
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/compare-roles`, { roles: cl }, { timeout: 1800 });
+      const res = await axios.post(`${API_BASE_URL}/api/compare-roles`, { roles: cl }, { timeout: 20000 });
       const d = Array.isArray(res.data?.data) ? res.data.data : [];
-      const n = d.slice(0, 3).map((item, i) => ({ role: item.role || cl[i], sub: "", risk: Number(item.risk ?? 0), aiImpact: "Medium", jobDemand: "High", outlook: "Stable" }));
+      const n = d.slice(0, 3).map((item, i) => ({
+        role: item.role || cl[i],
+        sub: item.isRealProviderData ? "Verified Data" : "AI Estimated",
+        risk: Number(item.risk ?? 42),
+        aiImpact: item.aiImpact || "Medium",
+        jobDemand: item.jobDemand || (item.isRealProviderData ? "High" : "Estimated"),
+        outlook: item.outlook || "Stable",
+      }));
       setCompareData(n.length === 3 ? n : createCompareFallback(cl));
-    } catch { setCompareData(createCompareFallback(cl)); }
+    } catch {
+      setCompareData(createCompareFallback(cl));
+    }
     setIsComp(false);
   };
 
   const addTip = (tip) => {
     try {
-      const raw = localStorage.getItem(TASKS_KEY); const stored = raw ? JSON.parse(raw) : [];
-      if (stored.some(t => t.title?.trim().toLowerCase() === tip.trim().toLowerCase())) { setMsg("Already in tasks."); return; }
-      localStorage.setItem(TASKS_KEY, JSON.stringify([{ id: Date.now(), title: tip, completed: false, rewarded: false }, ...stored]));
-      setAddedTips(p => ({ ...p, [tip]: true })); setMsg("Added to tasks!");
-    } catch { setMsg("Could not add."); }
+      const raw = localStorage.getItem(TASKS_KEY);
+      const stored = raw ? JSON.parse(raw) : [];
+      if (stored.some((t) => t.title?.trim().toLowerCase() === tip.trim().toLowerCase())) {
+        setMsg("Already in tasks.");
+        return;
+      }
+      const newTask = {
+        id: Date.now(),
+        title: tip,
+        completed: false,
+        rewarded: false,
+        isLearning: true, // Counts as qualifying learning activity
+        category: "learning",
+        date: new Date().toISOString(),
+      };
+      localStorage.setItem(TASKS_KEY, JSON.stringify([newTask, ...stored]));
+      setAddedTips((p) => ({ ...p, [tip]: true }));
+      setMsg("Added to tasks as qualifying learning quest!");
+    } catch {
+      setMsg("Could not add.");
+    }
   };
 
   const tipIcons = [
@@ -146,7 +185,8 @@ function RiskManagement() {
             {/* Risk Score */}
             <div className="mobile-risk-score" style={{ display: "flex", gap: 32, alignItems: "center", marginBottom: 24 }}>
               <div style={{ textAlign: "center" }}>
-                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 12 }}>AI Replacement Risk Score</p>
+                <p style={{ fontSize: 11, fontWeight: 700, color: "var(--text-dim)", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 4 }}>AI Automation Exposure</p>
+                <p style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 12 }}>Higher risk reduces readiness (Resilience = {100 - riskData.risk}%)</p>
                 <div style={{ position: "relative", width: 180, height: 180 }}>
                   <svg width="180" height="180" className="progress-circle"><circle cx="90" cy="90" r="80" stroke="rgba(255,255,255,0.05)" strokeWidth="10" fill="none"/><circle cx="90" cy="90" r="80" stroke={riskColor} strokeWidth="10" fill="none" strokeDasharray={circ} strokeDashoffset={off} strokeLinecap="round" style={{ filter: `drop-shadow(0 0 8px ${riskColor})` }}/></svg>
                   <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
@@ -159,7 +199,7 @@ function RiskManagement() {
                 <h3 className="font-display" style={{ fontSize: 16, fontWeight: 700, color: "var(--text-primary)", marginBottom: 8 }}>Analysis Summary</h3>
                 <p style={{ fontSize: 13, color: "var(--text-muted)", lineHeight: 1.7, marginBottom: 16 }}>{riskData.explanation}</p>
                 <div className="mobile-metric-row" style={{ display: "flex", gap: 16 }}>
-                  {[{ l: "AI Impact", v: riskData.risk < 40 ? "Low" : riskData.risk < 60 ? "Medium" : "High", c: riskData.risk < 40 ? "var(--accent-2)" : riskData.risk < 60 ? "var(--accent-3)" : "var(--accent-4)" }, { l: "Job Demand", v: "High", c: "var(--accent-primary)" }, { l: "Future Outlook", v: riskData.risk < 50 ? "Stable" : "Uncertain", c: riskData.risk < 50 ? "var(--accent-2)" : "var(--accent-3)" }].map((m, i) => (
+                  {[{ l: "AI Impact", v: riskData.risk < 40 ? "Low" : riskData.risk < 60 ? "Medium" : "High", c: riskData.risk < 40 ? "var(--accent-2)" : riskData.risk < 60 ? "var(--accent-3)" : "var(--accent-4)" }, { l: "Job Demand", v: "Estimated", c: "var(--accent-primary)" }, { l: "Future Outlook", v: riskData.risk < 50 ? "Stable" : "Uncertain", c: riskData.risk < 50 ? "var(--accent-2)" : "var(--accent-3)" }].map((m, i) => (
                     <div key={i} style={{ padding: "8px 16px", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 12, textAlign: "center" }}>
                       <div style={{ fontSize: 11, color: "var(--text-dim)", marginBottom: 4 }}>{m.l}</div>
                       <div style={{ fontSize: 13, fontWeight: 700, color: m.c }}>{m.v}</div>

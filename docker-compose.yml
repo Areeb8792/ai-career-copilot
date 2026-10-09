@@ -5,6 +5,8 @@ services:
       - "5001:5000"   # changed to avoid port conflict
     environment:
       - MONGO_URI=mongodb://mongo:27017/ai-career
+    env_file:
+      - server/.env
     depends_on:
       - mongo
     restart: always   # auto restart

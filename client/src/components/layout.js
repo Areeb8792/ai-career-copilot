@@ -144,17 +144,25 @@ function Layout({ children }) {
           <div className="space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-widest px-4 mb-4" style={{ color: "var(--text-dim)" }}>Core</p>
             <nav className="space-y-2 px-1">
-              <NavLink to="/progress" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+              <NavLink to="/dashboard" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
                 <span>Dashboard</span>
+              </NavLink>
+              <NavLink to="/career-profile" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><polygon points="12 8 8 12 12 16 16 12 12 8"/></svg>
+                <span>Career Profile</span>
               </NavLink>
               <NavLink to="/tasks" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
                 <span>Tasks</span>
               </NavLink>
+              <NavLink to="/progress" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                <span>XP Progress</span>
+              </NavLink>
               <NavLink to="/risk-management" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                <span>Risk</span>
+                <span>Risk Analysis</span>
               </NavLink>
             </nav>
           </div>
@@ -162,10 +170,10 @@ function Layout({ children }) {
           <div className="space-y-1">
             <p className="text-[10px] font-bold uppercase tracking-widest px-4 mb-4" style={{ color: "var(--text-dim)" }}>Intelligence</p>
             <nav className="space-y-2 px-1">
-              <a href="#" className="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group hover:text-white" style={{ color: "var(--text-muted)", fontWeight: 500 }}>
+              <NavLink to="/career-profile" onClick={closeMobileSidebar} className={({isActive})=>isActive?"nav-item-active group transition-all duration-300":"flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group"} style={({isActive})=>isActive?{display:"flex",alignItems:"center",gap:12,padding:"10px 16px",borderRadius:12,background:"rgba(var(--accent-1-rgb),0.12)",border:"1px solid rgba(var(--accent-1-rgb),0.5)",boxShadow:"0 0 25px rgba(var(--accent-1-rgb),0.25), inset 0 0 10px rgba(var(--accent-1-rgb),0.1)",color:"var(--accent-1)",fontWeight:600}:{color:"var(--text-muted)",fontWeight:500}}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 4.5a2.5 2.5 0 00-4.96-.46 2.5 2.5 0 00-1.98 3 2.5 2.5 0 00-1.32 4.24 3 3 0 00.34 5.58 2.5 2.5 0 002.96 3.08A2.5 2.5 0 0012 20V4.5z"/><path d="M16 8V5c0-1.1.9-2 2-2"/><path d="M12 13h4M12 17h6"/></svg>
-                <span>Coaching</span>
-              </a>
+                <span>Assessment</span>
+              </NavLink>
             </nav>
           </div>
 
