@@ -82,7 +82,18 @@ function Profile() {
     }
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (token) {
+      try {
+        await axios.post(
+          `${API_BASE_URL}/api/logout`,
+          {},
+          { headers: { authorization: `Bearer ${token}` }, timeout: 3000 }
+        );
+      } catch {
+        // Continue client logout even if backend is offline
+      }
+    }
     localStorage.removeItem("token");
     localStorage.removeItem("prometheus_username");
     window.dispatchEvent(new Event("storage"));

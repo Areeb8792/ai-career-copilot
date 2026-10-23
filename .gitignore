@@ -17,6 +17,8 @@ client/.env.*
 **/.env
 **/.env.*
 !**/.env.example
+!client/.env.production
+
 
 # build files
 client/build/

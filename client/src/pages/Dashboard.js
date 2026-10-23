@@ -87,7 +87,13 @@ export default function Dashboard() {
       setRoadmap(res.data.roadmap || []);
       showToast("success", "Personalized learning roadmap generated!");
     } catch (err) {
-      showToast("error", "Failed to generate roadmap.");
+      if (err?.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("prometheus_username");
+        navigate("/login");
+        return;
+      }
+      showToast("error", err?.response?.data?.message || "Failed to generate roadmap.");
     }
   };
 

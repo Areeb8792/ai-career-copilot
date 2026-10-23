@@ -20,10 +20,9 @@ test("Security Audit: Server refuses to start with insecure or default JWT_SECRE
   for (const badSecret of insecureSecrets) {
     let processFailed = false;
     let exitCode = 0;
-    const childEnv = { ...process.env };
+    const childEnv = { ...process.env, SKIP_DOTENV: "true" };
     if (badSecret === undefined) {
       delete childEnv.JWT_SECRET;
-      childEnv.SKIP_DOTENV = "true";
     } else {
       childEnv.JWT_SECRET = badSecret;
     }

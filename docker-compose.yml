@@ -2,7 +2,7 @@ services:
   backend:
     build: ./server
     ports:
-      - "5001:5000"   # changed to avoid port conflict
+      - "127.0.0.1:5001:5000"   # bound to loopback for security
     environment:
       - MONGO_URI=mongodb://mongo:27017/ai-career
     env_file:
@@ -14,15 +14,15 @@ services:
   frontend:
     build: ./client
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       - backend
     restart: always
 
   mongo:
-    image: mongo
+    image: mongo:7.0
     ports:
-      - "27017:27017"
+      - "127.0.0.1:27017:27017"
     volumes:
       - mongo-data:/data/db   # data persistence
     restart: always

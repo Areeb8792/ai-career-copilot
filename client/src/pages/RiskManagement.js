@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Layout from "../components/layout";
 import "./theme-dynamic.css";
 import API_BASE_URL from "../config/api";
@@ -60,6 +61,7 @@ const createFallback = (job, skill) => { const p = getRoleProfile(job); const ad
 const createCompareFallback = (roles) => roles.map((r) => { const p = getRoleProfile(r); const off = r.split("").reduce((s, c) => s + c.charCodeAt(0), 0) % 9; const risk = Math.max(14, Math.min(88, (p.baseRisk || 42) + off)); return { role: r, sub: "AI Estimated", risk, aiImpact: risk > 60 ? "High" : risk > 35 ? "Medium" : "Low", jobDemand: "Estimated", outlook: risk < 50 ? "Stable" : "Uncertain" }; });
 
 function RiskManagement() {
+  const navigate = useNavigate();
   const [jobTitle, setJobTitle] = useState("");
   const [riskData, setRiskData] = useState(defaultRisk);
   const [careers, setCareers] = useState(["", "", ""]);
@@ -77,8 +79,17 @@ function RiskManagement() {
   const analyze = async () => {
     if (!jobTitle.trim()) return;
     setIsCalc(true);
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/predict-risk`, { role: jobTitle }, { timeout: 15000 });
+      const res = await axios.post(
+        `${API_BASE_URL}/api/predict-risk`,
+        { role: jobTitle },
+        { headers: { authorization: `Bearer ${token}` }, timeout: 15000 }
+      );
       const details = res.data.details;
       const riskVal = res.data.riskScore ?? (res.data.result ? Number(res.data.result.match(/\d+/)?.[0] || 42) : 42);
 
@@ -88,12 +99,19 @@ function RiskManagement() {
         tips: details?.countermeasures && details.countermeasures.length > 0 ? details.countermeasures : getRoleTips(jobTitle),
         subfactors: details?.subfactors,
       });
-    } catch {
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("prometheus_username");
+        navigate("/login");
+        return;
+      }
       setRiskData(createFallback(jobTitle, 50));
+    } finally {
+      setIsCalc(false);
+      setAddedTips({});
+      setMsg("");
     }
-    setIsCalc(false);
-    setAddedTips({});
-    setMsg("");
   };
 
   const compare = async () => {
@@ -103,8 +121,17 @@ function RiskManagement() {
       return;
     }
     setIsComp(true);
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") || "" : "";
+    if (!token) {
+      navigate("/login");
+      return;
+    }
     try {
-      const res = await axios.post(`${API_BASE_URL}/api/compare-roles`, { roles: cl }, { timeout: 20000 });
+      const res = await axios.post(
+        `${API_BASE_URL}/api/compare-roles`,
+        { roles: cl },
+        { headers: { authorization: `Bearer ${token}` }, timeout: 20000 }
+      );
       const d = Array.isArray(res.data?.data) ? res.data.data : [];
       const n = d.slice(0, 3).map((item, i) => ({
         role: item.role || cl[i],
@@ -115,10 +142,17 @@ function RiskManagement() {
         outlook: item.outlook || "Stable",
       }));
       setCompareData(n.length === 3 ? n : createCompareFallback(cl));
-    } catch {
+    } catch (err) {
+      if (err?.response?.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("prometheus_username");
+        navigate("/login");
+        return;
+      }
       setCompareData(createCompareFallback(cl));
+    } finally {
+      setIsComp(false);
     }
-    setIsComp(false);
   };
 
   const addTip = (tip) => {
