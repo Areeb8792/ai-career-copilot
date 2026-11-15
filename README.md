@@ -12,7 +12,7 @@ The project combines a deterministic, explainable scoring engine with AI-generat
 - **Maintainer:** Areeb Ali — [@Areeb8792](https://github.com/Areeb8792)
 - **License:** MIT — see [LICENSE](./LICENSE)
 
-> **Project status:** Pravida AI is an independently maintained application under active development. Features, scoring rules, and integrations may change. It is a career-planning aid, not a hiring decision system or a guarantee of employment outcomes.
+> **Project status:** Pravida AI is an application under active development. Features, scoring rules, and integrations may change. It is a career-planning aid, not a hiring decision system or a guarantee of employment outcomes.
 
 ## Table of contents
 
